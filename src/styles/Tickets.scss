@@ -1,0 +1,38 @@
+.tickets {
+    // Main title styles
+    &__title {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      color: #333;
+    }
+  
+    // Section container
+    &__section {
+      margin-bottom: 1.5rem;
+  
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  
+    // Section subtitle styles
+    &__subtitle {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #444;
+    }
+  
+    // Section description styles
+    &__description {
+      margin-bottom: 1rem;
+      font-size: 1rem;
+      color: #555;
+  
+      strong {
+        color: #000; // Emphasized text for the total ticket count
+      }
+    }
+  }
+  
