@@ -18,12 +18,13 @@ export default function Tickets() {
     return <div>Loading...</div>;
   }
 
-  const { totalTickets, ticketStatusData } = data;
+  const { totalTickets, ticketStatusData, ticketOwners } = data;
 
   return (
     <div className="tickets">
       <h2 className="tickets__title">Tickets Report</h2>
 
+      {/* Ticket Status Breakdown */}
       <section className="tickets__section">
         <h3 className="tickets__subtitle">Ticket Status Breakdown</h3>
         <p className="tickets__description">
@@ -34,6 +35,24 @@ export default function Tickets() {
           data={ticketStatusData}
           headers={['Status', 'Count']}
           keys={['status', 'count']}
+        />
+      </section>
+
+      {/* Ticket Owners Breakdown */}
+      <section className="tickets__section">
+        <h3 className="tickets__subtitle">Ticket Owners Breakdown</h3>
+        <p className="tickets__description">
+          Below is the breakdown of ticket ownership and resolution rates:
+        </p>
+        <DataTable
+          data={ticketOwners}
+          headers={[
+            'Ticket Owner',
+            'Total Tickets',
+            'Resolved',
+            'Resolution Rate',
+          ]}
+          keys={['ticketOwner', 'totalTickets', 'resolved', 'resolutionRate']}
         />
       </section>
     </div>

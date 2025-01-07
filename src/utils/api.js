@@ -113,6 +113,12 @@ export const fetchDealsData = async () => {
 export const fetchTicketsData = async () => {
   return {
     totalTickets: 350,
+    ticketStatusData: [
+      { status: 'Open', count: 150 },
+      { status: 'In Progress', count: 100 },
+      { status: 'Closed', count: 80 },
+      { status: 'Escalated', count: 20 },
+    ],
     ticketOwners: [
       {
         ticketOwner: 'Apoorv Singh',
