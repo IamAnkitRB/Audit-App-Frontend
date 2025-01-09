@@ -2,13 +2,11 @@
     display: flex;
     font-family: Arial, sans-serif;
     height: 100vh; 
+    width: 99vw;
     overflow: hidden; 
   }
   
   .sidebar {
-    position: fixed; 
-    top: 60px;
-    left: 0;
     width: 25%; 
     height: 100vh; 
     background-color: #f4f4f4;
@@ -55,29 +53,17 @@
     font-weight: bold;
   }
   
-  .content {
-    margin-left: 8%; 
+  .content { 
     flex: 1; 
-    padding: 16px;
     box-sizing: border-box;
     overflow-y: auto; 
     scrollbar-width: none; 
     -ms-overflow-style: none; 
+    min-width: 50rem;
   }
   
   .content::-webkit-scrollbar {
     display: none; 
   }
   
-  .content-wrapper {
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 16px;
-    margin-top: 7vh;
-    margin-left: 16vw;
-    box-sizing: border-box;
-    min-height: 90vh;
-    width: 80vw;
-  }
   

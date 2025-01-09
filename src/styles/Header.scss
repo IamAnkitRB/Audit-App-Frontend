@@ -1,7 +1,7 @@
 .header {
     display: flex;
     justify-content: space-between;
-    position: fixed;
+    position: relative;
     top: 0;
     align-items: center;
     padding: 10px 20px;
@@ -9,14 +9,13 @@
     border-bottom: 1px solid #ddd;
   
     &__logo {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #333;
+      width: 8rem;
     }
   
     &__user {
       position: relative;
       height: 30px;
+      bottom: 6px;
   
       &-icon {
         width: 40px;

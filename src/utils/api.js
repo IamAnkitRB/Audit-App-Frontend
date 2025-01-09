@@ -4,6 +4,7 @@ export const fetchContactsData = async () => {
     missingData: [
       { property: 'Email', count: 300, percentage: '25%' },
       { property: 'Phone Number', count: 450, percentage: '37.5%' },
+      { property: 'Owner', count: 450, percentage: '37.5%' },
     ],
     lifecycleData: {
       labels: [
@@ -133,5 +134,29 @@ export const fetchTicketsData = async () => {
         resolutionRate: '87.5%',
       },
     ],
+  };
+};
+
+export const fetchAuditData = async () => {
+  return {
+    id: 102,
+    createDate: '08-Jan-2025',
+    overallScore: 53,
+    globalAverage: 66,
+    industryAverage: 59,
+    scores: {
+      dateAudit: 33,
+      salesAudit: 33,
+      marketingAudit: 56,
+      serviceAudit: 56,
+      roiAudit: 56,
+    },
+    benchmarks: 68,
+    dataAudit: {
+      contacts: 58,
+      companies: 23,
+      deals: 67,
+      tickets: 33,
+    },
   };
 };

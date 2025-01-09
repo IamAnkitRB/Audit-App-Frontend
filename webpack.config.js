@@ -4,7 +4,6 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
 const autoprefixer = require('autoprefixer');
 
-
 const hubspotConfig = ({ portal, autoupload } = {}) => {
   return {
     target: 'web',
@@ -26,6 +25,10 @@ const hubspotConfig = ({ portal, autoupload } = {}) => {
           use: {
             loader: 'babel-loader',
           },
+        },
+        {
+          test: /\.(png|jpe?g|gif|svg)$/i,
+          type: 'asset/resource', // For Webpack 5+
         },
         {
           test: /\.s[ac]ss$/i,
