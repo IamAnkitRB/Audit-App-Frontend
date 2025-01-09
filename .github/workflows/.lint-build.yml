@@ -13,8 +13,8 @@ jobs:
           node-version: 16.x
       - name: Install deps
         run: |
-          yarn install
+          npm install
       - name: Lint and build project into dist
         run: |
-          yarn lint
-          yarn build
+          npm run lint
+          npm run build
