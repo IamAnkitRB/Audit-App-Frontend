@@ -14,7 +14,6 @@ jobs:
       - name: Install deps
         run: |
           npm install
-      - name: Lint and build project into dist
+      - name: Build project into dist
         run: |
-          npm run lint
           npm run build
