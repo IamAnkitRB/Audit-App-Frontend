@@ -10,7 +10,8 @@ export default function Header() {
   };
 
   const handleLogout = () => {
-    // Add logout functionality here
+    window.location.href =
+      'https://test-portal-contentninja-6343592.hs-sites.com/audit-app-login';
   };
 
   return (

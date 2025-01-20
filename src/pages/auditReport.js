@@ -1,182 +1,235 @@
 import React, { useEffect, useState } from 'react';
 import ProgressBar from '../components/ProgressBar';
 import { fetchAuditData } from '../utils/api';
-import Modal from '../components/Modal';
 import '../styles/AuditReport.scss';
-import Companies from './companies';
-import Contacts from './contacts';
-import Deals from './deals';
-import Tickets from './tickets';
+import ReportDetails from '../components/ReportDetails';
 
-export default function AuditReport() {
+export default function AuditReport({ reportId }) {
   const [auditData, setAuditData] = useState(null);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [isDetailsExpanded, setisDetailsExpanded] = useState(false);
-  const [id, setId] = useState('001');
-  const [createDate, setCreateDate] = useState(null);
-  const [modalContent, setModalContent] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('contacts');
+  const [isExpanded, setIsExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(true);
+  const [isBreakdownExpanded, setIsBreakdownExpanded] = useState(true);
 
   const toggleSection = () => {
+    toggleExpanded();
     setIsExpanded(!isExpanded);
   };
+  const toggleExpanded = () => {
+    setExpanded(!expanded);
+  };
+  const toggleScoreSection = () => {
+    setIsBreakdownExpanded(!isBreakdownExpanded);
+  };
 
-  const toggleDetailsSection = () => {
-    setisDetailsExpanded(!isDetailsExpanded);
+  const handleCategoryClick = (category) => {
+    setSelectedCategory(category);
   };
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetchAuditData();
-      setId(response?.id);
-      setAuditData(response);
-      setCreateDate(response.createDate);
+      if (reportId) {
+        const response = await fetchAuditData(reportId);
+        setAuditData(response);
+      }
     };
     fetchData();
-  }, []);
+  }, [reportId]);
 
-  if (!auditData) {
-    return <div>Loading...</div>;
+  if (!reportId) {
+    return <div>I don't know wat to do.</div>;
   }
 
-  const openModal = (content) => {
-    setModalContent(content);
-    setIsModalOpen(true);
-  };
+  if (!auditData) {
+    return <div>Loading report data...</div>;
+  }
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setModalContent(null);
-  };
-
-  const { overallScore, globalAverage, industryAverage, scores, dataAudit } =
-    auditData;
+  const { overallScore, globalAverage, industryAverage, dataAudit } = auditData;
 
   return (
     <div className="audit-report">
       <header className="audit-report__header">
-        <div className="audit-report__header-section">
-          <button className="audit-report__header-button">Reports</button>
-          <span className="audit-report__icon">&#62;</span>
-          <button className="audit-report__header-button">
-            Id: {id} | {createDate}
-          </button>
-        </div>
+        <p>Hi Pranav!</p>
       </header>
 
       {/* Overall Audit Score */}
       <section className="audit-report__section">
         <h3 className="audit-report__overall_title">Overall Audit Score</h3>
         <div className="audit-report__score">
-          <ProgressBar score={overallScore} maxScore={100} height={3} />
+          <ProgressBar score={overallScore} maxScore={100} />
         </div>
         <p className="audit-report__main_heading">
-          You are <strong>{globalAverage - overallScore}</strong> points behind
-          the Global Average and{' '}
-          <strong>{industryAverage - overallScore}</strong> points behind your
+          You are '{globalAverage - overallScore}' points behind the Global
+          Average and '{industryAverage - overallScore}' points behind your
           Industry Average.
         </p>
       </section>
 
-      {/* Detailed Scores Section */}
-      <section className="audit-report__section">
+      <section className="audit-report__subSection">
         <div className="audit-report__section-header">
-          <h3 className="audit-report__subtitle">Detailed Audit Scores</h3>
+          <h3 className="audit-report__subtitle">Score Breakdown</h3>
           <button
             className="audit-report__toggle-button"
-            onClick={toggleDetailsSection}
+            onClick={toggleScoreSection}
           >
-            {isDetailsExpanded ? '-' : '^'}
+            {isBreakdownExpanded ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="#333"
+                class="size-5"
+                style={{ height: '15px' }}
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M9.47 6.47a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 8.06l-3.72 3.72a.75.75 0 0 1-1.06-1.06l4.25-4.25Z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="#333"
+                class="size-5"
+                style={{ height: '15px' }}
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            )}
           </button>
         </div>
-
-        {isDetailsExpanded && (
-          <div className="audit-report__details">
-            {Object.entries(scores).map(([key, value]) => (
-              <ProgressBar
-                key={key}
-                label={key
-                  .replace(/Audit/g, '')
-                  .replace(/([a-z])([A-Z])/g, '$1 $2')}
-                score={value}
-                maxScore={100}
-              />
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* Data Audit Section */}
-      <section className="audit-report__section">
-        <div className="audit-report__section-header">
-          <h3 className="audit-report__subtitle">Data Audit</h3>
-          <button
-            className="audit-report__toggle-button"
-            onClick={toggleSection}
-          >
-            {isExpanded ? '−' : '^'}
-          </button>
-        </div>
-
-        {isExpanded && (
+        {isBreakdownExpanded && (
           <div className="audit-report__data">
             <div className="audit-report__data-item">
               <div className="audit-report__data-div">
-                <div
-                  className="audit-report__data-item"
-                  onClick={() => openModal(<Contacts />)}
-                >
-                  <p className="audit-report__data-div-heading">Contacts</p>
+                <div className="audit-report__data-item">
+                  <div className="score-heading">
+                    <p className="audit-report__data-div-heading">
+                      Data Quality
+                    </p>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      class="size-6 danger-svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
+                      />
+                    </svg>
+                  </div>
+
                   <p className="audit-report__data-div-score">
-                    {dataAudit.contacts}/
-                    <span className="audit-report__data-div-hundred">100</span>
+                    {dataAudit.contacts ? (
+                      <>{dataAudit.contacts}/100</>
+                    ) : (
+                      <span className="audit-report__unavailable">
+                        Not in Use
+                      </span>
+                    )}
                   </p>
                 </div>
               </div>
             </div>
-            <div className="audit-report__data-item">
+            <div className="audit-report__data-item glassmorhp">
               <div className="audit-report__data-div">
-                <div
-                  className="audit-report__data-item"
-                  onClick={() => openModal(<Companies />)}
-                >
-                  <p className="audit-report__data-div-heading">Companies</p>
+                <div className="audit-report__data-item">
+                  <span className="coming-soon">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="size-6"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                      />
+                    </svg>
+                    Coming Soon
+                  </span>
+                  <p className="audit-report__data-div-heading">Marketing</p>
                   <p className="audit-report__data-div-score">
-                    {dataAudit.companies}/
-                    <span className="audit-report__data-div-hundred">100</span>
+                    {dataAudit.companies ? (
+                      <>?/100</>
+                    ) : (
+                      <span className="audit-report__unavailable">
+                        Not in Use
+                      </span>
+                    )}
                   </p>
                 </div>
               </div>
             </div>
-            <div className="audit-report__data-item">
+            <div className="audit-report__data-item glassmorhp">
               <div className="audit-report__data-div">
-                <div
-                  className="audit-report__data-item"
-                  onClick={() => openModal(<Deals />)}
-                >
-                  <p className="audit-report__data-div-heading">Deals</p>
+                <div className="audit-report__data-item">
+                  <span className="coming-soon">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="size-6"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                      />
+                    </svg>
+                    Coming Soon
+                  </span>
+                  <p className="audit-report__data-div-heading">Sales</p>
                   <p className="audit-report__data-div-score">
-                    {dataAudit.deals}/
-                    <span className="audit-report__data-div-hundred">100</span>
+                    {dataAudit.deals ? (
+                      <>?/100</>
+                    ) : (
+                      <span className="audit-report__unavailable">
+                        Not in Use
+                      </span>
+                    )}
                   </p>
                 </div>
               </div>
             </div>
-            <div className="audit-report__data-item">
+            <div className="audit-report__data-item glassmorhp">
               <div className="audit-report__data-div">
-                <div
-                  className="audit-report__data-item"
-                  onClick={() => openModal(<Tickets />)}
-                >
-                  <p className="audit-report__data-div-heading">Tickets</p>
+                <div className="audit-report__data-item">
+                  <span className="coming-soon">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="size-6"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                      />
+                    </svg>
+                    Coming Soon
+                  </span>
+                  <p className="audit-report__data-div-heading">Services</p>
                   <p className="audit-report__data-div-score">
                     {dataAudit.tickets ? (
-                      <>
-                        {dataAudit.tickets}/
-                        <span className="audit-report__data-div-hundred">
-                          100
-                        </span>
-                      </>
+                      <>?/100</>
                     ) : (
                       <span className="audit-report__unavailable">
                         Not in Use
@@ -189,9 +242,117 @@ export default function AuditReport() {
           </div>
         )}
       </section>
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
-        {modalContent}
-      </Modal>
+
+      {/* Data Audit Section */}
+      <section className="audit-report__subSection">
+        <div className="audit-report__section-header">
+          <h3 className="audit-report__subtitle">Data Audit</h3>
+          <button
+            className="audit-report__toggle-button"
+            onClick={toggleSection}
+          >
+            {isExpanded ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="#333"
+                class="size-5"
+                style={{ height: '15px' }}
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M9.47 6.47a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 8.06l-3.72 3.72a.75.75 0 0 1-1.06-1.06l4.25-4.25Z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="#333"
+                class="size-5"
+                style={{ height: '15px' }}
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            )}
+          </button>
+        </div>
+
+        {isExpanded && (
+          <div className="audit-report__data">
+            <div
+              className="audit-report__data-item"
+              onClick={() => handleCategoryClick('contacts')}
+            >
+              <div className="audit-report__data-div">
+                <div className="audit-report__data-item">
+                  <p className="audit-report__data-div-heading">Contacts</p>
+                  <p className="audit-report__data-div-score">
+                    {dataAudit.contacts}/
+                    <span className="audit-report__data-div-hundred">100</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div
+              className="audit-report__data-item"
+              onClick={() => handleCategoryClick('companies')}
+            >
+              <div className="audit-report__data-div">
+                <div className="audit-report__data-item">
+                  <p className="audit-report__data-div-heading">Companies</p>
+                  <p className="audit-report__data-div-score">
+                    {dataAudit.companies}/100
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div
+              className="audit-report__data-item"
+              onClick={() => handleCategoryClick('deals')}
+            >
+              <div className="audit-report__data-div">
+                <div className="audit-report__data-item">
+                  <p className="audit-report__data-div-heading">Deals</p>
+                  <p className="audit-report__data-div-score">
+                    {dataAudit.deals}/100
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div
+              className="audit-report__data-item"
+              onClick={() => handleCategoryClick('tickets')}
+            >
+              <div className="audit-report__data-div">
+                <div className="audit-report__data-item">
+                  <p className="audit-report__data-div-heading">Tickets</p>
+                  <p className="audit-report__data-div-score">
+                    {dataAudit.tickets ? (
+                      <>{dataAudit.tickets}/100</>
+                    ) : (
+                      <span className="audit-report__unavailable">
+                        Not in Use
+                      </span>
+                    )}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </section>
+      {expanded && (
+        <ReportDetails
+          category={selectedCategory}
+          data={auditData.dataAudit[selectedCategory]}
+        />
+      )}
     </div>
   );
 }
