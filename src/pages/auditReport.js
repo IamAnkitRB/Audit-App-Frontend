@@ -106,7 +106,7 @@ export default function AuditReport({ reportId }) {
         {isBreakdownExpanded && (
           <div className="audit-report__data">
             <div className="audit-report__data-item">
-              <div className="audit-report__data-div">
+              <div className="audit-report__data-div selected-item">
                 <div className="audit-report__data-item">
                   <div className="score-heading">
                     <p className="audit-report__data-div-heading">
@@ -289,12 +289,12 @@ export default function AuditReport({ reportId }) {
               className="audit-report__data-item"
               onClick={() => handleCategoryClick('contacts')}
             >
-              <div className="audit-report__data-div">
+              <div className={`audit-report__data-div ${selectedCategory === 'contacts' ? 'selected-item' : ''
+                }`}>
                 <div className="audit-report__data-item">
                   <p className="audit-report__data-div-heading">Contacts</p>
                   <p className="audit-report__data-div-score">
-                    {dataAudit.contacts}/
-                    <span className="audit-report__data-div-hundred">100</span>
+                    {dataAudit.contacts}/100
                   </p>
                 </div>
               </div>
@@ -303,7 +303,8 @@ export default function AuditReport({ reportId }) {
               className="audit-report__data-item"
               onClick={() => handleCategoryClick('companies')}
             >
-              <div className="audit-report__data-div">
+              <div className={`audit-report__data-div ${selectedCategory === 'companies' ? 'selected-item' : ''
+                }`}>
                 <div className="audit-report__data-item">
                   <p className="audit-report__data-div-heading">Companies</p>
                   <p className="audit-report__data-div-score">
@@ -316,7 +317,8 @@ export default function AuditReport({ reportId }) {
               className="audit-report__data-item"
               onClick={() => handleCategoryClick('deals')}
             >
-              <div className="audit-report__data-div">
+              <div className={`audit-report__data-div ${selectedCategory === 'deals' ? 'selected-item' : ''
+                }`}>
                 <div className="audit-report__data-item">
                   <p className="audit-report__data-div-heading">Deals</p>
                   <p className="audit-report__data-div-score">
@@ -329,7 +331,8 @@ export default function AuditReport({ reportId }) {
               className="audit-report__data-item"
               onClick={() => handleCategoryClick('tickets')}
             >
-              <div className="audit-report__data-div">
+              <div className={`audit-report__data-div ${selectedCategory === 'tickets' ? 'selected-item' : ''
+                }`} >
                 <div className="audit-report__data-item">
                   <p className="audit-report__data-div-heading">Tickets</p>
                   <p className="audit-report__data-div-score">

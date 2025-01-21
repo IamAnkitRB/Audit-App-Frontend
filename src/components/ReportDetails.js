@@ -78,7 +78,7 @@ const ReportDetails = ({ category, data }) => {
                     <p>Contacts without Email ID</p>
                   </p>
                   <p className="report-details__data-div-score">
-                    <strong>{data}</strong>
+                    <strong>{data}%</strong>
                   </p>
                 </div>
               </div>
@@ -89,7 +89,7 @@ const ReportDetails = ({ category, data }) => {
                     <p> Contacts without Phone Numbers</p>
                   </p>
                   <p className="report-details__data-div-score">
-                    <strong>{data}</strong>
+                    <strong>{data}%</strong>
                   </p>
                 </div>
               </div>
@@ -99,7 +99,7 @@ const ReportDetails = ({ category, data }) => {
                     <p>Contacts with Lifecycle Stage</p>
                   </p>
                   <p className="report-details__data-div-score">
-                    <strong>{data}</strong>
+                    <strong>{data}%</strong>
                   </p>
                 </div>
               </div>
@@ -109,7 +109,7 @@ const ReportDetails = ({ category, data }) => {
                     <p>Contacts without Owners</p>
                   </p>
                   <p className="report-details__data-div-score">
-                    <strong>{data}</strong>
+                    <strong>{data}%</strong>
                   </p>
                 </div>
               </div>
@@ -221,7 +221,7 @@ const ReportDetails = ({ category, data }) => {
                     <p>Contacts with Similar Email IDs</p>
                   </p>
                   <p className="report-details__data-div-score">
-                    <strong>{data}</strong>
+                    <strong>{data}%</strong>
                   </p>
                 </div>
               </div>
@@ -231,7 +231,7 @@ const ReportDetails = ({ category, data }) => {
                     <p>Contacts with Duplicate Phone Numbers</p>
                   </p>
                   <p className="report-details__data-div-score">
-                    <strong>{data}</strong>
+                    <strong>{data}%</strong>
                   </p>
                 </div>
               </div>

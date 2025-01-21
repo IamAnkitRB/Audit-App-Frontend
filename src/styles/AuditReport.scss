@@ -1,7 +1,7 @@
 .audit-report {
   font-family: Arial, sans-serif;
   margin: 20px;
-  color: #333;
+  color: #6c6c6c;
 
   
   /* Header Styles */
@@ -19,7 +19,7 @@
 
     p {
       margin: 10px 0 0;
-      font-size: 1.2rem;
+      font-size: 2rem;
       color: #666;
       background: linear-gradient(90deg, #00E5E5, #9b87f5, #7E69AB);
       background-clip: text;
@@ -56,14 +56,14 @@
   }
 
   &__overall_title{
-    font-size: medium !important;
-    margin-bottom: 3rem;
+    font-size: medium;
+    margin-bottom: 4rem;
     display: flex;
     width: fit-content;
   }
 
   &__main_heading {
-    font-size: small;
+    font-size: 0.875rem;
     font-weight: 100;
     display: flex;
   }
@@ -78,7 +78,6 @@
     margin-bottom: 30px;
     padding: 20px;
     background: linear-gradient(90deg, rgba(155, 135, 245, 0.1) 0%, rgba(126, 105, 171, 0.1) 100%);
-    max-width: 60rem;
     margin: 20px auto;
     border-radius: 5px;
     box-sizing: border-box;
@@ -86,7 +85,7 @@
 
     & h3 {
       margin-top: 0;
-      font-size: 1.5rem;
+      font-size: 1.25rem;
       letter-spacing: 0;
       background: linear-gradient(90deg, #00E5E5, #9b87f5, #7E69AB);
       background-clip: text;
@@ -104,7 +103,6 @@
   &__subSection{
     margin-bottom: 30px;
     background: linear-gradient(90deg, rgba(155, 135, 245, 0.1) 0%, rgba(126, 105, 171, 0.1) 100%);
-    max-width: 60rem;
     margin: 20px auto;
     border-radius: 5px;
     box-sizing: border-box;
@@ -129,7 +127,7 @@
   }
 
   &__subtitle {
-    font-size: small !important;
+    font-size: small;
     font-weight: bold;
     display: flex;
     align-items: center;
@@ -167,10 +165,10 @@
 
     &-div {
       background-color: #fff;
-      padding: 14px 10px;
+      padding: 1.75rem 1rem;
       height: 100%;
       width: 16vw;
-      border-radius: 4px;
+      border-radius: 0.5rem;
       text-align: center;
       border: 1px solid rgb(255 165 0 );
 
@@ -179,7 +177,7 @@
       }
 
       &-heading {
-        font-size: x-small;
+        font-size: medium;
         padding-bottom: 4px;
       }
 
@@ -212,7 +210,7 @@
 
     h3 {
       margin: 0;
-      font-size: 1.5rem;
+      font-size: 1.25rem;
       font-weight: bold;
       color: #333;
     }
@@ -253,21 +251,21 @@
 }
 
 .glassmorhp svg{
-  height: 10px;
+  height: 1rem;
   margin-right: 3px;
 }
 
 .coming-soon{
   font-weight: bold;
-  color: black;
+  color: #6c6c6c;
   margin-left: 4rem;
   position: absolute;
   top: 0;
   right: 0;
   margin: 5px 10px;
   padding: 0 5px;
-  font-size: xx-small;
-  background: #d7e9f6;
+  font-size: small;
+  background: #e9ebeb;
   border-radius: 7px;
   display: flex;
   align-items: center;
@@ -279,7 +277,7 @@
   justify-content: space-between;
 }
 .danger-svg{
-  height: 15px;
+  height: 1.5rem;
   color: gray;
 }
 
@@ -315,7 +313,7 @@
 @media (max-width: 768px) {
   .audit-report {
     width: 100vw;
-    font-size: 0.85rem; 
+    font-size: medium; 
     margin: 5px;
 
     &__header h2 {
@@ -353,7 +351,7 @@
 /* Extra small screens (e.g., very small devices, 360px and up) */
 @media (max-width: 480px) {
   .audit-report {
-    font-size: 0.75rem; 
+    font-size: medium; 
 
     &__header h2 {
       font-size: 1.2rem; 
@@ -374,7 +372,7 @@
     }
 
     .coming-soon {
-      font-size: xx-small; 
+      font-size: x-small; 
       margin: 2px;
     }
 
@@ -383,4 +381,8 @@
       align-items: flex-start;
     }
   }
+}
+
+.selected-item {
+  background: linear-gradient(45deg, #e3ffff, #e6e4ef);
 }

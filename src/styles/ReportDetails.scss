@@ -1,5 +1,5 @@
 .report-details {
-    color: #333;
+    color: #6c6c6c;
     font-family: Arial, sans-serif;
   
     /* Section Container */
@@ -8,12 +8,11 @@
       background: linear-gradient(90deg, rgba(155, 135, 245, 0.1) 0%, rgba(126, 105, 171, 0.1) 100%);
       border-radius: 5px;
       border: 1px solid #e3e3e0;
-      max-width: 60rem;
       margin: 20px auto;
   
       & h3 {
         margin-top: 0;
-        font-size: 1.5rem;
+        font-size: 1.25rem;
         font-weight: bold;
         color: #333;
         letter-spacing: 0;
@@ -54,41 +53,43 @@
     }
     &__data-div {
         background-color: #fff;
-        border: 1px solid orange;
-        border-radius: 4px;
-        height: 100%;
-        text-align: center;
-        padding: 14px 10px;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        height: 9rem;
+        text-align: start;
         width: 16vw;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
     &__duplicate-data-div {
       background-color: #fff;
-      border: 1px solid orange;
-      border-radius: 4px;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
       height: 100%;
       text-align: center;
       padding: 14px 10px;
       width: 33vw;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
     &__data-item {
         align-items: start;
         display: flex;
         flex-direction: column;
-        
-       
+        padding: 1rem;
+        line-height: normal;
     }
     &__data-div-heading {
-        font-size: x-small;
+        font-size: 0.875rem;
         margin: 0;
-        padding-bottom: 4px;
+        padding: 0.5rem;
     }
     &__data-div-score {
         background: linear-gradient(90deg, #00e5e5, #9b87f5, #7e69ab);
         -webkit-background-clip: text;
         background-clip: text;
         font-weight: 700;
-        padding-left: 4px;
-        margin:0;
+        font-size: 1.7rem;
+        line-height: 2rem;
+        margin: 0.75rem 0 0 0.5rem;
         -webkit-text-fill-color: transparent;
     }
     &__section-header{
@@ -98,7 +99,7 @@
         margin-bottom: 10px;
     }
     &__subtitle {
-        font-size: small !important;
+        font-size: small;
         font-weight: bold;
         display: flex;
         align-items: center;
