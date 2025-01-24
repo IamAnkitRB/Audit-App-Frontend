@@ -386,3 +386,34 @@
 .selected-item {
   background: linear-gradient(45deg, #e3ffff, #e6e4ef);
 }
+
+.audit-report__table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.audit-report__table th,
+.audit-report__table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.audit-report__table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.audit-report__back-button, .audit-report__details-button {
+  padding: 5px 10px;
+  background-color: #6fb1da;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #6fb1da;
+  }
+}

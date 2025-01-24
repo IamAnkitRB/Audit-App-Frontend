@@ -1,0 +1,152 @@
+.generate-report-container {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 2rem;
+    width: 100%;
+    text-align: center;
+
+    .header-text {
+        font-size: 1.25rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+        color: #1f2937;
+    }
+
+    .report-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+
+        .past-reports-button {
+            background-color: #e5e7eb;
+            border: none;
+            border-radius: 4px;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+        }
+
+        .report-info {
+            font-size: 0.875rem;
+            color: white;
+            display: flex;
+            flex-wrap: wrap; // Allow wrapping on smaller screens
+
+            span {
+                padding: 10px 20px;
+                background: #6fb1da;
+                border-radius: 8px;
+                margin: 5px 0; // Add margin for better spacing on small screens
+            }
+
+            div {
+                color: #000;
+                font-weight: 600;
+                margin: auto 1rem;
+                font-size: 25px;
+            }
+
+            .report-details {
+                color: white;
+            }
+        }
+    }
+
+    .generating-state {
+        .generating-title {
+            display: flex;
+            flex-direction: column; // Stack elements vertically on small screens
+            align-items: center; // Center align items
+            justify-content: center;
+            gap: 1rem;
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 4rem 0 6rem;
+
+            p {
+                max-width: 90vw; // Adjust width for smaller screens
+                font-size: 2rem; // Reduce font size for smaller screens
+                line-height: normal;
+                text-align: center; // Center text
+            }
+        }
+
+        .loading-icon {
+            position: relative;
+            bottom: 2rem;
+
+            img {
+                width: 50vw; // Adjust size for smaller screens
+                height: 50vw;
+            }
+        }
+
+        .beta-notice {
+            font-size: 0.875rem;
+            font-style: italic;
+            color: #9ca3af;
+            margin-bottom: 1rem;
+        }
+
+        .feedback-link {
+            font-size: 0.875rem;
+            max-width: 90vw; // Adjust width for smaller screens
+            margin: auto;
+            color: #9ca3af;
+
+            a {
+                text-decoration: underline;
+                color: #2563eb;
+            }
+        }
+    }
+
+    .error-state,
+    .report-ready {
+        h2 {
+            font-size: 2rem; // Adjust font size for smaller screens
+        }
+
+        p {
+            font-size: 1rem; // Adjust font size for smaller screens
+        }
+    }
+
+    // Media Queries for Responsiveness
+    @media (min-width: 768px) {
+        .generating-state {
+            .generating-title {
+                flex-direction: row; // Revert to horizontal layout on larger screens
+                justify-content: center;
+                gap: 1rem;
+
+                p {
+                    max-width: 37vw; // Revert to original width
+                    font-size: 3rem; // Revert to original font size
+                    text-align: start; // Revert to original alignment
+                }
+            }
+
+            .loading-icon {
+                img {
+                    width: 20vw; // Revert to original size
+                    height: 20vw;
+                }
+            }
+
+            .feedback-link {
+                max-width: 40vw; // Revert to original width
+            }
+        }
+
+        .error-state,
+        .report-ready {
+            h2 {
+                font-size: 2.5rem; // Revert to original font size
+            }
+        }
+    }
+}

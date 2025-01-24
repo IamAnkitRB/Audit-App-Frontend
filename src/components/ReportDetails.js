@@ -6,6 +6,8 @@ const ReportDetails = ({ category, data }) => {
   const [isDuplicateDataExpanded, setIsDuplicateDataExpanded] = useState(true);
   const [isDeletingDataExpanded, setIsDeletingDataExpanded] = useState(true);
 
+  category = category.charAt(0).toUpperCase() + category.slice(1)
+
   const toggleSection = (section) => {
     switch (section) {
       case 'missingData':
@@ -75,7 +77,7 @@ const ReportDetails = ({ category, data }) => {
               <div className="report-details__data-div">
                 <div className="report-details__data-item">
                   <p className="report-details__data-div-heading">
-                    <p>Contacts without Email ID</p>
+                    <p>{category} without Email ID</p>
                   </p>
                   <p className="report-details__data-div-score">
                     <strong>{data}%</strong>
@@ -86,7 +88,7 @@ const ReportDetails = ({ category, data }) => {
               <div className="report-details__data-div">
                 <div className="report-details__data-item">
                   <p className="report-details__data-div-heading">
-                    <p> Contacts without Phone Numbers</p>
+                    <p> {category} without Phone Numbers</p>
                   </p>
                   <p className="report-details__data-div-score">
                     <strong>{data}%</strong>
@@ -96,7 +98,7 @@ const ReportDetails = ({ category, data }) => {
               <div className="report-details__data-div">
                 <div className="report-details__data-item">
                   <p className="report-details__data-div-heading">
-                    <p>Contacts with Lifecycle Stage</p>
+                    <p>{category} with Lifecycle Stage</p>
                   </p>
                   <p className="report-details__data-div-score">
                     <strong>{data}%</strong>
@@ -106,7 +108,7 @@ const ReportDetails = ({ category, data }) => {
               <div className="report-details__data-div">
                 <div className="report-details__data-item">
                   <p className="report-details__data-div-heading">
-                    <p>Contacts without Owners</p>
+                    <p>{category} without Owners</p>
                   </p>
                   <p className="report-details__data-div-score">
                     <strong>{data}%</strong>
@@ -121,19 +123,19 @@ const ReportDetails = ({ category, data }) => {
                 <div className="report-details__checkbox-group">
                   <label>
                     <input type="checkbox" />
-                    Contacts without Email ID
+                    {category} without Email ID
                   </label>
                   <label>
                     <input type="checkbox" />
-                    Contacts without Lifecycle Stage
+                    {category} without Lifecycle Stage
                   </label>
                   <label>
                     <input type="checkbox" />
-                    Contacts without Phone Numbers
+                    {category} without Phone Numbers
                   </label>
                   <label>
                     <input type="checkbox" />
-                    Contacts without Owners
+                    {category} without Owners
                   </label>
                 </div>
                 <div className="report-details__action-button-div">
@@ -148,19 +150,19 @@ const ReportDetails = ({ category, data }) => {
                 <div className="report-details__checkbox-group">
                   <label>
                     <input type="checkbox" />
-                    Contacts without Email ID
+                    {category} without Email ID
                   </label>
                   <label>
                     <input type="checkbox" />
-                    Contacts without Lifecycle Stage
+                    {category} without Lifecycle Stage
                   </label>
                   <label>
                     <input type="checkbox" />
-                    Contacts without Phone Numbers
+                    {category} without Phone Numbers
                   </label>
                   <label>
                     <input type="checkbox" />
-                    Contacts without Owners
+                    {category} without Owners
                   </label>
                 </div>
                 <div className="report-details__action-button-div">
@@ -174,7 +176,7 @@ const ReportDetails = ({ category, data }) => {
         )}
       </section>
 
-      <section className="report-details__subSection">
+      {/* <section className="report-details__subSection">
         <div className="report-details__section-header">
           <h3 className="report-details__subtitle">Duplicate Data</h3>
           <button
@@ -218,7 +220,7 @@ const ReportDetails = ({ category, data }) => {
               <div className="report-details__duplicate-data-div">
                 <div className="report-details__data-item">
                   <p className="report-details__data-div-heading">
-                    <p>Contacts with Similar Email IDs</p>
+                    <p>{category} with Similar Email IDs</p>
                   </p>
                   <p className="report-details__data-div-score">
                     <strong>{data}%</strong>
@@ -228,7 +230,7 @@ const ReportDetails = ({ category, data }) => {
               <div className="report-details__duplicate-data-div">
                 <div className="report-details__data-item">
                   <p className="report-details__data-div-heading">
-                    <p>Contacts with Duplicate Phone Numbers</p>
+                    <p>{category} with Duplicate Phone Numbers</p>
                   </p>
                   <p className="report-details__data-div-score">
                     <strong>{data}%</strong>
@@ -243,11 +245,11 @@ const ReportDetails = ({ category, data }) => {
                 <div className="report-details__checkbox-group">
                   <label>
                     <input type="checkbox" />
-                    Contacts with Similar Email Ids
+                    {category} with Similar Email Ids
                   </label>
                   <label>
                     <input type="checkbox" />
-                    Contacts with Duplicate Phone Numbers
+                    {category} with Duplicate Phone Numbers
                   </label>
                 </div>
                 <div className="report-details__action-button-div">
@@ -262,7 +264,7 @@ const ReportDetails = ({ category, data }) => {
                 <div className="report-details__checkbox-group">
                   <label>
                     <input type="checkbox" />
-                    Merge contacts with Duplicate Phone Numbers
+                    Merge {category} with Duplicate Phone Numbers
                   </label>
                 </div>
                 <div className="report-details__action-button-div">
@@ -274,7 +276,7 @@ const ReportDetails = ({ category, data }) => {
             </div>
           </>
         )}
-      </section>
+      </section> */}
 
       <section className="report-details__subSection">
         <div className="report-details__section-header">
@@ -320,7 +322,7 @@ const ReportDetails = ({ category, data }) => {
               <div className="report-details__duplicate-data-div">
                 <div className="report-details__data-item">
                   <p className="report-details__data-div-heading">
-                    <p>Contacts have no activity in the last 180 days</p>
+                    <p>{category} have no activity in the last 180 days</p>
                   </p>
                   <p className="report-details__data-div-score">
                     <strong>1362</strong>
@@ -330,7 +332,7 @@ const ReportDetails = ({ category, data }) => {
               <div className="report-details__duplicate-data-div">
                 <div className="report-details__data-item">
                   <p className="report-details__data-div-heading">
-                    <p>Contacts are internal team members</p>
+                    <p>{category} are internal team members</p>
                   </p>
                   <p className="report-details__data-div-score">
                     <strong>19</strong>
@@ -345,11 +347,11 @@ const ReportDetails = ({ category, data }) => {
                 <div className="report-details__checkbox-group">
                   <label>
                     <input type="checkbox" />
-                    Contacts have no activity in the last 180 days
+                    {category} have no activity in the last 180 days
                   </label>
                   <label>
                     <input type="checkbox" />
-                    Contacts are internal team members
+                    {category} are internal team members
                   </label>
                 </div>
                 <div className="report-details__action-button-div">
@@ -364,11 +366,11 @@ const ReportDetails = ({ category, data }) => {
                 <div className="report-details__checkbox-group">
                   <label>
                     <input type="checkbox" />
-                    Contacts have no activity in the last 180 days
+                    {category} have no activity in the last 180 days
                   </label>
                   <label>
                     <input type="checkbox" />
-                    Contacts are internal team members
+                    {category} are internal team members
                   </label>
                 </div>
                 <div className="report-details__action-button-div">
