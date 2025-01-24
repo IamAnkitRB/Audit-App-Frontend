@@ -3,12 +3,11 @@
   margin: 20px;
   color: #6c6c6c;
 
-  
+
   /* Header Styles */
   &__header {
     border-radius: 5px;
     text-align: start;
-    max-width: 30rem; 
     z-index: 1;
 
     h2 {
@@ -31,8 +30,8 @@
     &-section {
       display: flex;
       align-items: center;
-      justify-content: flex-start; 
-      gap: 10px; 
+      justify-content: flex-start;
+      gap: 10px;
     }
 
     &-button {
@@ -55,7 +54,7 @@
     }
   }
 
-  &__overall_title{
+  &__overall_title {
     font-size: medium;
     margin-bottom: 4rem;
     display: flex;
@@ -100,7 +99,7 @@
     }
   }
 
-  &__subSection{
+  &__subSection {
     margin-bottom: 30px;
     background: linear-gradient(90deg, rgba(155, 135, 245, 0.1) 0%, rgba(126, 105, 171, 0.1) 100%);
     margin: 20px auto;
@@ -158,6 +157,7 @@
       display: flex;
       flex-direction: column;
       align-items: start;
+
       p {
         margin: 0;
       }
@@ -170,10 +170,10 @@
       width: 16vw;
       border-radius: 0.5rem;
       text-align: center;
-      border: 1px solid rgb(255 165 0 );
+      border: 1px solid rgb(255 165 0);
 
       &:hover {
-        border: 1px solid rgb(255 165 0 );
+        border: 1px solid rgb(255 165 0);
       }
 
       &-heading {
@@ -233,29 +233,29 @@
     transition: max-height 0.3s ease;
 
     &.expanded {
-      max-height: 500px; 
+      max-height: 500px;
     }
   }
 }
 
-.glassmorhp{
-  background: rgba( 255, 255, 255, 0.35 );
-  backdrop-filter: blur( 6.5px );
-  -webkit-backdrop-filter: blur( 6.5px );
+.glassmorhp {
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(6.5px);
+  -webkit-backdrop-filter: blur(6.5px);
   border-radius: 10px;
-  border: 1px solid rgba( 255, 255, 255, 0.18 );
+  border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
-.glassmorhp p{
+.glassmorhp p {
   opacity: 0.1;
 }
 
-.glassmorhp svg{
+.glassmorhp svg {
   height: 1rem;
   margin-right: 3px;
 }
 
-.coming-soon{
+.coming-soon {
   font-weight: bold;
   color: #6c6c6c;
   margin-left: 4rem;
@@ -271,12 +271,13 @@
   align-items: center;
 }
 
-.score-heading{
+.score-heading {
   width: 100%;
   display: flex;
   justify-content: space-between;
 }
-.danger-svg{
+
+.danger-svg {
   height: 1.5rem;
   color: gray;
 }
@@ -289,22 +290,22 @@
     margin: 10px;
 
     &__header {
-      max-width: 90%; 
+      max-width: 90%;
     }
 
     &__section,
     &__subSection {
       padding: 15px;
-      max-width: 80%; 
+      max-width: 80%;
     }
 
     &__data {
-      flex-direction: column; 
+      flex-direction: column;
       gap: 15px;
     }
 
     .glassmorhp {
-      border-radius: 8px; 
+      border-radius: 8px;
     }
   }
 }
@@ -313,16 +314,16 @@
 @media (max-width: 768px) {
   .audit-report {
     width: 100vw;
-    font-size: medium; 
+    font-size: medium;
     margin: 5px;
 
     &__header h2 {
-      font-size: 1.5rem; 
+      font-size: 1.5rem;
     }
 
     &__section,
     &__subSection {
-      max-width: 100%; 
+      max-width: 100%;
       margin-right: 15px;
     }
 
@@ -331,8 +332,8 @@
     }
 
     &__data-div {
-      width: 100%; 
-      text-align: left; 
+      width: 100%;
+      text-align: left;
     }
 
     .glassmorhp {
@@ -340,8 +341,8 @@
     }
 
     .coming-soon {
-      font-size: x-small; 
-      position: relative; 
+      font-size: x-small;
+      position: relative;
       top: auto;
       right: auto;
     }
@@ -351,33 +352,33 @@
 /* Extra small screens (e.g., very small devices, 360px and up) */
 @media (max-width: 480px) {
   .audit-report {
-    font-size: medium; 
+    font-size: medium;
 
     &__header h2 {
-      font-size: 1.2rem; 
+      font-size: 1.2rem;
     }
 
     &__section,
     &__subSection {
-      padding: 10px; 
+      padding: 10px;
     }
 
     &__toggle-button {
-      font-size: 0.85rem; 
+      font-size: 0.85rem;
     }
 
     .glassmorhp {
-      border-radius: 5px; 
-      padding: 0; 
+      border-radius: 5px;
+      padding: 0;
     }
 
     .coming-soon {
-      font-size: x-small; 
+      font-size: x-small;
       margin: 2px;
     }
 
     .score-heading {
-      flex-direction: row; 
+      flex-direction: row;
       align-items: flex-start;
     }
   }
@@ -387,33 +388,71 @@
   background: linear-gradient(45deg, #e3ffff, #e6e4ef);
 }
 
-.audit-report__table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-.audit-report__table th,
-.audit-report__table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-.audit-report__table th {
-  background-color: #f4f4f4;
-  font-weight: bold;
-}
-
-.audit-report__back-button, .audit-report__details-button {
+.audit-report__back-button {
   padding: 5px 10px;
   background-color: #6fb1da;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  position: absolute;
+  right: 0;
+  top: 15px;
+  font-size: medium;
 
   &:hover {
     background-color: #6fb1da;
   }
+}
+
+.audit-report__table {
+  width: 85%;
+  margin: 2rem auto;
+  font-family: Arial, sans-serif;
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 1rem;
+}
+
+.audit-report__table th,
+.audit-report__table td {
+  padding: 12px 15px;
+  text-align: center;
+}
+
+.audit-report__table th {
+  background-color: #0077b6;
+  color: white;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+.audit-report__table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.audit-report__table tr:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+.audit-report__table tr:hover {
+  background-color: #e3f2fd;
+  cursor: pointer;
+}
+
+.audit-report__details-button {
+  padding: 8px 12px;
+  background-color: #0288d1;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.audit-report__details-button:hover {
+  background-color: #0277bd;
 }

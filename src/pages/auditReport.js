@@ -6,10 +6,12 @@ import ReportDetails from '../components/ReportDetails';
 import AuditHeader from '../components/AuditHeader';
 import ReportList from '../components/ReportList';
 import ScoreSection from '../components/ScoreSection';
+import { fetchReportList } from '../utils/api';
 
 export default function AuditReport({ reportIdArray }) {
   const [selectedReportId, setSelectedReportId] = useState(null); 
   const [auditData, setAuditData] = useState(null);
+  const [reportList, setReportList] = useState([{}])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,8 +23,24 @@ export default function AuditReport({ reportIdArray }) {
     fetchData();
   }, [selectedReportId]);
 
+  useEffect(() => {
+    const fetchReports = async () => {
+      try {
+        const cookies = document.cookie.split("; ");
+        const stateCookie = cookies.find((cookie) => cookie.startsWith("state="));
+        const stateToken = stateCookie ? stateCookie.split("=")[1] : null;
+
+        const response = await fetchReportList(stateToken); 
+        setReportList(response.data || []); 
+      } catch (error) {
+        console.error("Error fetching report list:", error);
+      }
+    };
+    fetchReports();
+  }, []);
+
   if (!selectedReportId) {
-    return <ReportList reports={reportIdArray} onSelectReport={setSelectedReportId} />;
+    return <ReportList reports={reportList} onSelectReport={setSelectedReportId} />;
   }
 
   if (!auditData) {

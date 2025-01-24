@@ -6,14 +6,7 @@ import AuditReport from './pages/auditReport';
 import GenerateReport from './pages/generateReport';
 
 function App() {
-  const [activeTab, setActiveTab] = useState('current'); // Tracks active tab
-  const reportIds =  [
-    { report_id: '001', create_date: '2023-12-01', score: 70 },
-    { report_id: '002', create_date: '2023-12-05', score: 65 },
-    { report_id: '003', create_date: '2023-12-10', score: 80 },
-    { report_id: '004', create_date: '2023-12-15', score: 58 },
-  ];
-
+  const [activeTab, setActiveTab] = useState('current'); 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
@@ -44,7 +37,7 @@ function App() {
       >
         {/* Main Content */}
         <GenerateReport title="Current Report" />
-        <AuditReport title="Past Reports" reportIdArray={reportIds}/>
+        <AuditReport title="Past Reports"/>
       </TabLayout>
     </div>
   );

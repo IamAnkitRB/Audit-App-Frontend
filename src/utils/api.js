@@ -139,8 +139,8 @@ export const fetchTicketsData = async () => {
 
 export const fetchAuditData = async (reportId) => {
   const reports = {
-    '001': {
-      id: '001',
+    '21': {
+      id: '21',
       createDate: '08-Jan-2025',
       overallScore: 70,
       globalAverage: 66,
@@ -227,3 +227,26 @@ export const fetchAuditData = async (reportId) => {
 
   return reports[reportId] || null;
 };
+
+export const fetchReportList = async (state) => {
+  try {
+    const response = await fetch("https://tapir-relaxing-partly.ngrok-free.app/pastreports", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "state": `${state}`, 
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status} - ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching report list:", error);
+    throw error;
+  }
+};
+

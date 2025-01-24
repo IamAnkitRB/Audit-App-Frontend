@@ -3,6 +3,7 @@ import "../styles/GenerateReport.scss";
 import '../styles/AuditReport.scss';
 import AuditHeader from "../components/AuditHeader";
 import ReportGenerate from "../components/ReportGenerating";
+import ScoreSection from "../components/ScoreSection";
 
 
 const GenerateReport = () => {
@@ -36,6 +37,7 @@ const GenerateReport = () => {
 
     const url = new URL(window.location.href);
     const token = url.searchParams.get("state");
+
 
     const checkReport = async () => {
         try {
@@ -93,8 +95,6 @@ const GenerateReport = () => {
                 if (data?.report_details?.status == 'completed') {
                     setIsGenerating(false);
                 }
-                console.log('data::', JSON.stringify(data))
-
             } else {
                 throw new Error(data.message || "Failed to generate the report.");
             }
@@ -106,7 +106,13 @@ const GenerateReport = () => {
 
     useEffect(() => {
         if (token) {
+            document.cookie = `state=${token}; path=/; SameSite=Lax; Secure; max-age=${60 * 60 * 24}`;
+            url.searchParams.delete("state");
+            window.history.replaceState(null, "", url.toString());
+
             checkReport();
+        }else{
+            setIsGenerating(false)
         }
     }, []);
 
@@ -114,7 +120,7 @@ const GenerateReport = () => {
         <div className="generate-report-container">
             <AuditHeader />
             {isGenerating ? (
-                <ReportGenerate reportData={reportData}/>
+                <ReportGenerate reportData={reportData} />
             ) : (
                 <div className="report-ready">
                     <ScoreSection

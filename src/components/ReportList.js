@@ -16,8 +16,8 @@ const ReportList = ({ reports, onSelectReport }) => (
           {reports.map((report) => (
             <tr key={report.report_id}>
               <td>{report.report_id}</td>
-              <td>{new Date(report.create_date).toLocaleDateString()}</td>
-              <td>{report.score}</td>
+              <td>{new Date(report.created_at).toLocaleDateString()}</td>
+              <td>{report.score ? report.score: 'N/A'}</td>
               <td>
                 <button
                   className="audit-report__details-button"
