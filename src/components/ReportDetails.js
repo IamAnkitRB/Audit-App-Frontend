@@ -145,7 +145,7 @@ const ReportDetails = ({ category, data }) => {
                 </div>
               </div>
 
-              <div className="report-details__action-group">
+              {/* <div className="report-details__action-group">
                 <h5>2. Create Workflows to Trigger Reminder</h5>
                 <div className="report-details__checkbox-group">
                   <label>
@@ -170,7 +170,7 @@ const ReportDetails = ({ category, data }) => {
                     Create Workflows
                   </button>
                 </div>
-              </div>
+              </div> */}
             </div>
           </>
         )}
@@ -362,7 +362,7 @@ const ReportDetails = ({ category, data }) => {
               </div>
 
               <div className="report-details__action-group">
-                <h5>2. Create Workflows to Trigger Reminder</h5>
+                {/* <h5>2. Create Workflows to Trigger Reminder</h5>
                 <div className="report-details__checkbox-group">
                   <label>
                     <input type="checkbox" />
@@ -372,7 +372,7 @@ const ReportDetails = ({ category, data }) => {
                     <input type="checkbox" />
                     {category} are internal team members
                   </label>
-                </div>
+                </div> */}
                 <div className="report-details__action-button-div">
                   <button className="report-details__action-button">
                     Delete Junk

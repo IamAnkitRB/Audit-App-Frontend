@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.scss';
 import TabLayout from './components/TabLayout';
 import Header from './components/Header';
@@ -7,9 +7,27 @@ import GenerateReport from './pages/generateReport';
 
 function App() {
   const [activeTab, setActiveTab] = useState('current'); 
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
+
+  const checkAuth = () => {
+    const cookies = document.cookie.split(';').map(cookie => cookie.trim());
+    return cookies.some(cookie => cookie.startsWith('state='));
+  };
+
+  useEffect(() => {
+    if (checkAuth()) {
+      setIsAuthenticated(true);
+    } else {
+      window.location.href = 'https://test-portal-contentninja-6343592.hs-sites.com/audit-app-login';
+    }
+  }, []);
+
+  if (!isAuthenticated) {
+    return null; // Render nothing while redirecting
+  }
 
   return (
     <div className="cms-react-boilerplate__container min-h-screen bg-gray-50">

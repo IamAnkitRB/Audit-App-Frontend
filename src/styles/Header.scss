@@ -10,6 +10,16 @@
   
     &__logo {
       width: 8rem;
+      display: flex;
+    }
+    &__logo_img {
+      height: 2rem;
+      margin-right: 0.5rem;
+    }
+    &__logo_img_2{
+      display: block;
+      width: 9rem;
+      max-width: max-content;
     }
   
     &__user {

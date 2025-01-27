@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import ProgressBar from '../components/ProgressBar';
 import { fetchAuditData } from '../utils/api';
 import '../styles/AuditReport.scss';
-import ReportDetails from '../components/ReportDetails';
 import AuditHeader from '../components/AuditHeader';
 import ReportList from '../components/ReportList';
 import ScoreSection from '../components/ScoreSection';
@@ -11,7 +9,7 @@ import { fetchReportList } from '../utils/api';
 export default function AuditReport({ reportIdArray }) {
   const [selectedReportId, setSelectedReportId] = useState(null); 
   const [auditData, setAuditData] = useState(null);
-  const [reportList, setReportList] = useState([{}])
+  const [reportList, setReportList] = useState([])
 
   useEffect(() => {
     const fetchData = async () => {

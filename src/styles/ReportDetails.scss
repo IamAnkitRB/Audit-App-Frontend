@@ -60,6 +60,11 @@
         width: 16vw;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
+    &__data-div:hover {
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); 
+      transform: translateY(-2px);
+      transition: transform 0.3s ease; 
+    }
     &__duplicate-data-div {
       background-color: #fff;
       border: 1px solid #e5e7eb;
@@ -69,6 +74,11 @@
       padding: 14px 10px;
       width: 33vw;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    &__duplicate-data-div:hover {
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); 
+      transform: translateY(-2px);
+      transition: transform 0.3s ease; 
     }
     &__data-item {
         align-items: start;

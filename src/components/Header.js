@@ -10,22 +10,30 @@ export default function Header() {
   };
 
   const handleLogout = () => {
+    document.cookie = "state=; Max-Age=0; path=/;";
     window.location.href =
       'https://test-portal-contentninja-6343592.hs-sites.com/audit-app-login';
   };
 
   return (
     <header className="header">
-      <div
-        className="header__logo"
-        onClick={() => window.open('https://boundary.agency', '_blank')}
-        style={{ cursor: 'pointer' }}
-      >
-        <img
-          src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/boundary-2.svg"
-          alt="Boundary"
-        />
-      </div>
+      <a href='#'>
+        <div
+          className="header__logo"
+          style={{ cursor: 'pointer' }}
+        >
+          <img
+            src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/A-fill-249x300.png"
+            alt="Boundary"
+            className="header__logo_img"
+          />
+          <img
+            src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/boundary-2.svg"
+            alt="Boundary"
+            className="header__logo_img_2"
+          />
+        </div>
+      </a>
       <div className="header__user">
         <div className="header__user-icon" onClick={toggleDropdown}>
           <UserCircleIcon className="header__user-heroicon" />
