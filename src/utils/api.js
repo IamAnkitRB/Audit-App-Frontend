@@ -138,6 +138,27 @@ export const fetchTicketsData = async () => {
 };
 
 export const fetchAuditData = async (reportId) => {
+//   try {
+//     const response = await fetch("https://tapir-relaxing-partly.ngrok-free.app/getreport", {
+//         method: "POST",
+//         headers: {
+//             "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({ state: token })
+//     });
+
+//     const data = await response.json();
+//     if (data.success) {
+//         if (data?.report_details?.status == 'completed') {
+//             setIsGenerating(false);
+//         }
+//     } else {
+//         throw new Error(data.message || "Failed to generate the report.");
+//     }
+// } catch (err) {
+//     setError(err.message);
+//     console.log('Some error', err)
+// }
   const reports = {
     '21': {
       id: '21',

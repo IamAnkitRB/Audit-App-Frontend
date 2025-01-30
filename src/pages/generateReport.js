@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import "../styles/GenerateReport.scss";
-import '../styles/AuditReport.scss';
+import "../styles/AuditReport.scss";
 import AuditHeader from "../components/AuditHeader";
 import ReportGenerate from "../components/ReportGenerating";
 import ScoreSection from "../components/ScoreSection";
 
-
 const GenerateReport = () => {
     const [isGenerating, setIsGenerating] = useState(true);
     const [reportData, setReportData] = useState(null);
+    const [token, setToken] = useState(null);
     const [error, setError] = useState(null);
 
     const auditData = {
@@ -31,13 +31,9 @@ const GenerateReport = () => {
             deals: 75,
             tickets: 40,
         },
-    }
+    };
 
     const { overallScore, globalAverage, industryAverage, dataAudit } = auditData;
-
-    const url = new URL(window.location.href);
-    const token = url.searchParams.get("state");
-
 
     const checkReport = async () => {
         try {
@@ -46,8 +42,9 @@ const GenerateReport = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ state: token })
+                body: JSON.stringify({ state: token }),
             });
+
             const data = await response.json();
 
             if (data.success) {
@@ -73,8 +70,8 @@ const GenerateReport = () => {
                 throw new Error("Failed to check report status.");
             }
         } catch (err) {
-            setError("Failed to check report. Please try again later.");
-            console.log('error occured', err)
+            setError("Something went wrong! Please try again later.");
+            console.log("Error occurred:", err);
             setIsGenerating(false);
         }
     };
@@ -87,34 +84,49 @@ const GenerateReport = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ state: token })
+                body: JSON.stringify({ state: token }),
             });
 
             const data = await response.json();
             if (data.success) {
-                if (data?.report_details?.status == 'completed') {
+                if (data?.report_details?.status === "completed") {
                     setIsGenerating(false);
                 }
+                console.log(data);
             } else {
                 throw new Error(data.message || "Failed to generate the report.");
             }
         } catch (err) {
             setError(err.message);
-            console.log('Some error', err)
+            console.log("Some error", err);
         }
     };
 
     useEffect(() => {
-        if (token) {
-            document.cookie = `state=${token}; path=/; SameSite=Lax; Secure; max-age=${60 * 60 * 24}`;
-            url.searchParams.delete("state");
-            window.history.replaceState(null, "", url.toString());
+        const cookies = document.cookie.split(";").map((cookie) => cookie.trim());
+        const stateCookie = cookies.find((cookie) => cookie.startsWith("state="));
 
+        if (stateCookie) {
+            const stateValue = stateCookie.split("=")[1];
+            setToken(stateValue);
             checkReport();
-        }else{
-            setIsGenerating(false)
+        } else {
+            setIsGenerating(false);
         }
-    }, []);
+    }, [token]);
+
+    // **Show only error page if an error occurs**
+    if (error) {
+        return (
+            <div className="error-page">
+                <div className="error-box">
+                    <h1>⚠️ Oops! Something Went Wrong</h1>
+                    <p>There seems to be some problem at this moment! Please try again later.</p>
+                    <button onClick={() => window.location.reload()}>🔄 Try Again</button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="generate-report-container">

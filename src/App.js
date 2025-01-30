@@ -6,11 +6,14 @@ import AuditReport from './pages/auditReport';
 import GenerateReport from './pages/generateReport';
 
 function App() {
-  const [activeTab, setActiveTab] = useState('current'); 
+  const [activeTab, setActiveTab] = useState('current');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
+
+  const url = new URL(window.location.href);
+  const token = url.searchParams.get("state");
 
   const checkAuth = () => {
     const cookies = document.cookie.split(';').map(cookie => cookie.trim());
@@ -18,6 +21,11 @@ function App() {
   };
 
   useEffect(() => {
+    if (token) {
+      document.cookie = `state=${token}; path=/; SameSite=Lax; Secure; max-age=${60 * 60 * 24}`;
+      url.searchParams.delete("state");
+      window.history.replaceState(null, "", url.toString());
+    }
     if (checkAuth()) {
       setIsAuthenticated(true);
     } else {
@@ -49,13 +57,13 @@ function App() {
               Past Reports
             </button>
 
-           
+
           </div>
         }
       >
         {/* Main Content */}
         <GenerateReport title="Current Report" />
-        <AuditReport title="Past Reports"/>
+        <AuditReport title="Past Reports" />
       </TabLayout>
     </div>
   );

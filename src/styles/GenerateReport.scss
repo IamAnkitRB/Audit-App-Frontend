@@ -79,7 +79,7 @@
             bottom: 2rem;
 
             img {
-                width: 50vw; // Adjust size for smaller screens
+                width: 50vw; 
                 height: 50vw;
             }
         }
@@ -145,4 +145,47 @@
             }
         }
     }
+}
+
+.error-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.error-box {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    border: 2px solid #d8000c;
+    max-width: 90vw;
+    margin-right: 1rem;
+}
+
+.error-box h1 {
+    color: #d8000c;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.error-box p {
+    color: #333;
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.error-box button {
+    color: #333;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.error-box button:hover {
+   color: #332;
 }

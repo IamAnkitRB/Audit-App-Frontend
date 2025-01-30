@@ -15,9 +15,16 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 const BarChart = ({ data }) => {
   const options = {
     responsive: true,
+    indexAxis: 'y',
     plugins: {
       legend: {
         position: 'top',
+      },
+      datalabels: false, 
+    },
+    scales: {
+      x: {
+        beginAtZero: true,
       },
     },
   };
