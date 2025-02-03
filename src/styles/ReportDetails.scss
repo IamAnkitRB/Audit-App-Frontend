@@ -5,7 +5,11 @@
   /* Section Container */
   &__subSection {
     margin-bottom: 30px;
-    background: linear-gradient(90deg, rgba(155, 135, 245, 0.1) 0%, rgba(126, 105, 171, 0.1) 100%);
+    background: linear-gradient(
+      90deg,
+      rgba(155, 135, 245, 0.1) 0%,
+      rgba(126, 105, 171, 0.1) 100%
+    );
     border-radius: 5px;
     border: 1px solid #e3e3e0;
     margin: 20px auto;
@@ -16,7 +20,7 @@
       font-weight: bold;
       color: #333;
       letter-spacing: 0;
-      background: linear-gradient(90deg, #00E5E5, #9b87f5, #7E69AB);
+      background: linear-gradient(90deg, #00e5e5, #9b87f5, #7e69ab);
       background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -138,6 +142,12 @@
     transition: background-color 0.3s ease;
   }
 
+  &__missing_title {
+    display: flex;
+    margin: 1rem 2rem;
+    font-weight: 600;
+    color: black;
+  }
 }
 
 .report-details__take-action {
@@ -207,7 +217,14 @@
               margin-top: 2px;
               background-color: white;
               /* Tick color */
-              clip-path: polygon(14% 44%, 0 32%, 36% 100%, 100% 0, 85% 0, 35% 80%);
+              clip-path: polygon(
+                14% 44%,
+                0 32%,
+                36% 100%,
+                100% 0,
+                85% 0,
+                35% 80%
+              );
             }
           }
 
@@ -326,9 +343,61 @@
   }
 }
 
+.audit-report__chart-container {
+  display: flex;
+}
 .audit-report__chart {
   height: 27rem;
   display: flex;
   justify-content: flex-start;
   margin-left: 5rem;
+}
+
+.audit-report__risk-text {
+  flex: 1;
+  max-width: 40%;
+  margin: auto;
+  text-align: start;
+}
+
+.risk-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.risk-dot-high {
+  width: 30px;
+  height: 30px;
+  background-color: #ff00006b;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.risk-dot-medium {
+  width: 30px;
+  height: 30px;
+  background-color: #fa961289;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.risk-dot-low {
+  width: 30px;
+  height: 30px;
+  background-color: #39c4076b;
+  border-radius: 50%;
+  display: inline-block;
+}
+.audit-report__risk-text h3 {
+  font-size: x-large;
+  font-weight: bold;
+  margin: 0;
+}
+
+.audit-report__risk-text p {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.75;
+  margin-top: 1rem;
 }

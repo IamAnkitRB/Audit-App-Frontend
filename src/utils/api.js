@@ -137,116 +137,29 @@ export const fetchTicketsData = async () => {
   };
 };
 
-export const fetchAuditData = async (reportId) => {
-//   try {
-//     const response = await fetch("https://tapir-relaxing-partly.ngrok-free.app/getreport", {
-//         method: "POST",
-//         headers: {
-//             "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({ state: token })
-//     });
+export const fetchAuditData = async (state, reportId) => {
+  try {
+    const response = await fetch("https://tapir-relaxing-partly.ngrok-free.app/fetchreport", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "state": state, 
+      },
+      body: JSON.stringify({ reportId: 42 }) 
+    });
 
-//     const data = await response.json();
-//     if (data.success) {
-//         if (data?.report_details?.status == 'completed') {
-//             setIsGenerating(false);
-//         }
-//     } else {
-//         throw new Error(data.message || "Failed to generate the report.");
-//     }
-// } catch (err) {
-//     setError(err.message);
-//     console.log('Some error', err)
-// }
-  const reports = {
-    '21': {
-      id: '21',
-      createDate: '08-Jan-2025',
-      overallScore: 70,
-      globalAverage: 66,
-      industryAverage: 60,
-      scores: {
-        dateAudit: 40,
-        salesAudit: 75,
-        marketingAudit: 68,
-        serviceAudit: 72,
-        roiAudit: 65,
-      },
-      benchmarks: 70,
-      dataAudit: {
-        contacts: 60,
-        companies: 30,
-        deals: 75,
-        tickets: 40,
-      },
-    },
-    '002': {
-      id: '002',
-      createDate: '15-Jan-2025',
-      overallScore: 65,
-      globalAverage: 66,
-      industryAverage: 62,
-      scores: {
-        dateAudit: 35,
-        salesAudit: 60,
-        marketingAudit: 70,
-        serviceAudit: 65,
-        roiAudit: 55,
-      },
-      benchmarks: 68,
-      dataAudit: {
-        contacts: 55,
-        companies: 25,
-        deals: 68,
-        tickets: 35,
-      },
-    },
-    '003': {
-      id: '003',
-      createDate: '22-Jan-2025',
-      overallScore: 80,
-      globalAverage: 66,
-      industryAverage: 65,
-      scores: {
-        dateAudit: 50,
-        salesAudit: 85,
-        marketingAudit: 78,
-        serviceAudit: 80,
-        roiAudit: 75,
-      },
-      benchmarks: 72,
-      dataAudit: {
-        contacts: 65,
-        companies: 40,
-        deals: 80,
-        tickets: 50,
-      },
-    },
-    '004': {
-      id: '004',
-      createDate: '30-Jan-2025',
-      overallScore: 58,
-      globalAverage: 66,
-      industryAverage: 59,
-      scores: {
-        dateAudit: 30,
-        salesAudit: 50,
-        marketingAudit: 60,
-        serviceAudit: 55,
-        roiAudit: 50,
-      },
-      benchmarks: 65,
-      dataAudit: {
-        contacts: 45,
-        companies: 20,
-        deals: 50,
-        tickets: 25,
-      },
-    },
-  };
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status} - ${response.statusText}`);
+    }
 
-  return reports[reportId] || null;
+    const data = await response.json();
+    console.log("Get report data:::", data);
+    return data;
+  } catch (error) {
+    console.error("Error fetching report:", error);
+    throw error;
+  }
+ 
 };
 
 export const fetchReportList = async (state) => {
@@ -255,7 +168,7 @@ export const fetchReportList = async (state) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "state": `${state}`, 
+        "state": `${state}`,
       },
     });
 
@@ -264,7 +177,58 @@ export const fetchReportList = async (state) => {
     }
 
     const data = await response.json();
-    return data;
+    return data
+  } catch (error) {
+    console.error("Error fetching report list:", error);
+    throw error;
+  }
+};
+
+export const fetchReportData = async (state) => {
+  try {
+    const response = await fetch("https://tapir-relaxing-partly.ngrok-free.app/fetchdata", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "state": `${state}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status} - ${response.statusText}`);
+    }
+
+    const data = await response.json();
+
+    console.log('Get report data:::', data)
+    return data
+  } catch (error) {
+    console.error("Error fetching report list:", error);
+    throw error;
+  }
+};
+
+export const fetchReportDataById = async (state, reportId) => {
+  try {
+    const response = await fetch("https://tapir-relaxing-partly.ngrok-free.app/fetchreport", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "state": `${state}`,
+      },
+      body: {
+        reportId: reportId
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status} - ${response.statusText}`);
+    }
+
+    const data = await response.json();
+
+    console.log('Get report data:::', data)
+    return data
   } catch (error) {
     console.error("Error fetching report list:", error);
     throw error;

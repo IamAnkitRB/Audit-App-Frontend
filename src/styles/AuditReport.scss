@@ -3,7 +3,6 @@
   margin: 20px;
   color: #6c6c6c;
 
-
   /* Header Styles */
   &__header {
     border-radius: 5px;
@@ -20,11 +19,10 @@
       margin: 10px 0 0;
       font-size: 2rem;
       color: #666;
-      background: linear-gradient(90deg, #00E5E5, #9b87f5, #7E69AB);
+      background: linear-gradient(90deg, #00e5e5, #9b87f5, #7e69ab);
       background-clip: text;
       -webkit-text-fill-color: transparent;
       width: fit-content;
-      font-weight: bold;
     }
 
     &-section {
@@ -76,7 +74,11 @@
   &__section {
     margin-bottom: 30px;
     padding: 20px;
-    background: linear-gradient(90deg, rgba(155, 135, 245, 0.1) 0%, rgba(126, 105, 171, 0.1) 100%);
+    background: linear-gradient(
+      90deg,
+      rgba(155, 135, 245, 0.1) 0%,
+      rgba(126, 105, 171, 0.1) 100%
+    );
     margin: 20px auto;
     border-radius: 5px;
     box-sizing: border-box;
@@ -86,9 +88,9 @@
       margin-top: 0;
       font-size: 1.25rem;
       letter-spacing: 0;
-      background: linear-gradient(90deg, #00E5E5, #9b87f5, #7E69AB);
+      background: linear-gradient(90deg, #00e5e5, #9b87f5, #7e69ab);
       background-clip: text;
-      -webkit-text-fill-color: transparent
+      -webkit-text-fill-color: transparent;
     }
 
     &-header {
@@ -101,7 +103,11 @@
 
   &__subSection {
     margin-bottom: 30px;
-    background: linear-gradient(90deg, rgba(155, 135, 245, 0.1) 0%, rgba(126, 105, 171, 0.1) 100%);
+    background: linear-gradient(
+      90deg,
+      rgba(155, 135, 245, 0.1) 0%,
+      rgba(126, 105, 171, 0.1) 100%
+    );
     margin: 20px auto;
     border-radius: 5px;
     box-sizing: border-box;
@@ -111,9 +117,9 @@
       margin-top: 0;
       font-size: 1.5rem;
       letter-spacing: 0;
-      background: linear-gradient(90deg, #00E5E5, #9b87f5, #7E69AB);
+      background: linear-gradient(90deg, #00e5e5, #9b87f5, #7e69ab);
       background-clip: text;
-      -webkit-text-fill-color: transparent
+      -webkit-text-fill-color: transparent;
     }
 
     &-header {
@@ -184,7 +190,7 @@
       &-score {
         padding-left: 4px;
         font-weight: bold;
-        background: linear-gradient(90deg, #00E5E5, #9b87f5, #7E69AB);
+        background: linear-gradient(90deg, #00e5e5, #9b87f5, #7e69ab);
         background-clip: text;
         -webkit-text-fill-color: transparent;
       }
@@ -195,11 +201,11 @@
       }
     }
   }
-  
+
   &__data-div:hover {
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); 
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     transform: translateY(-2px);
-    transition: transform 0.3s ease; 
+    transition: transform 0.3s ease;
   }
 
   &__unavailable {
@@ -287,7 +293,6 @@
   height: 1.5rem;
   color: gray;
 }
-
 
 /* Medium screens (e.g., tablets, 768px and up) */
 @media (max-width: 1024px) {
@@ -461,4 +466,75 @@
 
 .audit-report__details-button:hover {
   background-color: #0277bd;
+}
+
+.audit-report__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background: #fff;
+  border-bottom: 1px solid #ddd;
+}
+
+.report-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.report-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown {
+  position: relative;
+  margin-top: 4px;
+  right: 13vw;
+}
+
+.dropdown-toggle {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: large;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 90%;
+  left: 0;
+  background: #afdafa;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  width: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-item {
+  width: 90%;
+  text-align: left;
+  border: none;
+  background: #afdafa;
+  cursor: pointer;
+  font-size: medium;
+}
+
+.generate-report-button {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-left: 10px;
+  font-size: large;
+}
+
+.generate-report-button:hover {
+  background: #2980b9;
 }

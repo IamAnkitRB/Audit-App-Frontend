@@ -8,9 +8,95 @@ const ReportDetails = ({ category, data }) => {
   const [isDuplicateDataExpanded, setIsDuplicateDataExpanded] = useState(true);
   const [isDeletingDataExpanded, setIsDeletingDataExpanded] = useState(true);
   const [isChartVisible, setIsChartVisible] = useState(false);
-  const [isDoughnutChartVisible, setIsDoughnutChartVisible] = useState(false);
+  const [isDoughnutChartVisible, setIsDoughnutChartVisible] = useState(true);
+  const doughnutChartData1 = {
+    labels: [
+      'Subscriber',
+      'Lead',
+      'MQL',
+      'SQL',
+      'Opportunity',
+      'Customer',
+      'Evangelist',
+      'Other',
+    ],
+    datasets: [
+      {
+        data: [50000, 85000, 200, 45, 40000, 39800, 30000, 5],
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.5)',
+          'rgba(54, 162, 235, 0.5)',
+          'rgba(255, 206, 86, 0.5)',
+          'rgba(75, 192, 192, 0.5)',
+          'rgba(153, 102, 255, 0.5)',
+          'rgba(255, 159, 64, 0.5)',
+          'rgba(104, 132, 245, 0.5)',
+          'rgba(201, 203, 207, 0.5)',
+        ],
+      },
+    ],
+  };
 
-  category = category.charAt(0).toUpperCase() + category.slice(1)
+  const doughnutChartData2 = {
+    labels: [
+      'Subscriber',
+      'Lead',
+      'MQL',
+      'SQL',
+      'Opportunity',
+      'Customer',
+      'Evangelist',
+      'Other',
+    ],
+    datasets: [
+      {
+        data: [45000, 91000, 50, 22, 29500, 33000, 30500, 3],
+        backgroundColor: [
+          'rgba(255, 99, 71, 0.5)',
+          'rgba(50, 205, 50, 0.5)',
+          'rgba(135, 206, 235, 0.5)',
+          'rgba(255, 140, 0, 0.5)',
+          'rgba(75, 0, 130, 0.5)',
+          'rgba(218, 165, 32, 0.5)',
+          'rgba(176, 196, 222, 0.5)',
+          'rgba(112, 128, 144, 0.5)',
+        ],
+      },
+    ],
+  };
+
+  const doughnutChartData3 = {
+    labels: [
+      'Subscriber',
+      'Lead',
+      'MQL',
+      'SQL',
+      'Opportunity',
+      'Customer',
+      'Evangelist',
+      'Other',
+    ],
+    datasets: [
+      {
+        data: [62000, 97000, 120, 18, 28000, 41000, 29900, 2],
+        backgroundColor: [
+          'rgba(0, 128, 128, 0.5)',
+          'rgba(128, 0, 128, 0.5)',
+          'rgba(255, 165, 0, 0.5)',
+          'rgba(0, 0, 255, 0.5)',
+          'rgba(220, 20, 60, 0.5)',
+          'rgba(34, 139, 34, 0.5)',
+          'rgba(70, 130, 180, 0.5)',
+          'rgba(255, 215, 0, 0.5)',
+        ],
+      },
+    ],
+  };
+  const [firstDonutChartData, setFirstDonutChartData] = useState(doughnutChartData1);
+  const [secondDonutChartData, setSecondDonutChartData] = useState(doughnutChartData2);
+  const [thirdDonutChartData, setThirdDonutChartData] = useState(doughnutChartData3);
+
+  category = category.charAt(0).toUpperCase() + category.slice(1);
 
   const toggleSection = (section) => {
     switch (section) {
@@ -25,19 +111,17 @@ const ReportDetails = ({ category, data }) => {
         break;
     }
   };
+ 
 
-  const toggleChartVisibility = () => {
-    console.log(category)
-    if (category === 'Contacts') {
-      setIsDoughnutChartVisible(!isDoughnutChartVisible);
-    } else if (category === 'Deals') {
-      setIsChartVisible(!isChartVisible)
-    } else {
-      setIsDoughnutChartVisible(false);
-      setIsChartVisible(false)
+  const toggleDonutChartVisibility = (item) => {
+    if (item === 'withoutFirstName') {
+      setFirstDonutChartData(doughnutChartData1);
+    }else if(item === 'withoutAssociatedCompany'){
+      setSecondDonutChartData(doughnutChartData2);
+    }else {
+      setThirdDonutChartData(doughnutChartData3);
     }
-  }
-
+  };
 
   /**
    * [
@@ -101,35 +185,15 @@ const ReportDetails = ({ category, data }) => {
   };
 
   const lifecycleStageData = [
-    { lifecycle_stage: "Subscriber", count: 31094 },
-    { lifecycle_stage: "Lead", count: 105006 },
-    { lifecycle_stage: "Marketing Qualified Lead", count: 35 },
-    { lifecycle_stage: "Sales Qualified Lead", count: 9 },
-    { lifecycle_stage: "Opportunity", count: 31634 },
-    { lifecycle_stage: "Customer", count: 31070 },
-    { lifecycle_stage: "Evangelist", count: 31079 },
-    { lifecycle_stage: "other", count: 0 },
+    { lifecycle_stage: 'Subscriber', count: 31094 },
+    { lifecycle_stage: 'Lead', count: 105006 },
+    { lifecycle_stage: 'Marketing Qualified Lead', count: 35 },
+    { lifecycle_stage: 'Sales Qualified Lead', count: 9 },
+    { lifecycle_stage: 'Opportunity', count: 31634 },
+    { lifecycle_stage: 'Customer', count: 31070 },
+    { lifecycle_stage: 'Evangelist', count: 31079 },
+    { lifecycle_stage: 'other', count: 0 },
   ];
-
-  const doughnutChartData = {
-    labels: ["Subscriber", "Lead", "MQL", "SQL", "Opportunity", "Customer", "Evangelist", "Other"],
-    datasets: [
-      {
-        data: [31094, 105006, 35, 9, 31634, 31070, 31079, 0], // Correct values
-        backgroundColor: [
-          "rgba(75, 192, 192, 0.5)",
-          "rgba(153, 102, 255, 0.5)",
-          "rgba(255, 159, 64, 0.5)",
-          "rgba(255, 205, 86, 0.5)",
-          "rgba(54, 162, 235, 0.5)",
-          "rgba(104, 132, 245, 0.5)",
-          "rgba(231, 233, 233, 0.5)",
-          "rgba(201, 203, 207, 0.5)",
-        ],
-      },
-    ],
-  };
-
 
   if (!data) {
     return (
@@ -182,99 +246,325 @@ const ReportDetails = ({ category, data }) => {
         </div>
         {isMissingDataExpanded && (
           <>
-            <div className="report-details__card">
-              <div className="report-details__data-div" onClick={toggleChartVisibility}>
-                <div className="report-details__data-item">
-                  <p className="report-details__data-div-heading">
-                    <p>{category} without Email ID</p>
-                  </p>
-                  <p className="report-details__data-div-score">
-                    <strong>{data}%</strong>
-                  </p>
-                </div>
+            <div>
+              <div className="report-details__missing_title">
+                <p>Are you kidding me!</p>
               </div>
+              <div className="report-details__card">
+                <div
+                  className="report-details__data-div"
+                  onClick={() => {
+                    toggleDonutChartVisibility('withoutFirstName');
+                  }}
+                >
+                  <div className="report-details__data-item">
+                    <p className="report-details__data-div-heading">
+                      <p>{category} without First Name</p>
+                    </p>
+                    <p className="report-details__data-div-score">
+                      <strong>{data}%</strong>
+                    </p>
+                  </div>
+                </div>
 
-              <div className="report-details__data-div" onClick={toggleChartVisibility}>
-                <div className="report-details__data-item">
-                  <p className="report-details__data-div-heading">
-                    <p> {category} without Phone Numbers</p>
-                  </p>
-                  <p className="report-details__data-div-score">
-                    <strong>{data}%</strong>
-                  </p>
+                <div
+                  className="report-details__data-div"
+                  onClick={() => {
+                    toggleDonutChartVisibility('withoutEmailId');
+                  }}
+                >
+                  <div className="report-details__data-item">
+                    <p className="report-details__data-div-heading">
+                      <p> {category} without Email ID</p>
+                    </p>
+                    <p className="report-details__data-div-score">
+                      <strong>{data}%</strong>
+                    </p>
+                  </div>
+                </div>
+                <div
+                  className="report-details__data-div"
+                  onClick={() => {
+                    toggleDonutChartVisibility('withoutAssociatedCompany');
+                  }}
+                >
+                  <div className="report-details__data-item">
+                    <p className="report-details__data-div-heading">
+                      <p>{category} with Associated Company</p>
+                    </p>
+                    <p className="report-details__data-div-score">
+                      <strong>{data}%</strong>
+                    </p>
+                  </div>
+                </div>
+                <div
+                  className="report-details__data-div"
+                  onClick={() => {
+                    toggleDonutChartVisibility('withoutOwner');
+                  }}
+                >
+                  <div className="report-details__data-item">
+                    <p className="report-details__data-div-heading">
+                      <p>{category} without Owners</p>
+                    </p>
+                    <p className="report-details__data-div-score">
+                      <strong>{data}%</strong>
+                    </p>
+                  </div>
                 </div>
               </div>
-              <div className="report-details__data-div" onClick={toggleChartVisibility}>
-                <div className="report-details__data-item">
-                  <p className="report-details__data-div-heading">
-                    <p>{category} with Lifecycle Stage</p>
-                  </p>
-                  <p className="report-details__data-div-score">
-                    <strong>{data}%</strong>
-                  </p>
-                </div>
+              <div>
+                {isDoughnutChartVisible && (
+                  <div className="audit-report__chart-container">
+                    <div className="audit-report__chart">
+                      <DonutChart data={firstDonutChartData} />
+                    </div>
+                    <div className="audit-report__risk-text">
+                      <div className="risk-indicator">
+                        <span className="risk-dot-high"></span>
+                        <h3>High Risk</h3>
+                      </div>
+                      <p>
+                        A critical gap in data integrity. Without email IDs,
+                        outreach, automation, and lead nurturing are severely
+                        impacted. This significantly reduces marketing and sales
+                        efficiency, making attribution and engagement tracking
+                        impossible.
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
-              <div className="report-details__data-div" onClick={toggleChartVisibility}>
-                <div className="report-details__data-item">
-                  <p className="report-details__data-div-heading">
-                    <p>{category} without Owners</p>
-                  </p>
-                  <p className="report-details__data-div-score">
-                    <strong>{data}%</strong>
-                  </p>
-                </div>
+              <div>
+                {isChartVisible && (
+                  <div className="audit-report__chart">
+                    <BarChart data={dealsChartData} />
+                  </div>
+                )}
               </div>
             </div>
             <div>
-              {isDoughnutChartVisible && (
-                <>
-                  <div className="audit-report__chart">
-                    <DonutChart data={doughnutChartData} />
+              <div className="report-details__missing_title">
+                <p>Must-Have</p>
+              </div>
+              <div className="report-details__card">
+                <div
+                  className="report-details__data-div"
+                  onClick={() => {
+                    toggleDonutChartVisibility('withoutDeals');
+                  }}
+                >
+                  <div className="report-details__data-item">
+                    <p className="report-details__data-div-heading">
+                      <p>{category} without Deals(Opportunity/Customer)</p>
+                    </p>
+                    <p className="report-details__data-div-score">
+                      <strong>{data}%</strong>
+                    </p>
                   </div>
-                  <div className="audit-report__chart">
-                    <DonutChart data={doughnutChartData} />
+                </div>
+
+                <div
+                  className="report-details__data-div"
+                  onClick={() => {
+                    toggleDonutChartVisibility('withoutLeadSource');
+                  }}
+                >
+                  <div className="report-details__data-item">
+                    <p className="report-details__data-div-heading">
+                      <p> {category} without Lead Source</p>
+                    </p>
+                    <p className="report-details__data-div-score">
+                      <strong>{data}%</strong>
+                    </p>
                   </div>
-                </>
-              )}
-            </div>
-            <div>
-              {isChartVisible && (
-                <div className="audit-report__chart">
-                  <BarChart data={dealsChartData} />
                 </div>
-              )}
-            </div>
-            <div className="report-details__take-action">
-              <h4 className="report-details__action-title">Take Action</h4>
-              <div className="report-details__action-group">
-                <h5>1. Create Active Lists</h5>
-                <div className="report-details__checkbox-group">
-                  <label>
-                    <input type="checkbox" />
-                    {category} without Email ID
-                  </label>
-                  <label>
-                    <input type="checkbox" />
-                    {category} without Lifecycle Stage
-                  </label>
-                  <label>
-                    <input type="checkbox" />
-                    {category} without Phone Numbers
-                  </label>
-                  <label>
-                    <input type="checkbox" />
-                    {category} without Owners
-                  </label>
+                <div
+                  className="report-details__data-div"
+                  onClick={() => {
+                    toggleDonutChartVisibility('withoutLifecycleStage');
+                  }}
+                >
+                  <div className="report-details__data-item">
+                    <p className="report-details__data-div-heading">
+                      <p>{category} without Lifecycle Stage</p>
+                    </p>
+                    <p className="report-details__data-div-score">
+                      <strong>{data}%</strong>
+                    </p>
+                  </div>
                 </div>
-                <div className="report-details__action-button-div">
-                  <button className="report-details__action-button">
-                    Create Lists
-                  </button>
+                <div
+                  className="report-details__data-div"
+                  onClick={() => {
+                    toggleDonutChartVisibility('withoutLeadStatus');
+                  }}
+                >
+                  <div className="report-details__data-item">
+                    <p className="report-details__data-div-heading">
+                      <p>{category} without Lead status</p>
+                    </p>
+                    <p className="report-details__data-div-score">
+                      <strong>{data}%</strong>
+                    </p>
+                  </div>
                 </div>
               </div>
+              <div>
+                {isDoughnutChartVisible && (
+                  <div className="audit-report__chart-container">
+                    <div className="audit-report__chart">
+                      <DonutChart data={secondDonutChartData} />
+                    </div>
+                    <div className="audit-report__risk-text">
+                      <div className="risk-indicator">
+                        <span className="risk-dot-medium"></span>
+                        <h3>Medium Risk</h3>
+                      </div>
+                      <p>
+                        A critical gap in data integrity. Without email IDs,
+                        outreach, automation, and lead nurturing are severely
+                        impacted. This significantly reduces marketing and sales
+                        efficiency, making attribution and engagement tracking
+                        impossible.
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+            <div>
+              <div className="report-details__missing_title">
+                <p>Good-to-Have</p>
+              </div>
+              <div className="report-details__card">
+                <div
+                  className="report-details__data-div"
+                  onClick={() => {
+                    toggleDonutChartVisibility('withoutJobTitle');
+                  }}
+                >
+                  <div className="report-details__data-item">
+                    <p className="report-details__data-div-heading">
+                      <p>{category} without Job Title</p>
+                    </p>
+                    <p className="report-details__data-div-score">
+                      <strong>{data}%</strong>
+                    </p>
+                  </div>
+                </div>
 
+                <div
+                  className="report-details__data-div"
+                  onClick={() => {
+                    toggleDonutChartVisibility('withoutTags');
+                  }}
+                >
+                  <div className="report-details__data-item">
+                    <p className="report-details__data-div-heading">
+                      <p> {category} without Tags</p>
+                    </p>
+                    <p className="report-details__data-div-score">
+                      <strong>{data}%</strong>
+                    </p>
+                  </div>
+                </div>
+                <div
+                  className="report-details__data-div"
+                  onClick={() => {
+                    toggleDonutChartVisibility('withoutLeadSource');
+                  }}
+                >
+                  <div className="report-details__data-item">
+                    <p className="report-details__data-div-heading">
+                      <p>{category} with Lead Score</p>
+                    </p>
+                    <p className="report-details__data-div-score">
+                      <strong>{data}%</strong>
+                    </p>
+                  </div>
+                </div>
+                <div
+                  className="report-details__data-div"
+                  onClick={() => {
+                    toggleDonutChartVisibility('withoutPhoneNumber');
+                  }}
+                >
+                  <div className="report-details__data-item">
+                    <p className="report-details__data-div-heading">
+                      <p>{category} without Phone No</p>
+                    </p>
+                    <p className="report-details__data-div-score">
+                      <strong>{data}%</strong>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                {isDoughnutChartVisible && (
+                  <div className="audit-report__chart-container">
+                    <div className="audit-report__chart">
+                      <DonutChart data={thirdDonutChartData} />
+                    </div>
+                    <div className="audit-report__risk-text">
+                      <div className="risk-indicator">
+                        <span className="risk-dot-low"></span>
+                        <h3>Low Risk</h3>
+                      </div>
+                      <p>
+                        A critical gap in data integrity. Without email IDs,
+                        outreach, automation, and lead nurturing are severely
+                        impacted. This significantly reduces marketing and sales
+                        efficiency, making attribution and engagement tracking
+                        impossible.
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div>
+                {isChartVisible && (
+                  <div className="audit-report__chart">
+                    <BarChart data={dealsChartData} />
+                  </div>
+                )}
+              </div>
+            </div>
+          </>
+        )}
+      </section>
 
-              {/* <div className="report-details__action-group">
+      <section>
+        <div className="report-details__take-action">
+          <h4 className="report-details__action-title">Take Action</h4>
+          <div className="report-details__action-group">
+            <h5>1. Create Active Lists</h5>
+            <div className="report-details__checkbox-group">
+              <label>
+                <input type="checkbox" />
+                {category} without Email ID
+              </label>
+              <label>
+                <input type="checkbox" />
+                {category} without Lifecycle Stage
+              </label>
+              <label>
+                <input type="checkbox" />
+                {category} without Phone Numbers
+              </label>
+              <label>
+                <input type="checkbox" />
+                {category} without Owners
+              </label>
+            </div>
+            <div className="report-details__action-button-div">
+              <button className="report-details__action-button">
+                Create Lists
+              </button>
+            </div>
+          </div>
+
+          {/* <div className="report-details__action-group">
                 <h5>2. Create Workflows to Trigger Reminder</h5>
                 <div className="report-details__checkbox-group">
                   <label>
@@ -300,9 +590,7 @@ const ReportDetails = ({ category, data }) => {
                   </button>
                 </div>
               </div> */}
-            </div>
-          </>
-        )}
+        </div>
       </section>
 
       {/* <section className="report-details__subSection">
@@ -512,7 +800,7 @@ const ReportDetails = ({ category, data }) => {
           </>
         )}
       </section>
-    </div >
+    </div>
   );
 };
 

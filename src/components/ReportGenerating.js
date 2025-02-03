@@ -1,43 +1,45 @@
-import React from "react";
+import React from 'react';
 
 const ReportGenerate = ({ reportData }) => {
+  return (
+    <>
+      <div className="report-header">
+        <div className="report-info">
+          <span className="report-details">
+            Id: {reportData?.reportId || 'N/A'} |{' '}
+            {reportData?.reportDate || 'N/A'}
+          </span>
+        </div>
+      </div>
+      <div className="generating-state">
+        <div className="generating-title">
+          <p>
+            <span style={{ color: '#ff5c35' }}>Sit Tight! </span>
+            <span>
+              Your report is being generated and will be displayed soon
+            </span>
+          </p>
 
-    return (
-        <>
-            <div className="report-header">
-                <div className="report-info">
-                    <span>Reports</span>
-                    <div>&gt;</div>
-                    <span className="report-details">
-                        Id: {reportData?.reportId || "N/A"} | {reportData?.reportDate || "N/A"}
-                    </span>
-                </div>
-            </div>
-            <div className="generating-state">
-                <div className="generating-title">
-                    <p>
-                        <span style={{ color: "#ff5c35" }}>Sit Tight! </span>
-                        <span>Your report is being generated and will be displayed soon</span>
-                    </p>
+          <div className="loading-icon">
+            <img
+              src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/platform_GIF.gif"
+              alt="Loading"
+            />
+          </div>
+        </div>
 
-                    <div className="loading-icon">
-                        <img
-                            src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/platform_GIF.gif"
-                            alt="Loading"
-                        />
-                    </div>
-                </div>
-
-                <p className="beta-notice">
-                    <em>This automated HubSpot auditor is currently in beta.</em>
-                </p>
-                <p className="feedback-link">
-                    We’re a small team working hard to build value-driven products for the HubSpot ecosystem.
-                    If you face any challenges, please <a href="#">drop us a note</a> or <a href="#">restart the process here</a>.
-                </p>
-            </div>
-        </>
-    )
-}
+        <p className="beta-notice">
+          <em>This automated HubSpot auditor is currently in beta.</em>
+        </p>
+        <p className="feedback-link">
+          We’re a small team working hard to build value-driven products for the
+          HubSpot ecosystem. If you face any challenges, please{' '}
+          <a href="#">drop us a note</a> or{' '}
+          <a href="#">restart the process here</a>.
+        </p>
+      </div>
+    </>
+  );
+};
 
 export default ReportGenerate;

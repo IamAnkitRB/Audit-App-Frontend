@@ -30,8 +30,8 @@ const DonutChart = ({ data }) => {
       },
     },
     onClick: (event, elements) => {
-      if (elements.length > 0) {
-        const index = elements[0].index;
+      if (elements?.length > 0) {
+        const index = elements[0]?.index;
         setClickedIndex(clickedIndex === index ? null : index); // Toggle clicked slice
       }
     },
@@ -40,12 +40,12 @@ const DonutChart = ({ data }) => {
   // Dynamically adjust the `offset` for clicked slice
   const updatedData = {
     ...data,
-    datasets: data.datasets.map((dataset, datasetIndex) => ({
+    datasets: data?.datasets ? data?.datasets?.map((dataset, datasetIndex) => ({
       ...dataset,
-      offset: dataset.data.map((_, dataIndex) =>
+      offset: dataset?.data?.map((_, dataIndex) =>
         clickedIndex === dataIndex ? 10 : 0 // Pop-out effect
       ),
-    })),
+    })): [],
   };
 
   return <Doughnut data={updatedData} options={options} />;
