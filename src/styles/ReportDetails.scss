@@ -146,6 +146,7 @@
     display: flex;
     margin: 1rem 2rem;
     font-weight: 600;
+    font-size: large;
     color: black;
   }
 }
@@ -350,13 +351,19 @@
   height: 27rem;
   display: flex;
   justify-content: flex-start;
-  margin-left: 5rem;
+  margin: 1rem;
+}
+
+.audit-report__chart canvas{
+  height: 360px !important;
+  width: 45rem !important;
 }
 
 .audit-report__risk-text {
   flex: 1;
   max-width: 40%;
   margin: auto;
+  margin-top: 7rem;
   text-align: start;
 }
 

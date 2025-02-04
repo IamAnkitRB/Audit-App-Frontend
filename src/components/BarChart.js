@@ -10,7 +10,14 @@ import {
   Legend,
 } from 'chart.js';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+);
 
 const BarChart = ({ data }) => {
   const options = {
@@ -20,11 +27,19 @@ const BarChart = ({ data }) => {
       legend: {
         position: 'top',
       },
-      datalabels: false, 
+      datalabels: false,
     },
     scales: {
       x: {
         beginAtZero: true,
+        grid: {
+          display: false,
+        },
+      },
+      y: {
+        grid: {
+          display: false, 
+        },
       },
     },
   };

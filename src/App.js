@@ -34,7 +34,7 @@ function App() {
   }, []);
 
   if (!isAuthenticated) {
-    return null; // Render nothing while redirecting
+    return null; 
   }
 
   return (
