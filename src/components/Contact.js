@@ -5,44 +5,23 @@ const Contact = ({ score_data }) => {
   const { missing_data, junk_data } = score_data;
   const [isMissingDataExpanded, setIsMissingDataExpanded] = useState(true);
   const [isDeletingDataExpanded, setIsDeletingDataExpanded] = useState(true);
-  const [isDoughnutChartVisible, setIsDoughnutChartVisible] = useState(true);
+  const [firstRowSelectedItem, setfirstRowSelectedItem] =
+    useState('withoutFirstName');
+  const [secondRowSelectedItem, setSecondRowSelectedItem] =
+    useState('withoutDeals');
+  const [thirdRowSelectedItem, setThirdRowSelectedItem] =
+    useState('withoutJobTitle');
 
-  const doughnutChartData = {
-    labels: [
-      'Subscriber',
-      'Lead',
-      'MQL',
-      'SQL',
-      'Opportunity',
-      'Customer',
-      'Evangelist',
-      'Other',
-    ],
-    datasets: [
-      {
-        label: "Contact Stages",
-        data: [50000, 85000, 200, 45, 40000, 39800, 30000, 5],
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.5)',
-          'rgba(54, 162, 235, 0.5)',
-          'rgba(255, 206, 86, 0.5)',
-          'rgba(75, 192, 192, 0.5)',
-          'rgba(153, 102, 255, 0.5)',
-          'rgba(255, 159, 64, 0.5)',
-          'rgba(104, 132, 245, 0.5)',
-          'rgba(201, 203, 207, 0.5)',
-        ],
-      },
-    ],
+  const getBorderColor = (score) => {
+    if (score <= 15) return 'border-green';
+    if (score <= 65) return 'border-orange';
+    return 'border-red';
   };
 
   const toggleSection = (section) => {
     switch (section) {
       case 'missingData':
         setIsMissingDataExpanded(!isMissingDataExpanded);
-        break;
-      case 'duplicateData':
-        setIsDuplicateDataExpanded(!isDuplicateDataExpanded);
         break;
       case 'deletingData':
         setIsDeletingDataExpanded(!isDeletingDataExpanded);
@@ -105,14 +84,18 @@ const Contact = ({ score_data }) => {
               <div className="report-details__missing_title">
                 <p>Are you kidding me!</p>
               </div>
-              <div className="report-details__card">
+              <div className="report-details__card ">
                 <div
-                  className="report-details__data-div"
+                  className={`report-details__data-div ${
+                    firstRowSelectedItem === 'withoutFirstName'
+                      ? 'selected-item'
+                      : ''
+                  }  ${getBorderColor(missing_data?.without_first_name)}`}
                   onClick={() => {
-                    toggleBarChartVisibility('withoutFirstName');
+                    setfirstRowSelectedItem('withoutFirstName');
                   }}
                 >
-                  <div className="report-details__data-item">
+                  <div className="report-details__data-item ">
                     <p className="report-details__data-div-heading">
                       <p>Contacts without First Name</p>
                     </p>
@@ -123,9 +106,13 @@ const Contact = ({ score_data }) => {
                 </div>
 
                 <div
-                  className="report-details__data-div"
+                  className={`report-details__data-div ${
+                    firstRowSelectedItem === 'withoutEmailId'
+                      ? 'selected-item'
+                      : ''
+                  }  ${getBorderColor(missing_data?.without_email)}`}
                   onClick={() => {
-                    toggleBarChartVisibility('withoutEmailId');
+                    setfirstRowSelectedItem('withoutEmailId');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -138,9 +125,15 @@ const Contact = ({ score_data }) => {
                   </div>
                 </div>
                 <div
-                  className="report-details__data-div"
+                  className={`report-details__data-div ${
+                    firstRowSelectedItem === 'withoutAssociatedCompany'
+                      ? 'selected-item'
+                      : ''
+                  }  ${getBorderColor(
+                    missing_data?.without_associated_company,
+                  )}`}
                   onClick={() => {
-                    toggleBarChartVisibility('withoutAssociatedCompany');
+                    setfirstRowSelectedItem('withoutAssociatedCompany');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -155,9 +148,13 @@ const Contact = ({ score_data }) => {
                   </div>
                 </div>
                 <div
-                  className="report-details__data-div"
+                  className={`report-details__data-div ${
+                    firstRowSelectedItem === 'withoutOwner'
+                      ? 'selected-item'
+                      : ''
+                  }  ${getBorderColor(missing_data?.without_owner)}`}
                   onClick={() => {
-                    toggleBarChartVisibility('withoutOwner');
+                    setfirstRowSelectedItem('withoutOwner');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -171,26 +168,24 @@ const Contact = ({ score_data }) => {
                 </div>
               </div>
               <div>
-                {isDoughnutChartVisible && (
-                  <div className="audit-report__chart-container">
-                    <div className="audit-report__chart">
-                      <BarChart data={doughnutChartData} />
-                    </div>
-                    <div className="audit-report__risk-text">
-                      <div className="risk-indicator">
-                        <span className="risk-dot-high"></span>
-                        <h3>High Risk</h3>
-                      </div>
-                      <p>
-                        A critical gap in data integrity. Without email IDs,
-                        outreach, automation, and lead nurturing are severely
-                        impacted. This significantly reduces marketing and sales
-                        efficiency, making attribution and engagement tracking
-                        impossible.
-                      </p>
-                    </div>
+                <div className="audit-report__chart-container">
+                  <div className="audit-report__chart">
+                    <BarChart />
                   </div>
-                )}
+                  <div className="audit-report__risk-text">
+                    <div className="risk-indicator">
+                      <span className="risk-dot-high"></span>
+                      <h3>High Risk</h3>
+                    </div>
+                    <p>
+                      A critical gap in data integrity. Without email IDs,
+                      outreach, automation, and lead nurturing are severely
+                      impacted. This significantly reduces marketing and sales
+                      efficiency, making attribution and engagement tracking
+                      impossible.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
             <div>
@@ -199,9 +194,13 @@ const Contact = ({ score_data }) => {
               </div>
               <div className="report-details__card">
                 <div
-                  className="report-details__data-div"
+                  className={`report-details__data-div ${
+                    secondRowSelectedItem === 'withoutDeals'
+                      ? 'selected-item'
+                      : ''
+                  }  ${getBorderColor(missing_data?.without_deals)}`}
                   onClick={() => {
-                    toggleBarChartVisibility('withoutDeals');
+                    setSecondRowSelectedItem('withoutDeals');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -215,9 +214,13 @@ const Contact = ({ score_data }) => {
                 </div>
 
                 <div
-                  className="report-details__data-div"
+                  className={`report-details__data-div ${
+                    secondRowSelectedItem === 'withoutLeadSource'
+                      ? 'selected-item'
+                      : ''
+                  }  ${getBorderColor(missing_data?.without_lead_source)}`}
                   onClick={() => {
-                    toggleBarChartVisibility('withoutLeadSource');
+                    setSecondRowSelectedItem('withoutLeadSource');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -230,9 +233,13 @@ const Contact = ({ score_data }) => {
                   </div>
                 </div>
                 <div
-                  className="report-details__data-div"
+                  className={`report-details__data-div ${
+                    secondRowSelectedItem === 'withoutLifecycleStage'
+                      ? 'selected-item'
+                      : ''
+                  }  ${getBorderColor(missing_data?.without_lifecycle_stage)}`}
                   onClick={() => {
-                    toggleBarChartVisibility('withoutLifecycleStage');
+                    setSecondRowSelectedItem('withoutLifecycleStage');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -245,9 +252,13 @@ const Contact = ({ score_data }) => {
                   </div>
                 </div>
                 <div
-                  className="report-details__data-div"
+                  className={`report-details__data-div ${
+                    secondRowSelectedItem === 'withoutLeadStatus'
+                      ? 'selected-item'
+                      : ''
+                  }  ${getBorderColor(missing_data?.without_lead_status)}`}
                   onClick={() => {
-                    toggleBarChartVisibility('withoutLeadStatus');
+                    setSecondRowSelectedItem('withoutLeadStatus');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -261,26 +272,24 @@ const Contact = ({ score_data }) => {
                 </div>
               </div>
               <div>
-                {isDoughnutChartVisible && (
-                  <div className="audit-report__chart-container">
-                    <div className="audit-report__chart">
-                      <BarChart data={doughnutChartData} />
-                    </div>
-                    <div className="audit-report__risk-text">
-                      <div className="risk-indicator">
-                        <span className="risk-dot-medium"></span>
-                        <h3>Medium Risk</h3>
-                      </div>
-                      <p>
-                        A critical gap in data integrity. Without email IDs,
-                        outreach, automation, and lead nurturing are severely
-                        impacted. This significantly reduces marketing and sales
-                        efficiency, making attribution and engagement tracking
-                        impossible.
-                      </p>
-                    </div>
+                <div className="audit-report__chart-container">
+                  <div className="audit-report__chart">
+                    <BarChart />
                   </div>
-                )}
+                  <div className="audit-report__risk-text">
+                    <div className="risk-indicator">
+                      <span className="risk-dot-medium"></span>
+                      <h3>Medium Risk</h3>
+                    </div>
+                    <p>
+                      A critical gap in data integrity. Without email IDs,
+                      outreach, automation, and lead nurturing are severely
+                      impacted. This significantly reduces marketing and sales
+                      efficiency, making attribution and engagement tracking
+                      impossible.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
             <div>
@@ -289,9 +298,13 @@ const Contact = ({ score_data }) => {
               </div>
               <div className="report-details__card">
                 <div
-                  className="report-details__data-div"
+                  className={`report-details__data-div ${
+                    thirdRowSelectedItem === 'withoutJobTitle'
+                      ? 'selected-item'
+                      : ''
+                  }  ${getBorderColor(missing_data?.without_job_title)}`}
                   onClick={() => {
-                    toggleBarChartVisibility('withoutJobTitle');
+                    setThirdRowSelectedItem('withoutJobTitle');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -305,9 +318,15 @@ const Contact = ({ score_data }) => {
                 </div>
 
                 <div
-                  className="report-details__data-div"
+                  className={`report-details__data-div ${
+                    thirdRowSelectedItem === 'withoutMarketingStatus'
+                      ? 'selected-item'
+                      : ''
+                  }  ${getBorderColor(
+                    missing_data?.without_marketing_contact_status,
+                  )}`}
                   onClick={() => {
-                    toggleBarChartVisibility('withoutTags');
+                    setThirdRowSelectedItem('withoutMarketingStatus');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -322,9 +341,13 @@ const Contact = ({ score_data }) => {
                   </div>
                 </div>
                 <div
-                  className="report-details__data-div"
+                  className={`report-details__data-div ${
+                    thirdRowSelectedItem === 'withLeadScore'
+                      ? 'selected-item'
+                      : ''
+                  }  ${getBorderColor(missing_data?.without_lead_score)}`}
                   onClick={() => {
-                    toggleBarChartVisibility('withoutLeadSource');
+                    setThirdRowSelectedItem('withLeadScore');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -337,9 +360,13 @@ const Contact = ({ score_data }) => {
                   </div>
                 </div>
                 <div
-                  className="report-details__data-div"
+                  className={`report-details__data-div ${
+                    thirdRowSelectedItem === 'withoutPhoneNumber'
+                      ? 'selected-item'
+                      : ''
+                  }  ${getBorderColor(missing_data?.without_phone)}`}
                   onClick={() => {
-                    toggleBarChartVisibility('withoutPhoneNumber');
+                    setThirdRowSelectedItem('withoutPhoneNumber');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -353,26 +380,24 @@ const Contact = ({ score_data }) => {
                 </div>
               </div>
               <div>
-                {isDoughnutChartVisible && (
-                  <div className="audit-report__chart-container">
-                    <div className="audit-report__chart">
-                      <BarChart data={doughnutChartData} />
-                    </div>
-                    <div className="audit-report__risk-text">
-                      <div className="risk-indicator">
-                        <span className="risk-dot-low"></span>
-                        <h3>Low Risk</h3>
-                      </div>
-                      <p>
-                        A critical gap in data integrity. Without email IDs,
-                        outreach, automation, and lead nurturing are severely
-                        impacted. This significantly reduces marketing and sales
-                        efficiency, making attribution and engagement tracking
-                        impossible.
-                      </p>
-                    </div>
+                <div className="audit-report__chart-container">
+                  <div className="audit-report__chart">
+                    <BarChart />
                   </div>
-                )}
+                  <div className="audit-report__risk-text">
+                    <div className="risk-indicator">
+                      <span className="risk-dot-low"></span>
+                      <h3>Low Risk</h3>
+                    </div>
+                    <p>
+                      A critical gap in data integrity. Without email IDs,
+                      outreach, automation, and lead nurturing are severely
+                      impacted. This significantly reduces marketing and sales
+                      efficiency, making attribution and engagement tracking
+                      impossible.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </>
@@ -473,48 +498,49 @@ const Contact = ({ score_data }) => {
                 </div>
               </div>
             </div>
-            <div className="report-details__take-action">
-              <h4 className="report-details__action-title">Take Action</h4>
-              <div className="report-details__action-group">
-                <h5>1. Create Active Lists</h5>
-                <div className="report-details__checkbox-group">
-                  <label>
-                    <input type="checkbox" />
-                    Contacts have no activity in the last 180 days
-                  </label>
-                  <label>
-                    <input type="checkbox" />
-                    Contacts are internal team members
-                  </label>
-                </div>
-                <div className="report-details__action-button-div">
-                  <button className="report-details__action-button">
-                    Create Lists
-                  </button>
-                </div>
-              </div>
-
-              <div className="report-details__action-group">
-                <h5>2. Delete Junk Data</h5>
-                <div className="report-details__checkbox-group">
-                  <label>
-                    <input type="checkbox" />
-                    Contacts have no activity in the last 180 days
-                  </label>
-                  <label>
-                    <input type="checkbox" />
-                    Contacts are internal team members
-                  </label>
-                </div>
-                <div className="report-details__action-button-div">
-                  <button className="report-details__action-button">
-                    Delete Junk
-                  </button>
-                </div>
-              </div>
-            </div>
           </>
         )}
+      </section>
+      <section>
+        <div className="report-details__take-action">
+          <h4 className="report-details__action-title">Take Action</h4>
+          <div className="report-details__action-group">
+            <h5>1. Create Active Lists</h5>
+            <div className="report-details__checkbox-group">
+              <label>
+                <input type="checkbox" />
+                Contacts have no activity in the last 180 days
+              </label>
+              <label>
+                <input type="checkbox" />
+                Contacts are internal team members
+              </label>
+            </div>
+            <div className="report-details__action-button-div">
+              <button className="report-details__action-button">
+                Create Lists
+              </button>
+            </div>
+          </div>
+          <div className="report-details__action-group">
+            <h5>2. Delete Junk Data</h5>
+            <div className="report-details__checkbox-group">
+              <label>
+                <input type="checkbox" />
+                Contacts have no activity in the last 180 days
+              </label>
+              <label>
+                <input type="checkbox" />
+                Contacts are internal team members
+              </label>
+            </div>
+            <div className="report-details__action-button-div">
+              <button className="report-details__action-button">
+                Delete Junk
+              </button>
+            </div>
+          </div>
+        </div>
       </section>
     </div>
   );

@@ -28,7 +28,7 @@
 
   /* Card Styles */
   &__card {
-    margin-bottom: 1.5rem;
+    margin-bottom: 3rem;
     display: flex;
     justify-content: space-evenly;
   }
@@ -354,7 +354,7 @@
   margin: 1rem;
 }
 
-.audit-report__chart canvas{
+.audit-report__chart canvas {
   height: 360px !important;
   width: 45rem !important;
 }
