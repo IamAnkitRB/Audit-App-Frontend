@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { UserCircleIcon } from '@heroicons/react/24/solid';
 
-const AuditHeader = ({ onBackClick, showBackButton }) => {
+const AuditHeader = ({ onBackClick, showBackButton, userData }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
+
+  // State to track the selected hub
+  const [selectedHub, setSelectedHub] = useState(userData?.hub_details);
 
   const toggleDropdown = () => {
     setDropdownOpen(!isDropdownOpen);
@@ -13,6 +16,12 @@ const AuditHeader = ({ onBackClick, showBackButton }) => {
     document.cookie = 'state=; Max-Age=0; path=/;';
     window.location.href =
       'https://test-portal-contentninja-6343592.hs-sites.com/audit-app-login';
+  };
+
+  // Handle hub selection
+  const handleHubSelection = (hub) => {
+    setSelectedHub(hub);
+    setShowDropdown(false); // Close dropdown after selection
   };
 
   return (
@@ -25,17 +34,29 @@ const AuditHeader = ({ onBackClick, showBackButton }) => {
 
       <div className="report-header">
         <div className="report-header__child">
-          <p>Hi Tushar!</p>
+          <p>Hi {userData?.hub_details?.hs_user}</p>
           <div className="dropdown">
             <button
               className="dropdown-toggle"
               onClick={() => setShowDropdown(!showDropdown)}
             >
-              Hub ID: 467189 (ritu@contentninja.in) ▼
+              Hub ID: {selectedHub?.hub_id} ({selectedHub?.hub_domain}) ▼
             </button>
 
             {showDropdown && (
               <div className="dropdown-menu">
+                {userData?.unique_hub_ids
+                  .filter((hub) => hub.hub_domain !== selectedHub?.hub_domain)
+                  .map((hub) => (
+                    <div
+                      key={hub.hub_id}
+                      className="dropdown-item"
+                      style={{ textAlign: 'center', cursor: 'pointer' }}
+                      onClick={() => handleHubSelection(hub)}
+                    >
+                      Hub ID: {hub.hub_id}
+                    </div>
+                  ))}
                 <button className="dropdown-item">+ Add New</button>
               </div>
             )}

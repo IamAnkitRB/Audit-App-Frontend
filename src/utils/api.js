@@ -99,7 +99,7 @@ export const fetchGraphData = async (
 ) => {
   try {
     const response = await fetch(
-      'https://deep-socially-polliwog.ngrok-free.app/get_graph_data',
+      'https://tapir-relaxing-partly.ngrok-free.app/get_graph_data',
       {
         method: 'POST',
         headers: {
@@ -114,6 +114,27 @@ export const fetchGraphData = async (
     return data;
   } catch (error) {
     console.log(`Error fetching graph data:`, error);
+    throw error;
+  }
+};
+
+export const fetchUserData = async (token) => {
+  try {
+    const response = await fetch(
+      'https://tapir-relaxing-partly.ngrok-free.app/gethubinfo',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ state: token }),
+      },
+    );
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log(`Error while fetching user data:`, error);
     throw error;
   }
 };
