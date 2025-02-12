@@ -8,6 +8,7 @@
     border-radius: 5px;
     text-align: start;
     z-index: 1;
+    margin-top: 1rem;
 
     h2 {
       margin: 0;
@@ -16,7 +17,7 @@
     }
 
     p {
-      margin: 10px 0 0;
+      margin: 0;
       font-size: 2rem;
       color: #666;
       background: linear-gradient(90deg, #00e5e5, #9b87f5, #7e69ab);
@@ -294,6 +295,12 @@
   color: gray;
 }
 
+.report-header__child {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 /* Medium screens (e.g., tablets, 768px and up) */
 @media (max-width: 1024px) {
   .audit-report {
@@ -472,7 +479,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
   background: #fff;
   border-bottom: 1px solid #ddd;
 }
@@ -488,57 +494,61 @@
   flex-direction: column;
 }
 
-.dropdown {
-  position: relative;
-  margin-top: 4px;
-  right: 13vw;
-}
-
 .dropdown-toggle {
-  background: #3498db;
-  color: white;
+  background: linear-gradient(
+    90deg,
+    rgba(155, 135, 245, 0.1),
+    rgba(126, 105, 171, 0.1)
+  );
+  color: #696969;
   border: none;
   padding: 8px 12px;
   cursor: pointer;
   border-radius: 5px;
-  font-size: large;
+  font-size: small;
 }
 
 .dropdown-menu {
   position: absolute;
-  top: 90%;
-  left: 0;
-  background: #afdafa;
+  background: linear-gradient(
+    90deg,
+    rgba(155, 135, 245, 0.1),
+    rgba(126, 105, 171, 0.1)
+  );
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   border: 1px solid #ddd;
-  border-radius: 5px;
-  width: 100%;
+  border-radius: 4px;
+  width: 22%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .dropdown-item {
-  width: 90%;
-  text-align: left;
-  border: none;
-  background: #afdafa;
+  background: #fff;
+  border: 1px solid #dad6d6;
   cursor: pointer;
-  font-size: medium;
+  font-size: small;
+  color: #666;
+  padding: 7px;
+  margin: 3px;
+  border-radius: 5px;
 }
 
 .generate-report-button {
-  background: #3498db;
-  color: white;
+  background: linear-gradient(
+    90deg,
+    rgba(155, 135, 245, 0.1),
+    rgba(126, 105, 171, 0.1)
+  );
+  color: #696969;
   border: none;
   padding: 10px 15px;
   cursor: pointer;
   border-radius: 5px;
   margin-left: 10px;
-  font-size: large;
+  font-size: medium;
 }
-
-.generate-report-button:hover {
-  background: #2980b9;
-}
-
 
 .border-red {
   border: 2px solid rgb(255, 69, 69) !important;

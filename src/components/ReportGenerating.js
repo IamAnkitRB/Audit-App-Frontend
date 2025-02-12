@@ -1,16 +1,8 @@
 import React from 'react';
 
-const ReportGenerate = ({ reportData }) => {
+const ReportGenerate = () => {
   return (
     <>
-      <div className="report-header">
-        <div className="report-info">
-          <span className="report-details">
-            Id: {reportData?.reportId || 'N/A'} |{' '}
-            {reportData?.reportDate || 'N/A'}
-          </span>
-        </div>
-      </div>
       <div className="generating-state">
         <div className="generating-title">
           <p>

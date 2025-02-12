@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import BarChart from './BarChart';
 
-const Ticket = ({ score_data }) => {
+const Ticket = ({ token, score_data }) => {
   const { missing_data, junk_data } = score_data;
   const [isMissingDataExpanded, setIsMissingDataExpanded] = useState(true);
   const [isDeletingDataExpanded, setIsDeletingDataExpanded] = useState(true);
@@ -9,6 +9,16 @@ const Ticket = ({ score_data }) => {
     useState('without_name');
   const [secondRowSelectedItem, setSecondRowSelectedItem] =
     useState('without_priority');
+  const [firstDatapoint, setFirstDatapoint] = useState('subject');
+  const [secondDataPoint, setSecondDataPoint] = useState('hs_ticket_priority');
+
+  const handleFirstDataPointChange = (dataPoint) => {
+    setFirstDatapoint(dataPoint);
+  };
+
+  const handleSecondDataPointChange = (dataPoint) => {
+    setSecondDataPoint(dataPoint);
+  };
 
   const getBorderColor = (score) => {
     if (score <= 15) return 'border-green';
@@ -91,6 +101,7 @@ const Ticket = ({ score_data }) => {
                   }  ${getBorderColor(missing_data?.without_name)}`}
                   onClick={() => {
                     setfirstRowSelectedItem('without_name');
+                    handleFirstDataPointChange('subject');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -111,6 +122,7 @@ const Ticket = ({ score_data }) => {
                   }  ${getBorderColor(missing_data?.without_owner)}`}
                   onClick={() => {
                     setfirstRowSelectedItem('without_owner');
+                    handleFirstDataPointChange('subject');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -132,6 +144,7 @@ const Ticket = ({ score_data }) => {
                   )}`}
                   onClick={() => {
                     setfirstRowSelectedItem('without_associated_contacts');
+                    handleFirstDataPointChange('subject');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -155,6 +168,7 @@ const Ticket = ({ score_data }) => {
                   )}`}
                   onClick={() => {
                     setfirstRowSelectedItem('without_associated_company');
+                    handleFirstDataPointChange('subject');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -172,7 +186,12 @@ const Ticket = ({ score_data }) => {
               <div>
                 <div className="audit-report__chart-container">
                   <div className="audit-report__chart">
-                    <BarChart />
+                    <BarChart
+                      token={token}
+                      reportId={'1'}
+                      objectType={'tickets'}
+                      dataPoint={firstDatapoint}
+                    />
                   </div>
                   <div className="audit-report__risk-text">
                     <div className="risk-indicator">
@@ -203,6 +222,7 @@ const Ticket = ({ score_data }) => {
                   }  ${getBorderColor(missing_data?.without_priority)}`}
                   onClick={() => {
                     setSecondRowSelectedItem('without_priority');
+                    handleSecondDataPointChange('subject');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -223,6 +243,7 @@ const Ticket = ({ score_data }) => {
                   }  ${getBorderColor(missing_data?.without_description)}`}
                   onClick={() => {
                     setSecondRowSelectedItem('without_description');
+                    handleSecondDataPointChange('subject');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -242,6 +263,7 @@ const Ticket = ({ score_data }) => {
                   }  ${getBorderColor(missing_data?.without_pipeline)}`}
                   onClick={() => {
                     setSecondRowSelectedItem('without_pipeline');
+                    handleSecondDataPointChange('subject');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -261,6 +283,7 @@ const Ticket = ({ score_data }) => {
                   }  ${getBorderColor(missing_data?.without_status)}`}
                   onClick={() => {
                     setSecondRowSelectedItem('without_status');
+                    handleSecondDataPointChange('subject');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -276,7 +299,12 @@ const Ticket = ({ score_data }) => {
               <div>
                 <div className="audit-report__chart-container">
                   <div className="audit-report__chart">
-                    <BarChart />
+                    <BarChart
+                      token={token}
+                      reportId={'1'}
+                      objectType={'tickets'}
+                      dataPoint={secondDataPoint}
+                    />
                   </div>
                   <div className="audit-report__risk-text">
                     <div className="risk-indicator">

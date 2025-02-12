@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import BarChart from './BarChart';
 
-const Contact = ({ score_data }) => {
+const Contact = ({ token, score_data }) => {
   const { missing_data, junk_data } = score_data;
   const [isMissingDataExpanded, setIsMissingDataExpanded] = useState(true);
   const [isDeletingDataExpanded, setIsDeletingDataExpanded] = useState(true);
@@ -11,6 +11,23 @@ const Contact = ({ score_data }) => {
     useState('withoutDeals');
   const [thirdRowSelectedItem, setThirdRowSelectedItem] =
     useState('withoutJobTitle');
+  const [firstDatapoint, setFirstDatapoint] = useState('firstname');
+  const [secondDataPoint, setSecondDataPoint] = useState(
+    'num_associated_deals',
+  );
+  const [thirdDataPoint, setThirdDataPoint] = useState('jobtitle');
+
+  const handleFirstDataPointChange = (dataPoint) => {
+    setFirstDatapoint(dataPoint);
+  };
+
+  const handleSecondDataPointChange = (dataPoint) => {
+    setSecondDataPoint(dataPoint);
+  };
+
+  const handleThirdDataPointChange = (dataPoint) => {
+    setThirdDataPoint(dataPoint);
+  };
 
   const getBorderColor = (score) => {
     if (score <= 15) return 'border-green';
@@ -93,6 +110,7 @@ const Contact = ({ score_data }) => {
                   }  ${getBorderColor(missing_data?.without_first_name)}`}
                   onClick={() => {
                     setfirstRowSelectedItem('withoutFirstName');
+                    handleFirstDataPointChange('firstname');
                   }}
                 >
                   <div className="report-details__data-item ">
@@ -113,6 +131,7 @@ const Contact = ({ score_data }) => {
                   }  ${getBorderColor(missing_data?.without_email)}`}
                   onClick={() => {
                     setfirstRowSelectedItem('withoutEmailId');
+                    handleFirstDataPointChange('email');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -134,6 +153,7 @@ const Contact = ({ score_data }) => {
                   )}`}
                   onClick={() => {
                     setfirstRowSelectedItem('withoutAssociatedCompany');
+                    handleFirstDataPointChange('associatedcompanyid');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -155,6 +175,7 @@ const Contact = ({ score_data }) => {
                   }  ${getBorderColor(missing_data?.without_owner)}`}
                   onClick={() => {
                     setfirstRowSelectedItem('withoutOwner');
+                    handleFirstDataPointChange('hubspot_owner_id');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -170,11 +191,19 @@ const Contact = ({ score_data }) => {
               <div>
                 <div className="audit-report__chart-container">
                   <div className="audit-report__chart">
-                    <BarChart />
+                    <BarChart
+                      token={token}
+                      reportId={'1'}
+                      objectType={'contacts'}
+                      dataPoint={firstDatapoint}
+                    />
                   </div>
                   <div className="audit-report__risk-text">
                     <div className="risk-indicator">
-                      <span className="risk-dot-high"></span>
+                      <span
+                        className="risk-dot"
+                        style={{ backgroundColor: '#ff00006b' }}
+                      ></span>
                       <h3>High Risk</h3>
                     </div>
                     <p>
@@ -201,6 +230,7 @@ const Contact = ({ score_data }) => {
                   }  ${getBorderColor(missing_data?.without_deals)}`}
                   onClick={() => {
                     setSecondRowSelectedItem('withoutDeals');
+                    handleSecondDataPointChange('num_associated_deals');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -221,6 +251,7 @@ const Contact = ({ score_data }) => {
                   }  ${getBorderColor(missing_data?.without_lead_source)}`}
                   onClick={() => {
                     setSecondRowSelectedItem('withoutLeadSource');
+                    handleSecondDataPointChange('deals');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -240,6 +271,7 @@ const Contact = ({ score_data }) => {
                   }  ${getBorderColor(missing_data?.without_lifecycle_stage)}`}
                   onClick={() => {
                     setSecondRowSelectedItem('withoutLifecycleStage');
+                    handleSecondDataPointChange('lifecyclestage');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -259,6 +291,7 @@ const Contact = ({ score_data }) => {
                   }  ${getBorderColor(missing_data?.without_lead_status)}`}
                   onClick={() => {
                     setSecondRowSelectedItem('withoutLeadStatus');
+                    handleSecondDataPointChange('hs_lead_status');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -274,11 +307,19 @@ const Contact = ({ score_data }) => {
               <div>
                 <div className="audit-report__chart-container">
                   <div className="audit-report__chart">
-                    <BarChart />
+                    <BarChart
+                      token={token}
+                      reportId={'1'}
+                      objectType={'contacts'}
+                      dataPoint={secondDataPoint}
+                    />
                   </div>
                   <div className="audit-report__risk-text">
                     <div className="risk-indicator">
-                      <span className="risk-dot-medium"></span>
+                      <span
+                        className="risk-dot"
+                        style={{ backgroundColor: '#ff00006b' }}
+                      ></span>
                       <h3>Medium Risk</h3>
                     </div>
                     <p>
@@ -305,6 +346,7 @@ const Contact = ({ score_data }) => {
                   }  ${getBorderColor(missing_data?.without_job_title)}`}
                   onClick={() => {
                     setThirdRowSelectedItem('withoutJobTitle');
+                    handleThirdDataPointChange('jobtitle');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -327,6 +369,7 @@ const Contact = ({ score_data }) => {
                   )}`}
                   onClick={() => {
                     setThirdRowSelectedItem('withoutMarketingStatus');
+                    handleThirdDataPointChange('hs_marketable_status');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -348,6 +391,7 @@ const Contact = ({ score_data }) => {
                   }  ${getBorderColor(missing_data?.without_lead_score)}`}
                   onClick={() => {
                     setThirdRowSelectedItem('withLeadScore');
+                    handleThirdDataPointChange('hubspotscore');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -367,6 +411,7 @@ const Contact = ({ score_data }) => {
                   }  ${getBorderColor(missing_data?.without_phone)}`}
                   onClick={() => {
                     setThirdRowSelectedItem('withoutPhoneNumber');
+                    handleThirdDataPointChange('phone');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -382,11 +427,19 @@ const Contact = ({ score_data }) => {
               <div>
                 <div className="audit-report__chart-container">
                   <div className="audit-report__chart">
-                    <BarChart />
+                    <BarChart
+                      token={token}
+                      reportId={'1'}
+                      objectType={'contacts'}
+                      dataPoint={thirdDataPoint}
+                    />
                   </div>
                   <div className="audit-report__risk-text">
                     <div className="risk-indicator">
-                      <span className="risk-dot-low"></span>
+                      <span
+                        className="risk-dot"
+                        style={{ backgroundColor: '#ff00006b' }}
+                      ></span>
                       <h3>Low Risk</h3>
                     </div>
                     <p>

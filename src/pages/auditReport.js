@@ -62,6 +62,7 @@ export default function AuditReport() {
 
       {/* Overall Audit Score */}
       <ScoreSection
+        token={token}
         overall_audit_score={overall_audit_score}
         score_breakdown={score_breakdown}
         data_audit={data_audit}

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import ProgressBar from './ProgressBar';
 import ReportDetails from './ReportDetails';
+import '../styles/AuditReportTwo.scss';
 
 const ScoreSection = ({
+  token,
   overall_audit_score = {},
   score_breakdown = {},
   data_audit = {},
@@ -27,15 +29,18 @@ const ScoreSection = ({
     setSelectedCategory(category);
   };
 
-  let borderColorClass = "";
+  let borderColorClass = '';
   if (score_breakdown?.data_quality?.score === null) {
-    borderColorClass = "border-red"; 
+    borderColorClass = 'border-red';
   } else if (score_breakdown?.data_quality?.score < 40) {
-    borderColorClass = "border-red";
-  } else if (score_breakdown?.data_quality?.score >= 40 && score_breakdown?.data_quality?.score <= 90) {
-    borderColorClass = "border-orange";
+    borderColorClass = 'border-red';
+  } else if (
+    score_breakdown?.data_quality?.score >= 40 &&
+    score_breakdown?.data_quality?.score <= 90
+  ) {
+    borderColorClass = 'border-orange';
   } else {
-    borderColorClass = "border-green";
+    borderColorClass = 'border-green';
   }
 
   return (
@@ -96,7 +101,9 @@ const ScoreSection = ({
         {isBreakdownExpanded && (
           <div className="audit-report__data">
             <div className="audit-report__data-item">
-              <div className={`audit-report__data-div ${borderColorClass} selected-item`}>
+              <div
+                className={`audit-report__data-div ${borderColorClass} selected-item`}
+              >
                 <div className="audit-report__data-item">
                   <div className="score-heading">
                     <p className="audit-report__data-div-heading">
@@ -263,7 +270,7 @@ const ScoreSection = ({
           <div className="audit-report__data">
             {Object.entries(data_audit).map(([key, value]) => {
               const formattedKey =
-                key.charAt(0).toUpperCase() + key.slice(1).toLowerCase(); 
+                key.charAt(0).toUpperCase() + key.slice(1).toLowerCase();
               const score = value?.score;
 
               let borderColorClass = '';
@@ -300,8 +307,70 @@ const ScoreSection = ({
           </div>
         )}
       </section>
+
+      {/* Data Audit Section */}
+      {/* <section className="audit-report_main">
+        <div className="audit-report__header_main">
+          <h3 className="audit-report__title_main">Data Audit</h3>
+          <button
+            className="audit-report__toggle-button_main"
+            onClick={toggleSection}
+          >
+            {isExpanded ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="#333"
+              >
+                <path d="M9.47 6.47a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 8.06l-3.72 3.72a.75.75 0 0 1-1.06-1.06l4.25-4.25Z" />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="#333"
+              >
+                <path d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" />
+              </svg>
+            )}
+          </button>
+        </div>
+
+        {isExpanded && (
+          <>
+            <div className="audit-report__tabs_main">
+              {Object.entries(data_audit).map(([key, value]) => {
+                const formattedKey =
+                  key.charAt(0).toUpperCase() + key.slice(1).toLowerCase();
+                return (
+                  <button
+                    key={key}
+                    className={`audit-report__tab_main ${
+                      selectedCategory === key ? 'active_main' : ''
+                    }`}
+                    onClick={() => handleCategoryClick(key)}
+                  >
+                    {formattedKey}{' '}
+                    <span className="audit-report__score_main">
+                      {value.score}/100
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+            {expanded && (
+              <ReportDetails
+                category={selectedCategory}
+                score_data={data_audit[selectedCategory]}
+              />
+            )}
+          </>
+        )}
+      </section> */}
+
       {expanded && (
         <ReportDetails
+          token={token}
           category={selectedCategory}
           score_data={data_audit[selectedCategory]}
         />

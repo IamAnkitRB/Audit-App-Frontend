@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -9,6 +9,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import { fetchGraphData } from '../utils/api';
 
 ChartJS.register(
   CategoryScale,
@@ -19,61 +20,71 @@ ChartJS.register(
   Legend,
 );
 
-const doughnutChartData = {
-  labels: [
-    'Subscriber',
-    'Lead',
-    'MQL',
-    'SQL',
-    'Opportunity',
-    'Customer',
-    'Evangelist',
-    'Other',
-  ],
-  datasets: [
-    {
-      label: 'Contact Stages',
-      data: [50000, 85000, 200, 45, 40000, 39800, 30000, 5],
-      backgroundColor: [
-        'rgba(255, 99, 132, 0.5)',
-        'rgba(54, 162, 235, 0.5)',
-        'rgba(255, 206, 86, 0.5)',
-        'rgba(75, 192, 192, 0.5)',
-        'rgba(153, 102, 255, 0.5)',
-        'rgba(255, 159, 64, 0.5)',
-        'rgba(104, 132, 245, 0.5)',
-        'rgba(201, 203, 207, 0.5)',
-      ],
-    },
-  ],
-};
+const BarChart = ({ token, reportId, objectType, dataPoint }) => {
+  const [chartData, setChartData] = useState(null);
 
-const BarChart = ({ data }) => {
+  useEffect(() => {
+    const fetchChartData = async () => {
+      try {
+        const result = await fetchGraphData(
+          token,
+          reportId,
+          objectType,
+          dataPoint,
+        );
+
+        if (result && result.data) {
+          const labels = Object.keys(result.data);
+          const values = Object.values(result.data);
+
+          setChartData({
+            labels,
+            datasets: [
+              {
+                label: dataPoint, // Use the dataPoint as the label
+                data: values,
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+              },
+            ],
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching chart data:', error);
+        setChartData(null);
+      }
+    };
+
+    fetchChartData();
+  }, [token, reportId, objectType, dataPoint]); // Dependencies to trigger re-fetching
+
   const options = {
     responsive: true,
     indexAxis: 'y',
     plugins: {
       legend: {
-        position: 'top',
+        display: false,
       },
-      datalabels: false,
     },
     scales: {
       x: {
         beginAtZero: true,
-        grid: {
-          display: false,
-        },
+        grid: { display: false },
       },
       y: {
-        grid: {
-          display: false,
-        },
+        grid: { display: false },
       },
     },
   };
 
-  return <Bar data={doughnutChartData} options={options} />;
+  return (
+    <div>
+      {chartData ? (
+        <Bar data={chartData} options={options} />
+      ) : (
+        <p>Loading chart...</p>
+      )}
+    </div>
+  );
 };
 
 export default BarChart;

@@ -5,9 +5,10 @@ import Company from './Company';
 import Deal from './Deal';
 import Ticket from './Ticket';
 
-const ReportDetails = ({ category, score_data }) => {
-  const formattedCategory = category.charAt(0).toUpperCase() + category.slice(1);
-  
+const ReportDetails = ({ token, category, score_data }) => {
+  const formattedCategory =
+    category.charAt(0).toUpperCase() + category.slice(1);
+
   if (!score_data) {
     return (
       <div className="report-details">
@@ -18,10 +19,18 @@ const ReportDetails = ({ category, score_data }) => {
 
   return (
     <div className="report-details">
-      {category.toLowerCase() === 'contacts' && <Contact score_data={score_data} />}
-      {category.toLowerCase() === 'companies' && <Company score_data={score_data} />}
-      {category.toLowerCase() === 'deals' && <Deal score_data={score_data} />}
-      {category.toLowerCase() === 'tickets' && <Ticket score_data={score_data} />}
+      {category.toLowerCase() === 'contacts' && (
+        <Contact token={token} score_data={score_data} />
+      )}
+      {category.toLowerCase() === 'companies' && (
+        <Company token={token} score_data={score_data} />
+      )}
+      {category.toLowerCase() === 'deals' && (
+        <Deal token={token} score_data={score_data} />
+      )}
+      {category.toLowerCase() === 'tickets' && (
+        <Ticket token={token} score_data={score_data} />
+      )}
     </div>
   );
 };

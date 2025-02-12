@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import BarChart from './BarChart';
 
-const Company = ({ score_data }) => {
+const Company = ({ token, score_data }) => {
   const { missing_data, junk_data } = score_data;
   const [isMissingDataExpanded, setIsMissingDataExpanded] = useState(true);
   const [isDeletingDataExpanded, setIsDeletingDataExpanded] = useState(true);
@@ -12,6 +12,23 @@ const Company = ({ score_data }) => {
   const [thirdRowSelectedItem, setThirdRowSelectedItem] = useState(
     'without_employee_count',
   );
+  const [firstDatapoint, setFirstDatapoint] = useState('name');
+  const [secondDataPoint, setSecondDataPoint] = useState(
+    'num_associated_deals',
+  );
+  const [thirdDataPoint, setThirdDataPoint] = useState('numberofemployees');
+
+  const handleFirstDataPointChange = (dataPoint) => {
+    setFirstDatapoint(dataPoint);
+  };
+
+  const handleSecondDataPointChange = (dataPoint) => {
+    setSecondDataPoint(dataPoint);
+  };
+
+  const handleThirdDataPointChange = (dataPoint) => {
+    setThirdDataPoint(dataPoint);
+  };
 
   const getBorderColor = (score) => {
     if (score <= 15) return 'border-green';
@@ -94,6 +111,7 @@ const Company = ({ score_data }) => {
                   }  ${getBorderColor(missing_data?.without_name)}`}
                   onClick={() => {
                     setfirstRowSelectedItem('without_name');
+                    handleFirstDataPointChange('name');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -114,6 +132,7 @@ const Company = ({ score_data }) => {
                   }  ${getBorderColor(missing_data?.without_domain)}`}
                   onClick={() => {
                     setfirstRowSelectedItem('without_domain');
+                    handleFirstDataPointChange('domain');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -135,6 +154,7 @@ const Company = ({ score_data }) => {
                   )}`}
                   onClick={() => {
                     setfirstRowSelectedItem('without_associated_contacts');
+                    handleFirstDataPointChange('num_associated_contacts');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -156,6 +176,7 @@ const Company = ({ score_data }) => {
                   }  ${getBorderColor(missing_data?.without_owner)}`}
                   onClick={() => {
                     setfirstRowSelectedItem('without_owner');
+                    handleFirstDataPointChange('hubspot_owner_id');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -171,7 +192,12 @@ const Company = ({ score_data }) => {
               <div>
                 <div className="audit-report__chart-container">
                   <div className="audit-report__chart">
-                    <BarChart />
+                    <BarChart
+                      token={token}
+                      reportId={'1'}
+                      objectType={'companies'}
+                      dataPoint={firstDatapoint}
+                    />
                   </div>
                   <div className="audit-report__risk-text">
                     <div className="risk-indicator">
@@ -202,6 +228,7 @@ const Company = ({ score_data }) => {
                   }  ${getBorderColor(missing_data?.without_deals)}`}
                   onClick={() => {
                     setSecondRowSelectedItem('without_deals');
+                    handleSecondDataPointChange('num_associated_deals');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -222,6 +249,7 @@ const Company = ({ score_data }) => {
                   }  ${getBorderColor(missing_data?.without_lead_source)}`}
                   onClick={() => {
                     setSecondRowSelectedItem('without_lead_source');
+                    handleSecondDataPointChange('lead_source');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -241,6 +269,7 @@ const Company = ({ score_data }) => {
                   }  ${getBorderColor(missing_data?.without_lifecycle_stage)}`}
                   onClick={() => {
                     setSecondRowSelectedItem('without_lifecycle_stage');
+                    handleSecondDataPointChange('lifecyclestage');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -260,6 +289,7 @@ const Company = ({ score_data }) => {
                   }  ${getBorderColor(missing_data?.without_region)}`}
                   onClick={() => {
                     setSecondRowSelectedItem('without_region');
+                    handleSecondDataPointChange('country');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -275,7 +305,12 @@ const Company = ({ score_data }) => {
               <div>
                 <div className="audit-report__chart-container">
                   <div className="audit-report__chart">
-                    <BarChart />
+                    <BarChart
+                      token={token}
+                      reportId={'1'}
+                      objectType={'companies'}
+                      dataPoint={secondDataPoint}
+                    />
                   </div>
                   <div className="audit-report__risk-text">
                     <div className="risk-indicator">
@@ -306,6 +341,7 @@ const Company = ({ score_data }) => {
                   }  ${getBorderColor(missing_data?.without_employee_count)}`}
                   onClick={() => {
                     setThirdRowSelectedItem('without_employee_count');
+                    handleThirdDataPointChange('numberofemployees');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -326,6 +362,7 @@ const Company = ({ score_data }) => {
                   }  ${getBorderColor(missing_data?.without_revenue)}`}
                   onClick={() => {
                     setThirdRowSelectedItem('without_revenue');
+                    handleThirdDataPointChange('annualrevenue');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -345,6 +382,7 @@ const Company = ({ score_data }) => {
                   }  ${getBorderColor(missing_data?.without_linkedin)}`}
                   onClick={() => {
                     setThirdRowSelectedItem('without_linkedin');
+                    handleThirdDataPointChange('linkedin_company_page');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -364,6 +402,7 @@ const Company = ({ score_data }) => {
                   }  ${getBorderColor(missing_data?.without_phone)}`}
                   onClick={() => {
                     setThirdRowSelectedItem('without_phone');
+                    handleThirdDataPointChange('phone');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -379,7 +418,12 @@ const Company = ({ score_data }) => {
               <div>
                 <div className="audit-report__chart-container">
                   <div className="audit-report__chart">
-                    <BarChart />
+                    <BarChart
+                      token={token}
+                      reportId={'1'}
+                      objectType={'companies'}
+                      dataPoint={thirdDataPoint}
+                    />
                   </div>
                   <div className="audit-report__risk-text">
                     <div className="risk-indicator">

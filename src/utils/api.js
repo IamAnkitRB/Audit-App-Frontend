@@ -1,4 +1,4 @@
-export const fetchAuditDataByID = async (state, reportId) => {
+export const fetchAuditDataByID = async (token, reportId) => {
   try {
     const response = await fetch(
       'https://tapir-relaxing-partly.ngrok-free.app/fetchreport',
@@ -6,7 +6,7 @@ export const fetchAuditDataByID = async (state, reportId) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          state: state,
+          state: token,
         },
         body: JSON.stringify({ reportId: reportId }),
       },
@@ -25,7 +25,7 @@ export const fetchAuditDataByID = async (state, reportId) => {
   }
 };
 
-export const fetchReportList = async (state) => {
+export const fetchReportList = async (token) => {
   try {
     const response = await fetch(
       'https://tapir-relaxing-partly.ngrok-free.app/pastreports',
@@ -33,7 +33,7 @@ export const fetchReportList = async (state) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          state: `${state}`,
+          state: `${token}`,
         },
       },
     );
@@ -87,6 +87,33 @@ export const triggerReportGeneration = async (token) => {
     return data;
   } catch (error) {
     console.error('Error while triggering report genearation:', error);
+    throw error;
+  }
+};
+
+export const fetchGraphData = async (
+  token,
+  reportId,
+  objectType,
+  dataPoint,
+) => {
+  try {
+    const response = await fetch(
+      'https://deep-socially-polliwog.ngrok-free.app/get_graph_data',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          state: token,
+        },
+        body: JSON.stringify({ reportId, objectType, dataPoint }),
+      },
+    );
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log(`Error fetching graph data:`, error);
     throw error;
   }
 };

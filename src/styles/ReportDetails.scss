@@ -373,26 +373,10 @@
   gap: 10px;
 }
 
-.risk-dot-high {
+.risk-dot {
   width: 30px;
   height: 30px;
-  background-color: #ff00006b;
-  border-radius: 50%;
-  display: inline-block;
-}
-
-.risk-dot-medium {
-  width: 30px;
-  height: 30px;
-  background-color: #fa961289;
-  border-radius: 50%;
-  display: inline-block;
-}
-
-.risk-dot-low {
-  width: 30px;
-  height: 30px;
-  background-color: #39c4076b;
+  // background-color: #39c4076b;
   border-radius: 50%;
   display: inline-block;
 }
