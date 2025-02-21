@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import BarChart from './BarChart';
 
 const Deal = ({ token, score_data }) => {
-  const { missing_data, junk_data } = score_data;
+  const { missing_data, junk_data, total_deals } = score_data;
   const [firstDatapoint, setFirstDatapoint] = useState('dealname');
   const [secondDataPoint, setSecondDataPoint] = useState('closedate');
   const [isMissingDataExpanded, setIsMissingDataExpanded] = useState(true);
@@ -49,7 +49,9 @@ const Deal = ({ token, score_data }) => {
       {/* Missing Data Section */}
       <section className="report-details__subSection">
         <div className="report-details__section-header">
-          <h3 className="report-details__subtitle">Missing Data</h3>
+          <h3 className="report-details__subtitle">
+            Missing Data - <h4 style={{ marginLeft: '4px' }}>Deals</h4>
+          </h3>
           <button
             className="report-details__toggle-button"
             onClick={() => toggleSection('missingData')}
@@ -97,7 +99,7 @@ const Deal = ({ token, score_data }) => {
                     firstRowSelectedItem === 'without_name'
                       ? 'selected-item'
                       : ''
-                  }  ${getBorderColor(missing_data?.without_name)}`}
+                  }  ${getBorderColor(missing_data?.without_name?.percent)}`}
                   onClick={() => {
                     setfirstRowSelectedItem('without_name');
                     handleFirstDataPointChange('dealname');
@@ -108,7 +110,11 @@ const Deal = ({ token, score_data }) => {
                       <p>Deals without Name</p>
                     </p>
                     <p className="report-details__data-div-score">
-                      <strong>{missing_data?.without_name}%</strong>
+                      <strong>{missing_data?.without_name?.percent}%</strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_name?.count}{' '}
+                      <span>/ {total_deals}</span>
                     </p>
                   </div>
                 </div>
@@ -118,7 +124,7 @@ const Deal = ({ token, score_data }) => {
                     firstRowSelectedItem === 'without_owner'
                       ? 'selected-item'
                       : ''
-                  }  ${getBorderColor(missing_data?.without_owner)}`}
+                  }  ${getBorderColor(missing_data?.without_owner?.percent)}`}
                   onClick={() => {
                     setfirstRowSelectedItem('without_owner');
                     handleFirstDataPointChange('hubspot_owner_id');
@@ -129,7 +135,11 @@ const Deal = ({ token, score_data }) => {
                       <p> Deals without Owner</p>
                     </p>
                     <p className="report-details__data-div-score">
-                      <strong>{missing_data?.without_owner}%</strong>
+                      <strong>{missing_data?.without_owner?.percent}%</strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_owner?.count}{' '}
+                      <span>/ {total_deals}</span>
                     </p>
                   </div>
                 </div>
@@ -139,7 +149,7 @@ const Deal = ({ token, score_data }) => {
                       ? 'selected-item'
                       : ''
                   }  ${getBorderColor(
-                    missing_data?.without_associated_contacts,
+                    missing_data?.without_associated_contacts?.percent,
                   )}`}
                   onClick={() => {
                     setfirstRowSelectedItem('without_associated_contacts');
@@ -152,8 +162,12 @@ const Deal = ({ token, score_data }) => {
                     </p>
                     <p className="report-details__data-div-score">
                       <strong>
-                        {missing_data?.without_associated_contacts}%
+                        {missing_data?.without_associated_contacts?.percent}%
                       </strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_associated_contacts?.count}{' '}
+                      <span>/ {total_deals}</span>
                     </p>
                   </div>
                 </div>
@@ -163,7 +177,7 @@ const Deal = ({ token, score_data }) => {
                       ? 'selected-item'
                       : ''
                   }  ${getBorderColor(
-                    missing_data?.without_associated_company,
+                    missing_data?.without_associated_company?.percent,
                   )}`}
                   onClick={() => {
                     setfirstRowSelectedItem('without_associated_company');
@@ -176,8 +190,12 @@ const Deal = ({ token, score_data }) => {
                     </p>
                     <p className="report-details__data-div-score">
                       <strong>
-                        {missing_data?.without_associated_company}%
+                        {missing_data?.without_associated_company?.percent}%
                       </strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_associated_company?.count}{' '}
+                      <span>/ {total_deals}</span>
                     </p>
                   </div>
                 </div>
@@ -192,22 +210,6 @@ const Deal = ({ token, score_data }) => {
                       dataPoint={firstDatapoint}
                     />
                   </div>
-                  <div className="audit-report__risk-text">
-                    <div className="risk-indicator">
-                      <span
-                        className="risk-dot"
-                        style={{ backgroundColor: '#ff00006b' }}
-                      ></span>
-                      <h3>High Risk</h3>
-                    </div>
-                    <p>
-                      A critical gap in data integrity. Without email IDs,
-                      outreach, automation, and lead nurturing are severely
-                      impacted. This significantly reduces marketing and sales
-                      efficiency, making attribution and engagement tracking
-                      impossible.
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>
@@ -221,7 +223,9 @@ const Deal = ({ token, score_data }) => {
                     secondRowSelectedItem === 'without_close_date'
                       ? 'selected-item'
                       : ''
-                  }  ${getBorderColor(missing_data?.without_close_date)}`}
+                  }  ${getBorderColor(
+                    missing_data?.without_closing_date?.percent,
+                  )}`}
                   onClick={() => {
                     setSecondRowSelectedItem('without_close_date');
                     handleSecondDataPointChange('closedate');
@@ -232,7 +236,13 @@ const Deal = ({ token, score_data }) => {
                       <p>Deals without Close Date</p>
                     </p>
                     <p className="report-details__data-div-score">
-                      <strong>{missing_data?.without_close_date}%</strong>
+                      <strong>
+                        {missing_data?.without_closing_date?.percent}%
+                      </strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_closing_date?.count}{' '}
+                      <span>/ {total_deals}</span>
                     </p>
                   </div>
                 </div>
@@ -242,7 +252,7 @@ const Deal = ({ token, score_data }) => {
                     secondRowSelectedItem === 'without_amount'
                       ? 'selected-item'
                       : ''
-                  }  ${getBorderColor(missing_data?.without_amount)}`}
+                  }  ${getBorderColor(missing_data?.without_amount?.percent)}`}
                   onClick={() => {
                     setSecondRowSelectedItem('without_amount');
                     handleSecondDataPointChange('amount');
@@ -253,7 +263,11 @@ const Deal = ({ token, score_data }) => {
                       <p> Deals without Amount</p>
                     </p>
                     <p className="report-details__data-div-score">
-                      <strong>{missing_data?.without_amount}%</strong>
+                      <strong>{missing_data?.without_amount?.percent}%</strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_amount?.count}{' '}
+                      <span>/ {total_deals}</span>
                     </p>
                   </div>
                 </div>
@@ -262,7 +276,9 @@ const Deal = ({ token, score_data }) => {
                     secondRowSelectedItem === 'without_lost_reason'
                       ? 'selected-item'
                       : ''
-                  }  ${getBorderColor(missing_data?.without_lost_reason)}`}
+                  }  ${getBorderColor(
+                    missing_data?.lost_without_reason?.percent,
+                  )}`}
                   onClick={() => {
                     setSecondRowSelectedItem('without_lost_reason');
                     handleSecondDataPointChange('amount');
@@ -273,7 +289,13 @@ const Deal = ({ token, score_data }) => {
                       <p>Lost Deals without Lost Reason</p>
                     </p>
                     <p className="report-details__data-div-score">
-                      <strong>{missing_data?.without_lost_reason}%</strong>
+                      <strong>
+                        {missing_data?.lost_without_reason?.percent}%
+                      </strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.lost_without_reason?.count}{' '}
+                      <span>/ {total_deals}</span>
                     </p>
                   </div>
                 </div>
@@ -282,7 +304,9 @@ const Deal = ({ token, score_data }) => {
                     secondRowSelectedItem === 'without_type'
                       ? 'selected-item'
                       : ''
-                  }  ${getBorderColor(missing_data?.without_type)}`}
+                  }  ${getBorderColor(
+                    missing_data?.without_deal_type?.percent,
+                  )}`}
                   onClick={() => {
                     setSecondRowSelectedItem('without_type');
                     handleSecondDataPointChange('dealtype');
@@ -293,7 +317,13 @@ const Deal = ({ token, score_data }) => {
                       <p>Deals without Deal Type</p>
                     </p>
                     <p className="report-details__data-div-score">
-                      <strong>{missing_data?.without_type}%</strong>
+                      <strong>
+                        {missing_data?.without_deal_type?.percent}%
+                      </strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_deal_type?.count}{' '}
+                      <span>/ {total_deals}</span>
                     </p>
                   </div>
                 </div>
@@ -308,61 +338,12 @@ const Deal = ({ token, score_data }) => {
                       dataPoint={secondDataPoint}
                     />
                   </div>
-                  <div className="audit-report__risk-text">
-                    <div className="risk-indicator">
-                      <span
-                        className="risk-dot"
-                        style={{ backgroundColor: '#fa961289' }}
-                      ></span>
-                      <h3>Medium Risk</h3>
-                    </div>
-                    <p>
-                      A critical gap in data integrity. Without email IDs,
-                      outreach, automation, and lead nurturing are severely
-                      impacted. This significantly reduces marketing and sales
-                      efficiency, making attribution and engagement tracking
-                      impossible.
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>
           </>
         )}
       </section>
-
-      <section>
-        <div className="report-details__take-action">
-          <h4 className="report-details__action-title">Take Action</h4>
-          <div className="report-details__action-group">
-            <h5>1. Create Active Lists</h5>
-            <div className="report-details__checkbox-group">
-              <label>
-                <input type="checkbox" />
-                Deals without Email ID
-              </label>
-              <label>
-                <input type="checkbox" />
-                Deals without Lifecycle Stage
-              </label>
-              <label>
-                <input type="checkbox" />
-                Deals without Phone Numbers
-              </label>
-              <label>
-                <input type="checkbox" />
-                Deals without Owners
-              </label>
-            </div>
-            <div className="report-details__action-button-div">
-              <button className="report-details__action-button">
-                Create Lists
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <section className="report-details__subSection">
         <div className="report-details__section-header">
           <h3 className="report-details__subtitle">Consider Deleting</h3>
@@ -410,18 +391,32 @@ const Deal = ({ token, score_data }) => {
                     <p>Deals have no activity in the last 180 days</p>
                   </p>
                   <p className="report-details__data-div-score">
-                    <strong>{junk_data?.no_activity_in_last_180_days}</strong>
+                    <strong>
+                      {junk_data?.no_activity_in_last_180_days?.count}
+                    </strong>
                   </p>
                 </div>
               </div>
               <div className="report-details__duplicate-data-div">
                 <div className="report-details__data-item">
                   <p className="report-details__data-div-heading">
-                    <p>Deals are internal team members</p>
+                    <p>Deals without name and owner</p>
                   </p>
                   <p className="report-details__data-div-score">
-                    <strong>{junk_data?.internal_team_members}</strong>
+                    <strong>{junk_data?.without_name_and_owner?.count}</strong>
                   </p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div className="audit-report__chart-container">
+                <div className="audit-report__chart">
+                  <BarChart
+                    token={token}
+                    reportId={'1'}
+                    objectType={'deals'}
+                    dataPoint={firstDatapoint}
+                  />
                 </div>
               </div>
             </div>
@@ -429,43 +424,85 @@ const Deal = ({ token, score_data }) => {
         )}
       </section>
       <section>
-        <div className="report-details__take-action">
-          <h4 className="report-details__action-title">Take Action</h4>
+        <div
+          className="report-details__take-action report-details__subSection"
+          id="take_action"
+        >
+          <h4 className="report-details__action-title">Take Bulk Action</h4>
           <div className="report-details__action-group">
-            <h5>1. Create Active Lists</h5>
-            <div className="report-details__checkbox-group">
-              <label>
-                <input type="checkbox" />
-                Deals have no activity in the last 180 days
-              </label>
-              <label>
-                <input type="checkbox" />
-                Deals are internal team members
-              </label>
-            </div>
-            <div className="report-details__action-button-div">
-              <button className="report-details__action-button">
-                Create Lists
-              </button>
+            {/* <h5>Create Active Lists</h5> */}
+            <div className="report-details__list">
+              <div className="report-details__checkbox-group">
+                <h5>Are You Kidding Me!</h5>
+                <label>
+                  <input type="checkbox" />
+                  Deals without Name
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  Deals without Owner
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  Deals without Associated Contact
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  Deals without Associated Company
+                </label>
+
+                <button>Create Active List</button>
+              </div>
+              <div className="report-details__checkbox-group">
+                <h5>Must Have</h5>
+                <label>
+                  <input type="checkbox" />
+                  Deals without Close Date
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  Deals without Amount
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  Lost Deals without Lost Reason
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  Deals without Deal Type
+                </label>
+
+                <button>Create Active List</button>
+              </div>
             </div>
           </div>
-
           <div className="report-details__action-group">
-            <h5>2. Delete Junk Data</h5>
-            <div className="report-details__checkbox-group">
-              <label>
-                <input type="checkbox" />
-                Deals have no activity in the last 180 days
-              </label>
-              <label>
-                <input type="checkbox" />
-                Deals are internal team members
-              </label>
-            </div>
-            <div className="report-details__action-button-div">
-              <button className="report-details__action-button">
-                Delete Junk
-              </button>
+            <div className="report-details__list">
+              <div className="report-details__checkbox-group">
+                <h5>Consider Deleting</h5>
+                <label>
+                  <input type="checkbox" />
+                  Deals without activity in the last 180 days
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  Deals without name and owner
+                </label>
+
+                <button>Create Active List</button>
+              </div>
+              <div className="report-details__checkbox-group">
+                <h5>Delete Junk</h5>
+                <label>
+                  <input type="checkbox" />
+                  Deals without activity in the last 180 days
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  Deals without name and owner
+                </label>
+                <button>Delete Junk</button>
+              </div>
             </div>
           </div>
         </div>

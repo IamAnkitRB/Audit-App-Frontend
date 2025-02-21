@@ -1,8 +1,10 @@
 import React from 'react';
+import { GeneratingProgressBar } from '../components/ProgressBar';
 
-const ReportGenerate = () => {
+const ReportGenerate = ({ progress }) => {
   return (
     <>
+      <GeneratingProgressBar progress={progress} />
       <div className="generating-state">
         <div className="generating-title">
           <p>

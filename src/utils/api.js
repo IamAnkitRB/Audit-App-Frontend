@@ -1,7 +1,7 @@
 export const fetchAuditDataByID = async (token, reportId) => {
   try {
     const response = await fetch(
-      'https://tapir-relaxing-partly.ngrok-free.app/fetchreport',
+      'https://deep-socially-polliwog.ngrok-free.app/fetchreport',
       {
         method: 'POST',
         headers: {
@@ -16,9 +16,8 @@ export const fetchAuditDataByID = async (token, reportId) => {
       throw new Error(`Error: ${response.status} - ${response.statusText}`);
     }
 
-    const data = await response.json();
-    console.log('Get report data:::', data);
-    return data;
+    const result = await response.json();
+    return result.data[0];
   } catch (error) {
     console.error('Error fetching report:', error);
     throw error;
@@ -28,7 +27,7 @@ export const fetchAuditDataByID = async (token, reportId) => {
 export const fetchReportList = async (token) => {
   try {
     const response = await fetch(
-      'https://tapir-relaxing-partly.ngrok-free.app/pastreports',
+      'https://deep-socially-polliwog.ngrok-free.app/pastreports',
       {
         method: 'POST',
         headers: {
@@ -50,16 +49,17 @@ export const fetchReportList = async (token) => {
   }
 };
 
-export const triggerCheckReport = async (token) => {
+export const triggerCheckReport = async (token, hubID) => {
   try {
     const response = await fetch(
-      'https://tapir-relaxing-partly.ngrok-free.app/checkreport',
+      'https://deep-socially-polliwog.ngrok-free.app/checkreport',
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          state: token,
         },
-        body: JSON.stringify({ state: token }),
+        body: JSON.stringify({ hub_id: hubID }),
       },
     );
     const data = await response.json();
@@ -70,16 +70,17 @@ export const triggerCheckReport = async (token) => {
   }
 };
 
-export const triggerReportGeneration = async (token) => {
+export const triggerReportGeneration = async (token, hubID) => {
   try {
     const response = await fetch(
-      'https://tapir-relaxing-partly.ngrok-free.app/getreport',
+      'https://deep-socially-polliwog.ngrok-free.app/getreport',
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          state: token,
         },
-        body: JSON.stringify({ state: token }),
+        body: JSON.stringify({ hub_id: hubID }),
       },
     );
 
@@ -95,18 +96,19 @@ export const fetchGraphData = async (
   token,
   reportId,
   objectType,
+  graphType,
   dataPoint,
 ) => {
   try {
     const response = await fetch(
-      'https://tapir-relaxing-partly.ngrok-free.app/get_graph_data',
+      'https://deep-socially-polliwog.ngrok-free.app/get_graph_data',
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           state: token,
         },
-        body: JSON.stringify({ reportId, objectType, dataPoint }),
+        body: JSON.stringify({ reportId, objectType, dataPoint, graphType }),
       },
     );
 
@@ -121,13 +123,35 @@ export const fetchGraphData = async (
 export const fetchUserData = async (token) => {
   try {
     const response = await fetch(
-      'https://tapir-relaxing-partly.ngrok-free.app/gethubinfo',
+      'https://deep-socially-polliwog.ngrok-free.app/gethubinfo',
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          state: token,
         },
-        body: JSON.stringify({ state: token }),
+      },
+    );
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(`Error while fetching user data:`, error);
+    throw error;
+  }
+};
+
+export const generateNewReport = async (token, hubId) => {
+  try {
+    const response = await fetch(
+      'https://deep-socially-polliwog.ngrok-free.app/generatenewreport',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          state: token,
+        },
+        body: JSON.stringify({ hub_id: hubId }),
       },
     );
 

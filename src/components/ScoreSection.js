@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
-import ProgressBar from './ProgressBar';
+import React, { useEffect, useState } from 'react';
+import { ReportProgressBar } from './ProgressBar';
 import ReportDetails from './ReportDetails';
-import '../styles/AuditReportTwo.scss';
 
 const ScoreSection = ({
   token,
-  overall_audit_score = {},
+  overall_audit_score = { score: 0, global_average_difference: 0 },
+  hub_domian,
+  object_scores = {},
   score_breakdown = {},
   data_audit = {},
 }) => {
   const [selectedCategory, setSelectedCategory] = useState('contacts');
+  const [overall_score, setOverallScore] = useState(0);
   const [isExpanded, setIsExpanded] = useState(true);
   const [expanded, setExpanded] = useState(true);
   const [isBreakdownExpanded, setIsBreakdownExpanded] = useState(true);
@@ -29,6 +31,15 @@ const ScoreSection = ({
     setSelectedCategory(category);
   };
 
+  const displayOrder = ['contacts', 'companies', 'deals', 'tickets'];
+  const sortedEntries = Object.entries(object_scores).sort(
+    ([keyA], [keyB]) => displayOrder.indexOf(keyA) - displayOrder.indexOf(keyB),
+  );
+
+  useEffect(() => {
+    setOverallScore(overall_audit_score?.score);
+  }, [overall_score]);
+
   let borderColorClass = '';
   if (score_breakdown?.data_quality?.score === null) {
     borderColorClass = 'border-red';
@@ -43,19 +54,41 @@ const ScoreSection = ({
     borderColorClass = 'border-green';
   }
 
+  // useEffect(() => {
+  //   const auditSection = document.querySelector('.audit-report__subSection');
+  //   console.log(auditSection);
+  //   const header = document.querySelector('header'); // Adjust if needed
+  //   console.log(header);
+  //   const headerHeight = header.offsetHeight; // Get header height dynamically
+  //   console.log(headerHeight);
+  //   document.addEventListener('click', function () {
+  //     const sectionTop = auditSection.getBoundingClientRect().top; // Distance from top
+  //     console.log(sectionTop);
+  //     if (sectionTop <= headerHeight) {
+  //       auditSection.classList.add('sticky');
+  //     } else {
+  //       auditSection.classList.remove('sticky');
+  //     }
+  //   });
+  // }, []);
   return (
     <>
       {/* Overall Audit Score */}
       <section className="audit-report__section">
         <h3 className="audit-report__overall_title">Overall Audit Score</h3>
         <div className="audit-report__score">
-          <ProgressBar score={overall_audit_score?.score} maxScore={100} />
+          <ReportProgressBar score={overall_score} maxScore={100} />
         </div>
         <p className="audit-report__main_heading">
-          You are {overall_audit_score?.global_average_difference} points behind
-          the Global Average and{' '}
-          {overall_audit_score?.industry_average_difference} points behind your
-          Industry Average.
+          You are{' '}
+          <strong>
+            {Math.abs(overall_audit_score?.global_average_difference)}{' '}
+          </strong>
+          points{' '}
+          {overall_audit_score?.global_average_difference > 0
+            ? 'ahead of'
+            : 'behind'}{' '}
+          the Global Average.
         </p>
       </section>
 
@@ -109,20 +142,6 @@ const ScoreSection = ({
                     <p className="audit-report__data-div-heading">
                       Data Quality
                     </p>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      class="size-6 danger-svg"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
-                      />
-                    </svg>
                   </div>
 
                   <p className="audit-report__data-div-score">
@@ -267,16 +286,14 @@ const ScoreSection = ({
         </div>
 
         {isExpanded && (
-          <div className="audit-report__data">
-            {Object.entries(data_audit).map(([key, value]) => {
+          <div className="audit-report__data" id="data_audit">
+            {sortedEntries.map(([key, value]) => {
               const formattedKey =
                 key.charAt(0).toUpperCase() + key.slice(1).toLowerCase();
-              const score = value?.score;
-
               let borderColorClass = '';
-              if (score < 40) {
+              if (value < 40) {
                 borderColorClass = 'border-red';
-              } else if (score >= 40 && score <= 90) {
+              } else if (value >= 40 && value <= 90) {
                 borderColorClass = 'border-orange';
               } else {
                 borderColorClass = 'border-green';
@@ -298,7 +315,7 @@ const ScoreSection = ({
                       {formattedKey}
                     </p>
                     <p className="audit-report__data-div-score">
-                      {score !== null ? `${score}/100` : 'Not in Use'}
+                      {value !== null ? `${value}/100` : 'Not in Use'}
                     </p>
                   </div>
                 </div>
@@ -307,66 +324,6 @@ const ScoreSection = ({
           </div>
         )}
       </section>
-
-      {/* Data Audit Section */}
-      {/* <section className="audit-report_main">
-        <div className="audit-report__header_main">
-          <h3 className="audit-report__title_main">Data Audit</h3>
-          <button
-            className="audit-report__toggle-button_main"
-            onClick={toggleSection}
-          >
-            {isExpanded ? (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="#333"
-              >
-                <path d="M9.47 6.47a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 8.06l-3.72 3.72a.75.75 0 0 1-1.06-1.06l4.25-4.25Z" />
-              </svg>
-            ) : (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="#333"
-              >
-                <path d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" />
-              </svg>
-            )}
-          </button>
-        </div>
-
-        {isExpanded && (
-          <>
-            <div className="audit-report__tabs_main">
-              {Object.entries(data_audit).map(([key, value]) => {
-                const formattedKey =
-                  key.charAt(0).toUpperCase() + key.slice(1).toLowerCase();
-                return (
-                  <button
-                    key={key}
-                    className={`audit-report__tab_main ${
-                      selectedCategory === key ? 'active_main' : ''
-                    }`}
-                    onClick={() => handleCategoryClick(key)}
-                  >
-                    {formattedKey}{' '}
-                    <span className="audit-report__score_main">
-                      {value.score}/100
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-            {expanded && (
-              <ReportDetails
-                category={selectedCategory}
-                score_data={data_audit[selectedCategory]}
-              />
-            )}
-          </>
-        )}
-      </section> */}
 
       {expanded && (
         <ReportDetails

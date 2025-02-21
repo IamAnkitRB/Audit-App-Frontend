@@ -1,6 +1,6 @@
 .cms-react-boilerplate__container {
   text-align: center;
-  background-color: #ffffff;
+  background-color: #f8fafd;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -10,22 +10,20 @@
   max-height: 99vh;
 }
 
-.report-button{
-  background-color: #69b5eb;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 1rem;
-      cursor: pointer;
-      text-align: center;
-      align-items: center;
-      justify-content: center;
-      transition: background-color 0.3s ease;
-      margin: 0.3rem;
+button {
+  border-color: transparent;
+  background-color: #000;
+  color: #fff;
+  transform: translate3d(0, -2px, 0);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+  padding: 8px 15px;
+  cursor: pointer;
+  margin-left: 10px;
+  font-size: medium;
+}
 
-      &:hover {
-        background-color: #5aa6d3;
-      }
+.take_action {
+  margin-top: 3px;
 }
 
 .sidebar-button {
@@ -51,20 +49,24 @@
   }
 }
 
+.sticky {
+  position: fixed;
+  top: 0; /* Sticks at the top */
+  width: 100%; /* Adjust width if necessary */
+  z-index: 1000;
+  background: white; /* Keep it visible */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Optional shadow */
+}
+
 .past-reports {
   margin-top: 10px;
 }
 
-.report-button {
-  padding: 8px 15px;
-  margin: 5px 0;
-  background-color: #f0f0f0;
-  border-radius: 4px;
-  cursor: pointer;
-
-  &.active {
-    background-color: #007bff;
-    color: white;
-    font-weight: bold;
-  }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: black;
 }

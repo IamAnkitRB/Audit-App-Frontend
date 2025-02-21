@@ -1,34 +1,42 @@
 .report-details {
   color: #6c6c6c;
-  font-family: Arial, sans-serif;
 
   /* Section Container */
   &__subSection {
     margin-bottom: 30px;
-    background: linear-gradient(
-      90deg,
-      rgba(155, 135, 245, 0.1) 0%,
-      rgba(126, 105, 171, 0.1) 100%
-    );
+    background: #fff;
     border-radius: 5px;
-    border: 1px solid #e3e3e0;
     margin: 20px auto;
 
     & h3 {
       margin-top: 0;
       font-size: 1.25rem;
       font-weight: bold;
-      color: #333;
+      color: black;
       letter-spacing: 0;
-      background: linear-gradient(90deg, #00e5e5, #9b87f5, #7e69ab);
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: black;
+    }
+  }
+  &__duplicate_subSection {
+    margin-bottom: 30px;
+    background: #fff;
+    border-radius: 5px;
+    margin: 20px auto;
+    padding-bottom: 1rem;
+
+    & h3 {
+      margin-top: 0;
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: black;
+      letter-spacing: 0;
+      color: black;
     }
   }
 
   /* Card Styles */
   &__card {
-    margin-bottom: 3rem;
+    margin-bottom: 1rem;
     display: flex;
     justify-content: space-evenly;
   }
@@ -67,51 +75,72 @@
   }
 
   &__data-div:hover {
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.2);
     transform: translateY(-2px);
     transition: transform 0.3s ease;
+    cursor: pointer;
   }
 
   &__duplicate-data-div {
     background-color: #fff;
-    border: 1px solid #e5e7eb;
     border-radius: 0.5rem;
     height: 100%;
     text-align: center;
     padding: 14px 10px;
-    width: 33vw;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 34vw;
   }
 
   &__duplicate-data-div:hover {
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.2);
     transform: translateY(-2px);
     transition: transform 0.3s ease;
+    cursor: pointer;
   }
 
   &__data-item {
     align-items: start;
     display: flex;
     flex-direction: column;
-    padding: 1rem;
-    line-height: normal;
+    padding: 0.1rem;
+    white-space: nowrap;
+    position: relative;
+  }
+
+  &__data-item p img {
+    position: absolute;
+    height: 1.5rem;
+    top: 50%;
+    right: 10px;
   }
 
   &__data-div-heading {
     font-size: 0.875rem;
     margin: 0;
     padding: 0.5rem;
+    width: inherit;
+    height: 50px;
+  }
+  &__data-div-heading p {
+    width: inherit;
+    text-wrap: auto;
   }
 
   &__data-div-score {
-    background: linear-gradient(90deg, #00e5e5, #9b87f5, #7e69ab);
-    -webkit-background-clip: text;
-    background-clip: text;
+    color: black;
     font-weight: 700;
     font-size: 1.7rem;
     line-height: 2rem;
     margin: 0.75rem 0 0 0.5rem;
-    -webkit-text-fill-color: transparent;
+  }
+
+  &__data-div-total {
+    color: #666;
+    font-size: small;
+    margin-left: 0.5rem;
+  }
+  &__data-div-total span {
+    color: #666;
+    font-size: small;
   }
 
   &__section-header {
@@ -126,14 +155,14 @@
     font-weight: bold;
     display: flex;
     align-items: center;
-    background-color: #bde3ff;
-    padding: 10px 16px;
+    padding: 15px 15px;
     border-radius: 2px;
   }
 
   &__toggle-button {
     background-color: inherit;
-    color: #333;
+    box-shadow: none;
+    color: black;
     border: none;
     border-radius: 5px;
     padding: 5px 10px;
@@ -144,7 +173,7 @@
 
   &__missing_title {
     display: flex;
-    margin: 1rem 2rem;
+    margin: 1rem 2.5rem;
     font-weight: 600;
     font-size: large;
     color: black;
@@ -159,7 +188,7 @@
   .report-details__action-title {
     font-weight: 400;
     margin-bottom: 1rem;
-    color: #10dbe7;
+    color: black;
   }
 
   .report-details__action-group {
@@ -169,44 +198,51 @@
       font-size: 1rem;
       font-weight: bolder;
       margin-bottom: 10px;
-      color: #333;
+      color: black;
     }
 
+    .report-details__list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* Creates two columns */
+      gap: 20px; /* Adds spacing between items */
+      justify-items: center;
+      align-items: start;
+      margin-bottom: 1.5rem;
+    }
     .report-details__checkbox-group {
       display: flex;
       flex-wrap: wrap;
       flex-direction: column;
       gap: 10px;
-      margin-bottom: 15px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 1rem;
+      border-radius: 9px;
+      width: 100%;
 
       label {
         display: flex;
         align-items: center;
         font-size: 0.9rem;
-        color: #333;
+        color: black;
 
         input {
           margin-right: 8px;
-          accent-color: #10dbe7;
+          accent-color: black;
         }
 
         input[type='checkbox'] {
-          /* Default Checkbox Styling */
           appearance: none;
-          /* Remove default checkbox styling */
           width: 16px;
           height: 16px;
-          border: 1px solid #10dbe7;
-          /* Custom border color */
+          border: 1px solid black;
           border-radius: 3px;
-          /* Optional for rounded corners */
           outline: none;
           cursor: pointer;
           background-color: transparent;
 
           /* Tick color when checked */
           &:checked {
-            background-color: #10dbe7;
+            background-color: white;
             position: relative;
 
             &::after {
@@ -216,7 +252,7 @@
               height: 10px;
               margin: auto;
               margin-top: 2px;
-              background-color: white;
+              background-color: black;
               /* Tick color */
               clip-path: polygon(
                 14% 44%,
@@ -228,28 +264,14 @@
               );
             }
           }
-
-          /* Hover effect */
-          &:hover {
-            border-color: #08b5c5;
-          }
         }
       }
     }
 
-    .report-details__action-button {
-      padding: 10px 20px;
-      font-size: 0.9rem;
-      border: none;
-      border-radius: 5px;
-      background: #10dbe7;
-      color: #fff;
-      cursor: pointer;
-      transition: background 0.3s ease;
-
-      &:hover {
-        background: #008c9e;
-      }
+    .report-details__checkbox-group button {
+      width: 100%;
+      margin: auto;
+      margin-top: 1rem;
     }
 
     .report-details__action-button-div {
@@ -315,10 +337,6 @@
       .report-details__checkbox-group {
         flex-direction: column;
       }
-
-      .report-details__action-button {
-        width: 100%;
-      }
     }
   }
 }
@@ -352,6 +370,7 @@
   display: flex;
   justify-content: flex-start;
   margin: 1rem;
+  margin-bottom: 6rem;
 }
 
 .audit-report__chart canvas {
@@ -361,9 +380,7 @@
 
 .audit-report__risk-text {
   flex: 1;
-  max-width: 40%;
-  margin: auto;
-  margin-top: 7rem;
+  margin: 0 2rem;
   text-align: start;
 }
 
@@ -388,7 +405,7 @@
 
 .audit-report__risk-text p {
   font-size: 14px;
-  color: #333;
+  color: black;
   line-height: 1.75;
   margin-top: 1rem;
 }

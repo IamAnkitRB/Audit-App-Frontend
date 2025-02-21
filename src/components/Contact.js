@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import BarChart from './BarChart';
+import { findRiskImage, getBorderColor } from '../utils/riskManager';
 
 const Contact = ({ token, score_data }) => {
-  const { missing_data, junk_data } = score_data;
+  const { missing_data, junk_data, total_contacts } = score_data;
   const [isMissingDataExpanded, setIsMissingDataExpanded] = useState(true);
   const [isDeletingDataExpanded, setIsDeletingDataExpanded] = useState(true);
   const [firstRowSelectedItem, setfirstRowSelectedItem] =
@@ -29,12 +30,6 @@ const Contact = ({ token, score_data }) => {
     setThirdDataPoint(dataPoint);
   };
 
-  const getBorderColor = (score) => {
-    if (score <= 15) return 'border-green';
-    if (score <= 65) return 'border-orange';
-    return 'border-red';
-  };
-
   const toggleSection = (section) => {
     switch (section) {
       case 'missingData':
@@ -59,7 +54,9 @@ const Contact = ({ token, score_data }) => {
       {/* Missing Data Section */}
       <section className="report-details__subSection">
         <div className="report-details__section-header">
-          <h3 className="report-details__subtitle">Missing Data</h3>
+          <h3 className="report-details__subtitle">
+            Missing Data - <h4 style={{ marginLeft: '4px' }}>Contacts</h4>
+          </h3>
           <button
             className="report-details__toggle-button"
             onClick={() => toggleSection('missingData')}
@@ -107,7 +104,7 @@ const Contact = ({ token, score_data }) => {
                     firstRowSelectedItem === 'withoutFirstName'
                       ? 'selected-item'
                       : ''
-                  }  ${getBorderColor(missing_data?.without_first_name)}`}
+                  }  ${getBorderColor(missing_data?.without_first_name?.risk)}`}
                   onClick={() => {
                     setfirstRowSelectedItem('withoutFirstName');
                     handleFirstDataPointChange('firstname');
@@ -116,9 +113,20 @@ const Contact = ({ token, score_data }) => {
                   <div className="report-details__data-item ">
                     <p className="report-details__data-div-heading">
                       <p>Contacts without First Name</p>
+                      <img
+                        src={findRiskImage(
+                          missing_data?.without_first_name?.risk,
+                        )}
+                      ></img>
                     </p>
                     <p className="report-details__data-div-score">
-                      <strong>{missing_data?.without_first_name}%</strong>
+                      <strong>
+                        {missing_data?.without_first_name?.percent}%
+                      </strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_first_name?.count.toLocaleString()}{' '}
+                      <span>/ {total_contacts.toLocaleString()}</span>
                     </p>
                   </div>
                 </div>
@@ -128,7 +136,7 @@ const Contact = ({ token, score_data }) => {
                     firstRowSelectedItem === 'withoutEmailId'
                       ? 'selected-item'
                       : ''
-                  }  ${getBorderColor(missing_data?.without_email)}`}
+                  }  ${getBorderColor(missing_data?.without_email?.risk)}`}
                   onClick={() => {
                     setfirstRowSelectedItem('withoutEmailId');
                     handleFirstDataPointChange('email');
@@ -136,10 +144,17 @@ const Contact = ({ token, score_data }) => {
                 >
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
-                      <p> Contacts without Email ID</p>
+                      <p>Contacts without Email ID</p>
+                      <img
+                        src={findRiskImage(missing_data?.without_email?.risk)}
+                      ></img>
                     </p>
                     <p className="report-details__data-div-score">
-                      <strong>{missing_data?.without_email}%</strong>
+                      <strong>{missing_data?.without_email?.percent}%</strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_email?.count?.toLocaleString()}{' '}
+                      <span>/ {total_contacts.toLocaleString()}</span>
                     </p>
                   </div>
                 </div>
@@ -149,7 +164,7 @@ const Contact = ({ token, score_data }) => {
                       ? 'selected-item'
                       : ''
                   }  ${getBorderColor(
-                    missing_data?.without_associated_company,
+                    missing_data?.without_associated_company?.risk,
                   )}`}
                   onClick={() => {
                     setfirstRowSelectedItem('withoutAssociatedCompany');
@@ -158,12 +173,21 @@ const Contact = ({ token, score_data }) => {
                 >
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
-                      <p>Contacts with Associated Company</p>
+                      <p>Contacts without Associated Company</p>
+                      <img
+                        src={findRiskImage(
+                          missing_data?.without_associated_company?.risk,
+                        )}
+                      ></img>
                     </p>
                     <p className="report-details__data-div-score">
                       <strong>
-                        {missing_data?.without_associated_company}%
+                        {missing_data?.without_associated_company?.percent}%
                       </strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_associated_company?.count?.toLocaleString()}{' '}
+                      <span>/ {total_contacts?.toLocaleString()}</span>
                     </p>
                   </div>
                 </div>
@@ -172,7 +196,7 @@ const Contact = ({ token, score_data }) => {
                     firstRowSelectedItem === 'withoutOwner'
                       ? 'selected-item'
                       : ''
-                  }  ${getBorderColor(missing_data?.without_owner)}`}
+                  }  ${getBorderColor(missing_data?.without_owner?.risk)}`}
                   onClick={() => {
                     setfirstRowSelectedItem('withoutOwner');
                     handleFirstDataPointChange('hubspot_owner_id');
@@ -181,9 +205,16 @@ const Contact = ({ token, score_data }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Contacts without Owners</p>
+                      <img
+                        src={findRiskImage(missing_data?.without_owner?.risk)}
+                      ></img>
                     </p>
                     <p className="report-details__data-div-score">
-                      <strong>{missing_data?.without_owner}%</strong>
+                      <strong>{missing_data?.without_owner?.percent}%</strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_owner?.count?.toLocaleString()}{' '}
+                      <span>/ {total_contacts?.toLocaleString()}</span>
                     </p>
                   </div>
                 </div>
@@ -198,28 +229,12 @@ const Contact = ({ token, score_data }) => {
                       dataPoint={firstDatapoint}
                     />
                   </div>
-                  <div className="audit-report__risk-text">
-                    <div className="risk-indicator">
-                      <span
-                        className="risk-dot"
-                        style={{ backgroundColor: '#ff00006b' }}
-                      ></span>
-                      <h3>High Risk</h3>
-                    </div>
-                    <p>
-                      A critical gap in data integrity. Without email IDs,
-                      outreach, automation, and lead nurturing are severely
-                      impacted. This significantly reduces marketing and sales
-                      efficiency, making attribution and engagement tracking
-                      impossible.
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>
             <div>
               <div className="report-details__missing_title">
-                <p>Must-Have</p>
+                <p>Must Have</p>
               </div>
               <div className="report-details__card">
                 <div
@@ -227,7 +242,7 @@ const Contact = ({ token, score_data }) => {
                     secondRowSelectedItem === 'withoutDeals'
                       ? 'selected-item'
                       : ''
-                  }  ${getBorderColor(missing_data?.without_deals)}`}
+                  }  ${getBorderColor(missing_data?.without_deals?.risk)}`}
                   onClick={() => {
                     setSecondRowSelectedItem('withoutDeals');
                     handleSecondDataPointChange('num_associated_deals');
@@ -235,10 +250,17 @@ const Contact = ({ token, score_data }) => {
                 >
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
-                      <p>Contacts without Deals(Opportunity/Customer)</p>
+                      <p>Contacts without Deals (Opportunity/Customer)</p>
+                      <img
+                        src={findRiskImage(missing_data?.without_deals?.risk)}
+                      ></img>
                     </p>
                     <p className="report-details__data-div-score">
-                      <strong>{missing_data?.without_deals}%</strong>
+                      <strong>{missing_data?.without_deals?.percent}%</strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_deals?.count?.toLocaleString()}{' '}
+                      <span>/ {total_contacts?.toLocaleString()}</span>
                     </p>
                   </div>
                 </div>
@@ -248,7 +270,9 @@ const Contact = ({ token, score_data }) => {
                     secondRowSelectedItem === 'withoutLeadSource'
                       ? 'selected-item'
                       : ''
-                  }  ${getBorderColor(missing_data?.without_lead_source)}`}
+                  }  ${getBorderColor(
+                    missing_data?.without_lead_source?.risk,
+                  )}`}
                   onClick={() => {
                     setSecondRowSelectedItem('withoutLeadSource');
                     handleSecondDataPointChange('deals');
@@ -257,9 +281,20 @@ const Contact = ({ token, score_data }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p> Contacts without Lead Source</p>
+                      <img
+                        src={findRiskImage(
+                          missing_data?.without_lead_source?.risk,
+                        )}
+                      ></img>
                     </p>
                     <p className="report-details__data-div-score">
-                      <strong>{missing_data?.without_lead_source}%</strong>
+                      <strong>
+                        {missing_data?.without_lead_source?.percent}%
+                      </strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_lead_source?.count?.toLocaleString()}{' '}
+                      <span>/ {total_contacts?.toLocaleString()}</span>
                     </p>
                   </div>
                 </div>
@@ -268,7 +303,9 @@ const Contact = ({ token, score_data }) => {
                     secondRowSelectedItem === 'withoutLifecycleStage'
                       ? 'selected-item'
                       : ''
-                  }  ${getBorderColor(missing_data?.without_lifecycle_stage)}`}
+                  }  ${getBorderColor(
+                    missing_data?.without_lifecycle_stage?.risk,
+                  )}`}
                   onClick={() => {
                     setSecondRowSelectedItem('withoutLifecycleStage');
                     handleSecondDataPointChange('lifecyclestage');
@@ -277,9 +314,20 @@ const Contact = ({ token, score_data }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Contacts without Lifecycle Stage</p>
+                      <img
+                        src={findRiskImage(
+                          missing_data?.without_lifecycle_stage?.risk,
+                        )}
+                      ></img>
                     </p>
                     <p className="report-details__data-div-score">
-                      <strong>{missing_data?.without_lifecycle_stage}%</strong>
+                      <strong>
+                        {missing_data?.without_lifecycle_stage?.percent}%
+                      </strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_lifecycle_stage?.count?.toLocaleString()}{' '}
+                      <span>/ {total_contacts?.toLocaleString()}</span>
                     </p>
                   </div>
                 </div>
@@ -288,7 +336,9 @@ const Contact = ({ token, score_data }) => {
                     secondRowSelectedItem === 'withoutLeadStatus'
                       ? 'selected-item'
                       : ''
-                  }  ${getBorderColor(missing_data?.without_lead_status)}`}
+                  }  ${getBorderColor(
+                    missing_data?.without_lead_status?.risk,
+                  )}`}
                   onClick={() => {
                     setSecondRowSelectedItem('withoutLeadStatus');
                     handleSecondDataPointChange('hs_lead_status');
@@ -297,9 +347,20 @@ const Contact = ({ token, score_data }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Contacts without Lead status</p>
+                      <img
+                        src={findRiskImage(
+                          missing_data?.without_lead_status?.risk,
+                        )}
+                      ></img>
                     </p>
                     <p className="report-details__data-div-score">
-                      <strong>{missing_data?.without_lead_status}%</strong>
+                      <strong>
+                        {missing_data?.without_lead_status?.percent}%
+                      </strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_lead_status?.count?.toLocaleString()}{' '}
+                      <span>/ {total_contacts?.toLocaleString()}</span>
                     </p>
                   </div>
                 </div>
@@ -314,28 +375,12 @@ const Contact = ({ token, score_data }) => {
                       dataPoint={secondDataPoint}
                     />
                   </div>
-                  <div className="audit-report__risk-text">
-                    <div className="risk-indicator">
-                      <span
-                        className="risk-dot"
-                        style={{ backgroundColor: '#ff00006b' }}
-                      ></span>
-                      <h3>Medium Risk</h3>
-                    </div>
-                    <p>
-                      A critical gap in data integrity. Without email IDs,
-                      outreach, automation, and lead nurturing are severely
-                      impacted. This significantly reduces marketing and sales
-                      efficiency, making attribution and engagement tracking
-                      impossible.
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>
             <div>
               <div className="report-details__missing_title">
-                <p>Good-to-Have</p>
+                <p>Good To Have</p>
               </div>
               <div className="report-details__card">
                 <div
@@ -343,7 +388,7 @@ const Contact = ({ token, score_data }) => {
                     thirdRowSelectedItem === 'withoutJobTitle'
                       ? 'selected-item'
                       : ''
-                  }  ${getBorderColor(missing_data?.without_job_title)}`}
+                  }  ${getBorderColor(missing_data?.without_job_title?.risk)}`}
                   onClick={() => {
                     setThirdRowSelectedItem('withoutJobTitle');
                     handleThirdDataPointChange('jobtitle');
@@ -352,9 +397,20 @@ const Contact = ({ token, score_data }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Contacts without Job Title</p>
+                      <img
+                        src={findRiskImage(
+                          missing_data?.without_job_title?.risk,
+                        )}
+                      ></img>
                     </p>
                     <p className="report-details__data-div-score">
-                      <strong>{missing_data?.without_job_title}%</strong>
+                      <strong>
+                        {missing_data?.without_job_title?.percent}%
+                      </strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_job_title?.count?.toLocaleString()}{' '}
+                      <span>/ {total_contacts?.toLocaleString()}</span>
                     </p>
                   </div>
                 </div>
@@ -365,7 +421,7 @@ const Contact = ({ token, score_data }) => {
                       ? 'selected-item'
                       : ''
                   }  ${getBorderColor(
-                    missing_data?.without_marketing_contact_status,
+                    missing_data?.without_marketing_contact_status?.risk,
                   )}`}
                   onClick={() => {
                     setThirdRowSelectedItem('withoutMarketingStatus');
@@ -374,12 +430,25 @@ const Contact = ({ token, score_data }) => {
                 >
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
-                      <p> Contacts without Marketing Contact Status</p>
+                      <p> Contacts without Marketing Status</p>
+                      <img
+                        src={findRiskImage(
+                          missing_data?.without_marketing_contact_status?.risk,
+                        )}
+                      ></img>
                     </p>
                     <p className="report-details__data-div-score">
                       <strong>
-                        {missing_data?.without_marketing_contact_status}%
+                        {
+                          missing_data?.without_marketing_contact_status
+                            ?.percent
+                        }
+                        %
                       </strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_marketing_contact_status?.count?.toLocaleString()}{' '}
+                      <span>/ {total_contacts?.toLocaleString()}</span>
                     </p>
                   </div>
                 </div>
@@ -388,7 +457,7 @@ const Contact = ({ token, score_data }) => {
                     thirdRowSelectedItem === 'withLeadScore'
                       ? 'selected-item'
                       : ''
-                  }  ${getBorderColor(missing_data?.without_lead_score)}`}
+                  }  ${getBorderColor(missing_data?.without_lead_score?.risk)}`}
                   onClick={() => {
                     setThirdRowSelectedItem('withLeadScore');
                     handleThirdDataPointChange('hubspotscore');
@@ -396,10 +465,21 @@ const Contact = ({ token, score_data }) => {
                 >
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
-                      <p>Contacts with Lead Score</p>
+                      <p>Contacts without Lead Score</p>
+                      <img
+                        src={findRiskImage(
+                          missing_data?.without_lead_score?.risk,
+                        )}
+                      ></img>
                     </p>
                     <p className="report-details__data-div-score">
-                      <strong>{missing_data?.without_lead_score}%</strong>
+                      <strong>
+                        {missing_data?.without_lead_score?.percent}%
+                      </strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_lead_score?.count?.toLocaleString()}{' '}
+                      <span>/ {total_contacts?.toLocaleString()}</span>
                     </p>
                   </div>
                 </div>
@@ -408,7 +488,7 @@ const Contact = ({ token, score_data }) => {
                     thirdRowSelectedItem === 'withoutPhoneNumber'
                       ? 'selected-item'
                       : ''
-                  }  ${getBorderColor(missing_data?.without_phone)}`}
+                  }  ${getBorderColor(missing_data?.without_phone?.risk)}`}
                   onClick={() => {
                     setThirdRowSelectedItem('withoutPhoneNumber');
                     handleThirdDataPointChange('phone');
@@ -417,9 +497,16 @@ const Contact = ({ token, score_data }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Contacts without Phone No</p>
+                      <img
+                        src={findRiskImage(missing_data?.without_phone?.risk)}
+                      ></img>
                     </p>
                     <p className="report-details__data-div-score">
-                      <strong>{missing_data?.without_phone}%</strong>
+                      <strong>{missing_data?.without_phone?.percent}%</strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_phone?.count?.toLocaleString()}{' '}
+                      <span>/ {total_contacts?.toLocaleString()}</span>
                     </p>
                   </div>
                 </div>
@@ -434,22 +521,6 @@ const Contact = ({ token, score_data }) => {
                       dataPoint={thirdDataPoint}
                     />
                   </div>
-                  <div className="audit-report__risk-text">
-                    <div className="risk-indicator">
-                      <span
-                        className="risk-dot"
-                        style={{ backgroundColor: '#ff00006b' }}
-                      ></span>
-                      <h3>Low Risk</h3>
-                    </div>
-                    <p>
-                      A critical gap in data integrity. Without email IDs,
-                      outreach, automation, and lead nurturing are severely
-                      impacted. This significantly reduces marketing and sales
-                      efficiency, making attribution and engagement tracking
-                      impossible.
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>
@@ -457,39 +528,7 @@ const Contact = ({ token, score_data }) => {
         )}
       </section>
 
-      <section>
-        <div className="report-details__take-action">
-          <h4 className="report-details__action-title">Take Action</h4>
-          <div className="report-details__action-group">
-            <h5>1. Create Active Lists</h5>
-            <div className="report-details__checkbox-group">
-              <label>
-                <input type="checkbox" />
-                Contacts without Email ID
-              </label>
-              <label>
-                <input type="checkbox" />
-                Contacts without Lifecycle Stage
-              </label>
-              <label>
-                <input type="checkbox" />
-                Contacts without Phone Numbers
-              </label>
-              <label>
-                <input type="checkbox" />
-                Contacts without Owners
-              </label>
-            </div>
-            <div className="report-details__action-button-div">
-              <button className="report-details__action-button">
-                Create Lists
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="report-details__subSection">
+      <section className="report-details__duplicate_subSection">
         <div className="report-details__section-header">
           <h3 className="report-details__subtitle">Consider Deleting</h3>
           <button
@@ -530,67 +569,176 @@ const Contact = ({ token, score_data }) => {
         {isDeletingDataExpanded && (
           <>
             <div className="report-details__card">
-              <div className="report-details__duplicate-data-div">
+              <div
+                className={`report-details__duplicate-data-div  ${getBorderColor(
+                  junk_data?.no_activity_in_last_180_days?.risk,
+                )}`}
+              >
                 <div className="report-details__data-item">
                   <p className="report-details__data-div-heading">
                     <p>Contacts have no activity in the last 180 days</p>
                   </p>
                   <p className="report-details__data-div-score">
-                    <strong>{junk_data?.no_activity_in_last_180_days}</strong>
+                    <strong>
+                      {junk_data?.no_activity_in_last_180_days?.count?.toLocaleString()}{' '}
+                      /
+                    </strong>
+                    <span
+                      style={{
+                        fontSize: 'large',
+                        fontWeight: '100',
+                        color: '#333',
+                      }}
+                    >
+                      {total_contacts?.toLocaleString()}
+                    </span>
                   </p>
                 </div>
               </div>
-              <div className="report-details__duplicate-data-div">
+              <div
+                className={`report-details__duplicate-data-div  ${getBorderColor(
+                  junk_data?.internal_team_members?.risk,
+                )}`}
+              >
                 <div className="report-details__data-item">
                   <p className="report-details__data-div-heading">
                     <p>Contacts are internal team members</p>
                   </p>
                   <p className="report-details__data-div-score">
-                    <strong>{junk_data?.internal_team_members}</strong>
+                    <strong>
+                      {junk_data?.internal_team_members?.count?.toLocaleString()}{' '}
+                      /
+                    </strong>
+                    <span
+                      style={{
+                        fontSize: 'large',
+                        fontWeight: '100',
+                        color: '#333',
+                      }}
+                    >
+                      {total_contacts?.toLocaleString()}
+                    </span>
                   </p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div className="audit-report__chart-container">
+                <div className="audit-report__chart">
+                  <BarChart
+                    token={token}
+                    reportId={'1'}
+                    objectType={'contacts'}
+                    dataPoint={firstDatapoint}
+                  />
                 </div>
               </div>
             </div>
           </>
         )}
       </section>
+
       <section>
-        <div className="report-details__take-action">
-          <h4 className="report-details__action-title">Take Action</h4>
+        <div
+          className="report-details__take-action report-details__subSection"
+          id="take_action"
+        >
+          <h4 className="report-details__action-title">Take Bulk Action</h4>
           <div className="report-details__action-group">
-            <h5>1. Create Active Lists</h5>
-            <div className="report-details__checkbox-group">
-              <label>
-                <input type="checkbox" />
-                Contacts have no activity in the last 180 days
-              </label>
-              <label>
-                <input type="checkbox" />
-                Contacts are internal team members
-              </label>
-            </div>
-            <div className="report-details__action-button-div">
-              <button className="report-details__action-button">
-                Create Lists
-              </button>
+            {/* <h5>Create Active Lists</h5> */}
+            <div className="report-details__list">
+              <div className="report-details__checkbox-group">
+                <h5>Are You Kidding Me!</h5>
+                <label>
+                  <input type="checkbox" />
+                  Contacts without First Name
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  Contacts without Email ID
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  Contacts without Associated Company
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  Contacts without Owner
+                </label>
+
+                <button>Create Active List</button>
+              </div>
+              <div className="report-details__checkbox-group">
+                <h5>Must Have</h5>
+                <label>
+                  <input type="checkbox" />
+                  Contacts without Deals
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  Contacts without Lead Source
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  Contacts without Lifecycle Stage
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  Contacts without Lead Status
+                </label>
+
+                <button>Create Active List</button>
+              </div>
+              <div className="report-details__checkbox-group">
+                <h5>Good To Have</h5>
+                <label>
+                  <input type="checkbox" />
+                  Contacts without Job Title
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  Contacts without Marketing Status
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  Contacts without Lead Score
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  Contacts without Phone No
+                </label>
+
+                <button>Create Active List</button>
+              </div>
             </div>
           </div>
           <div className="report-details__action-group">
-            <h5>2. Delete Junk Data</h5>
-            <div className="report-details__checkbox-group">
-              <label>
-                <input type="checkbox" />
-                Contacts have no activity in the last 180 days
-              </label>
-              <label>
-                <input type="checkbox" />
-                Contacts are internal team members
-              </label>
-            </div>
-            <div className="report-details__action-button-div">
-              <button className="report-details__action-button">
-                Delete Junk
-              </button>
+            <div className="report-details__list">
+              <div className="report-details__checkbox-group">
+                <h5>Consider Deleting</h5>
+                <label>
+                  <input type="checkbox" />
+                  Contacts have no activity in the last 180 days
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  Contacts are internal team members
+                </label>
+
+                <button>Create Active List</button>
+              </div>
+              <div className="report-details__checkbox-group">
+                <h5>Delete Junk</h5>
+                <label>
+                  <input type="checkbox" />
+                  Contacts have no activity in the last 180 days
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  Contacts are internal team members
+                </label>
+                <button>Delete Junk</button>
+              </div>
             </div>
           </div>
         </div>

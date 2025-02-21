@@ -6,6 +6,7 @@ import Deal from './Deal';
 import Ticket from './Ticket';
 
 const ReportDetails = ({ token, category, score_data }) => {
+  console.log(category, score_data);
   const formattedCategory =
     category.charAt(0).toUpperCase() + category.slice(1);
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import BarChart from './BarChart';
 
 const Company = ({ token, score_data }) => {
-  const { missing_data, junk_data } = score_data;
+  const { missing_data, junk_data, total_companies } = score_data;
   const [isMissingDataExpanded, setIsMissingDataExpanded] = useState(true);
   const [isDeletingDataExpanded, setIsDeletingDataExpanded] = useState(true);
   const [firstRowSelectedItem, setfirstRowSelectedItem] =
@@ -60,7 +60,9 @@ const Company = ({ token, score_data }) => {
       {/* Missing Data Section */}
       <section className="report-details__subSection">
         <div className="report-details__section-header">
-          <h3 className="report-details__subtitle">Missing Data</h3>
+          <h3 className="report-details__subtitle">
+            Missing Data - <h4 style={{ marginLeft: '4px' }}>Companies</h4>
+          </h3>
           <button
             className="report-details__toggle-button"
             onClick={() => toggleSection('missingData')}
@@ -108,7 +110,7 @@ const Company = ({ token, score_data }) => {
                     firstRowSelectedItem === 'without_name'
                       ? 'selected-item'
                       : ''
-                  }  ${getBorderColor(missing_data?.without_name)}`}
+                  }  ${getBorderColor(missing_data?.without_name?.percent)}`}
                   onClick={() => {
                     setfirstRowSelectedItem('without_name');
                     handleFirstDataPointChange('name');
@@ -119,7 +121,11 @@ const Company = ({ token, score_data }) => {
                       <p>Companies without Name</p>
                     </p>
                     <p className="report-details__data-div-score">
-                      <strong>{missing_data?.without_name}%</strong>
+                      <strong>{missing_data?.without_name?.percent}%</strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_name?.count}{' '}
+                      <span>/ {total_companies}</span>
                     </p>
                   </div>
                 </div>
@@ -129,7 +135,7 @@ const Company = ({ token, score_data }) => {
                     firstRowSelectedItem === 'without_domain'
                       ? 'selected-item'
                       : ''
-                  }  ${getBorderColor(missing_data?.without_domain)}`}
+                  }  ${getBorderColor(missing_data?.without_domain?.percent)}`}
                   onClick={() => {
                     setfirstRowSelectedItem('without_domain');
                     handleFirstDataPointChange('domain');
@@ -140,7 +146,11 @@ const Company = ({ token, score_data }) => {
                       <p> Companies without Domain</p>
                     </p>
                     <p className="report-details__data-div-score">
-                      <strong>{missing_data?.without_domain}%</strong>
+                      <strong>{missing_data?.without_domain?.percent}%</strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_domain?.count}{' '}
+                      <span>/ {total_companies}</span>
                     </p>
                   </div>
                 </div>
@@ -150,7 +160,7 @@ const Company = ({ token, score_data }) => {
                       ? 'selected-item'
                       : ''
                   }  ${getBorderColor(
-                    missing_data?.without_associated_contacts,
+                    missing_data?.without_associated_contacts?.percent,
                   )}`}
                   onClick={() => {
                     setfirstRowSelectedItem('without_associated_contacts');
@@ -163,8 +173,12 @@ const Company = ({ token, score_data }) => {
                     </p>
                     <p className="report-details__data-div-score">
                       <strong>
-                        {missing_data?.without_associated_contacts}%
+                        {missing_data?.without_associated_contacts?.percent}%
                       </strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_associated_contacts?.count}{' '}
+                      <span>/ {total_companies}</span>
                     </p>
                   </div>
                 </div>
@@ -173,7 +187,7 @@ const Company = ({ token, score_data }) => {
                     firstRowSelectedItem === 'without_owner'
                       ? 'selected-item'
                       : ''
-                  }  ${getBorderColor(missing_data?.without_owner)}`}
+                  }  ${getBorderColor(missing_data?.without_owner?.percent)}`}
                   onClick={() => {
                     setfirstRowSelectedItem('without_owner');
                     handleFirstDataPointChange('hubspot_owner_id');
@@ -184,7 +198,11 @@ const Company = ({ token, score_data }) => {
                       <p>Companies without an Owner</p>
                     </p>
                     <p className="report-details__data-div-score">
-                      <strong>{missing_data?.without_owner}%</strong>
+                      <strong>{missing_data?.without_owner?.percent}%</strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_owner?.count}{' '}
+                      <span>/ {total_companies}</span>
                     </p>
                   </div>
                 </div>
@@ -199,19 +217,6 @@ const Company = ({ token, score_data }) => {
                       dataPoint={firstDatapoint}
                     />
                   </div>
-                  <div className="audit-report__risk-text">
-                    <div className="risk-indicator">
-                      <span className="risk-dot-high"></span>
-                      <h3>High Risk</h3>
-                    </div>
-                    <p>
-                      A critical gap in data integrity. Without email IDs,
-                      outreach, automation, and lead nurturing are severely
-                      impacted. This significantly reduces marketing and sales
-                      efficiency, making attribution and engagement tracking
-                      impossible.
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>
@@ -225,7 +230,9 @@ const Company = ({ token, score_data }) => {
                     secondRowSelectedItem === 'without_deals'
                       ? 'selected-item'
                       : ''
-                  }  ${getBorderColor(missing_data?.without_deals)}`}
+                  }  ${getBorderColor(
+                    missing_data?.without_associated_deals?.percent,
+                  )}`}
                   onClick={() => {
                     setSecondRowSelectedItem('without_deals');
                     handleSecondDataPointChange('num_associated_deals');
@@ -233,10 +240,16 @@ const Company = ({ token, score_data }) => {
                 >
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
-                      <p>Companies without Deals(Opportunity/Customer)</p>
+                      <p>Companies without Deals (Opportunity/Customer)</p>
                     </p>
                     <p className="report-details__data-div-score">
-                      <strong>{missing_data?.without_deals}%</strong>
+                      <strong>
+                        {missing_data?.without_associated_deals?.percent}%
+                      </strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_associated_deals?.count}{' '}
+                      <span>/ {total_companies}</span>
                     </p>
                   </div>
                 </div>
@@ -246,7 +259,9 @@ const Company = ({ token, score_data }) => {
                     secondRowSelectedItem === 'without_lead_source'
                       ? 'selected-item'
                       : ''
-                  }  ${getBorderColor(missing_data?.without_lead_source)}`}
+                  }  ${getBorderColor(
+                    missing_data?.without_lead_source?.percent,
+                  )}`}
                   onClick={() => {
                     setSecondRowSelectedItem('without_lead_source');
                     handleSecondDataPointChange('lead_source');
@@ -257,7 +272,13 @@ const Company = ({ token, score_data }) => {
                       <p> Companies without Lead Source</p>
                     </p>
                     <p className="report-details__data-div-score">
-                      <strong>{missing_data?.without_lead_source}%</strong>
+                      <strong>
+                        {missing_data?.without_lead_source?.percent}%
+                      </strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_lead_source?.count}{' '}
+                      <span>/ {total_companies}</span>
                     </p>
                   </div>
                 </div>
@@ -266,7 +287,9 @@ const Company = ({ token, score_data }) => {
                     secondRowSelectedItem === 'without_lifecycle_stage'
                       ? 'selected-item'
                       : ''
-                  }  ${getBorderColor(missing_data?.without_lifecycle_stage)}`}
+                  }  ${getBorderColor(
+                    missing_data?.without_lifecycle_stage?.percent,
+                  )}`}
                   onClick={() => {
                     setSecondRowSelectedItem('without_lifecycle_stage');
                     handleSecondDataPointChange('lifecyclestage');
@@ -277,7 +300,13 @@ const Company = ({ token, score_data }) => {
                       <p>Companies without Lifecycle Stage</p>
                     </p>
                     <p className="report-details__data-div-score">
-                      <strong>{missing_data?.without_lifecycle_stage}%</strong>
+                      <strong>
+                        {missing_data?.without_lifecycle_stage?.percent}%
+                      </strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_lifecycle_stage?.count}{' '}
+                      <span>/ {total_companies}</span>
                     </p>
                   </div>
                 </div>
@@ -286,7 +315,9 @@ const Company = ({ token, score_data }) => {
                     secondRowSelectedItem === 'without_region'
                       ? 'selected-item'
                       : ''
-                  }  ${getBorderColor(missing_data?.without_region)}`}
+                  }  ${getBorderColor(
+                    missing_data?.without_country_region?.percent,
+                  )}`}
                   onClick={() => {
                     setSecondRowSelectedItem('without_region');
                     handleSecondDataPointChange('country');
@@ -297,7 +328,13 @@ const Company = ({ token, score_data }) => {
                       <p>Companies without Country/Region</p>
                     </p>
                     <p className="report-details__data-div-score">
-                      <strong>{missing_data?.without_region}%</strong>
+                      <strong>
+                        {missing_data?.without_country_region?.percent}%
+                      </strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_country_region?.count}{' '}
+                      <span>/ {total_companies}</span>
                     </p>
                   </div>
                 </div>
@@ -312,19 +349,6 @@ const Company = ({ token, score_data }) => {
                       dataPoint={secondDataPoint}
                     />
                   </div>
-                  <div className="audit-report__risk-text">
-                    <div className="risk-indicator">
-                      <span className="risk-dot-medium"></span>
-                      <h3>Medium Risk</h3>
-                    </div>
-                    <p>
-                      A critical gap in data integrity. Without email IDs,
-                      outreach, automation, and lead nurturing are severely
-                      impacted. This significantly reduces marketing and sales
-                      efficiency, making attribution and engagement tracking
-                      impossible.
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>
@@ -338,7 +362,9 @@ const Company = ({ token, score_data }) => {
                     thirdRowSelectedItem === 'without_employee_count'
                       ? 'selected-item'
                       : ''
-                  }  ${getBorderColor(missing_data?.without_employee_count)}`}
+                  }  ${getBorderColor(
+                    missing_data?.without_num_of_employees?.percent,
+                  )}`}
                   onClick={() => {
                     setThirdRowSelectedItem('without_employee_count');
                     handleThirdDataPointChange('numberofemployees');
@@ -349,7 +375,13 @@ const Company = ({ token, score_data }) => {
                       <p>Companies without Number of Employees</p>
                     </p>
                     <p className="report-details__data-div-score">
-                      <strong>{missing_data?.without_employee_count}%</strong>
+                      <strong>
+                        {missing_data?.without_num_of_employees?.percent}%
+                      </strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_num_of_employees?.count}{' '}
+                      <span>/ {total_companies}</span>
                     </p>
                   </div>
                 </div>
@@ -359,7 +391,7 @@ const Company = ({ token, score_data }) => {
                     thirdRowSelectedItem === 'without_revenue'
                       ? 'selected-item'
                       : ''
-                  }  ${getBorderColor(missing_data?.without_revenue)}`}
+                  }  ${getBorderColor(missing_data?.without_revenue?.percent)}`}
                   onClick={() => {
                     setThirdRowSelectedItem('without_revenue');
                     handleThirdDataPointChange('annualrevenue');
@@ -370,7 +402,11 @@ const Company = ({ token, score_data }) => {
                       <p> Companies without Revenue</p>
                     </p>
                     <p className="report-details__data-div-score">
-                      <strong>{missing_data?.without_revenue}%</strong>
+                      <strong>{missing_data?.without_revenue?.percent}%</strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_revenue?.count}{' '}
+                      <span>/ {total_companies}</span>
                     </p>
                   </div>
                 </div>
@@ -379,7 +415,9 @@ const Company = ({ token, score_data }) => {
                     thirdRowSelectedItem === 'without_linkedin'
                       ? 'selected-item'
                       : ''
-                  }  ${getBorderColor(missing_data?.without_linkedin)}`}
+                  }  ${getBorderColor(
+                    missing_data?.without_linkedin_url?.percent,
+                  )}`}
                   onClick={() => {
                     setThirdRowSelectedItem('without_linkedin');
                     handleThirdDataPointChange('linkedin_company_page');
@@ -390,7 +428,13 @@ const Company = ({ token, score_data }) => {
                       <p>Companies with LinkedIn Page URL</p>
                     </p>
                     <p className="report-details__data-div-score">
-                      <strong>{missing_data?.without_linkedin}%</strong>
+                      <strong>
+                        {missing_data?.without_linkedin_url?.percent}%
+                      </strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_linkedin_url?.count}{' '}
+                      <span>/ {total_companies}</span>
                     </p>
                   </div>
                 </div>
@@ -399,7 +443,9 @@ const Company = ({ token, score_data }) => {
                     thirdRowSelectedItem === 'without_phone'
                       ? 'selected-item'
                       : ''
-                  }  ${getBorderColor(missing_data?.without_phone)}`}
+                  }  ${getBorderColor(
+                    missing_data?.without_phone_number?.percent,
+                  )}`}
                   onClick={() => {
                     setThirdRowSelectedItem('without_phone');
                     handleThirdDataPointChange('phone');
@@ -410,7 +456,13 @@ const Company = ({ token, score_data }) => {
                       <p>Companies without Phone No</p>
                     </p>
                     <p className="report-details__data-div-score">
-                      <strong>{missing_data?.without_phone}%</strong>
+                      <strong>
+                        {missing_data?.without_phone_number?.percent}%
+                      </strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_phone_number?.count}{' '}
+                      <span>/ {total_companies}</span>
                     </p>
                   </div>
                 </div>
@@ -425,56 +477,11 @@ const Company = ({ token, score_data }) => {
                       dataPoint={thirdDataPoint}
                     />
                   </div>
-                  <div className="audit-report__risk-text">
-                    <div className="risk-indicator">
-                      <span className="risk-dot-low"></span>
-                      <h3>Low Risk</h3>
-                    </div>
-                    <p>
-                      A critical gap in data integrity. Without email IDs,
-                      outreach, automation, and lead nurturing are severely
-                      impacted. This significantly reduces marketing and sales
-                      efficiency, making attribution and engagement tracking
-                      impossible.
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>
           </>
         )}
-      </section>
-
-      <section>
-        <div className="report-details__take-action">
-          <h4 className="report-details__action-title">Take Action</h4>
-          <div className="report-details__action-group">
-            <h5>1. Create Active Lists</h5>
-            <div className="report-details__checkbox-group">
-              <label>
-                <input type="checkbox" />
-                Companies without Email ID
-              </label>
-              <label>
-                <input type="checkbox" />
-                Companies without Lifecycle Stage
-              </label>
-              <label>
-                <input type="checkbox" />
-                Companies without Phone Numbers
-              </label>
-              <label>
-                <input type="checkbox" />
-                Companies without Owner
-              </label>
-            </div>
-            <div className="report-details__action-button-div">
-              <button className="report-details__action-button">
-                Create Lists
-              </button>
-            </div>
-          </div>
-        </div>
       </section>
 
       <section className="report-details__subSection">
@@ -524,18 +531,34 @@ const Company = ({ token, score_data }) => {
                     <p>Companies have no activity in the last 180 days</p>
                   </p>
                   <p className="report-details__data-div-score">
-                    <strong>{junk_data?.no_activity_in_last_180_days}</strong>
+                    <strong>
+                      {junk_data?.no_activity_in_last_180_days?.count?.toLocaleString()}
+                    </strong>
                   </p>
                 </div>
               </div>
               <div className="report-details__duplicate-data-div">
                 <div className="report-details__data-item">
                   <p className="report-details__data-div-heading">
-                    <p>Companies are internal team members</p>
+                    <p>Companies without name and domain</p>
                   </p>
                   <p className="report-details__data-div-score">
-                    <strong>{junk_data?.internal_team_members}</strong>
+                    <strong>
+                      {junk_data?.without_name_and_domain?.count?.toLocaleString()}
+                    </strong>
                   </p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div className="audit-report__chart-container">
+                <div className="audit-report__chart">
+                  <BarChart
+                    token={token}
+                    reportId={'1'}
+                    objectType={'companies'}
+                    dataPoint={firstDatapoint}
+                  />
                 </div>
               </div>
             </div>
@@ -543,42 +566,106 @@ const Company = ({ token, score_data }) => {
         )}
       </section>
       <section>
-        <div className="report-details__take-action">
-          <h4 className="report-details__action-title">Take Action</h4>
+        <div
+          className="report-details__take-action report-details__subSection"
+          id="take_action"
+        >
+          <h4 className="report-details__action-title">Take Bulk Action</h4>
           <div className="report-details__action-group">
-            <h5>1. Create Active Lists</h5>
-            <div className="report-details__checkbox-group">
-              <label>
-                <input type="checkbox" />
-                Companies have no activity in the last 180 days
-              </label>
-              <label>
-                <input type="checkbox" />
-                Companies are internal team members
-              </label>
-            </div>
-            <div className="report-details__action-button-div">
-              <button className="report-details__action-button">
-                Create Lists
-              </button>
+            {/* <h5>Create Active Lists</h5> */}
+            <div className="report-details__list">
+              <div className="report-details__checkbox-group">
+                <h5>Are You Kidding Me!</h5>
+                <label>
+                  <input type="checkbox" />
+                  Companies without Name
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  Companies without Domain
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  Companies without Associated Contact
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  Companies without an Owner
+                </label>
+
+                <button>Create Active List</button>
+              </div>
+              <div className="report-details__checkbox-group">
+                <h5>Must Have</h5>
+                <label>
+                  <input type="checkbox" />
+                  Companies without Deals
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  Companies without Lead Source
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  Companies without Lifecycle Stage
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  Companies without Country/Region
+                </label>
+
+                <button>Create Active List</button>
+              </div>
+              <div className="report-details__checkbox-group">
+                <h5>Good To Have</h5>
+                <label>
+                  <input type="checkbox" />
+                  Companies without Number of Employees
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  Companies without Revenue
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  Companies without LinkedIn Page URL
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  Companies without Phone No
+                </label>
+
+                <button>Create Active List</button>
+              </div>
             </div>
           </div>
           <div className="report-details__action-group">
-            <h5>2. Delete Junk Data</h5>
-            <div className="report-details__checkbox-group">
-              <label>
-                <input type="checkbox" />
-                Companies have no activity in the last 180 days
-              </label>
-              <label>
-                <input type="checkbox" />
-                Companies are internal team members
-              </label>
-            </div>
-            <div className="report-details__action-button-div">
-              <button className="report-details__action-button">
-                Delete Junk
-              </button>
+            <div className="report-details__list">
+              <div className="report-details__checkbox-group">
+                <h5>Consider Deleting</h5>
+                <label>
+                  <input type="checkbox" />
+                  Company without activity in the last 180 days
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  Companies without name and domain
+                </label>
+
+                <button>Create Active List</button>
+              </div>
+              <div className="report-details__checkbox-group">
+                <h5>Delete Junk</h5>
+                <label>
+                  <input type="checkbox" />
+                  Company without activity in the last 180 days
+                </label>
+                <label>
+                  <input type="checkbox" />
+                  Companies without name and domain
+                </label>
+                <button>Delete Junk</button>
+              </div>
             </div>
           </div>
         </div>
