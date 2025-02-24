@@ -76,12 +76,20 @@
 .modal-content {
   background: white;
   padding: 20px;
-  border-radius: 8px;
+  border-radius: 4px;
+  height: 30%;
   text-align: center;
+  align-content: center;
 }
 
 .modal-content p {
   font-size: medium;
+  margin-bottom: 1rem;
+}
+
+.modal-content div {
+  display: flex;
+  justify-content: center;
 }
 
 .confirm-btn,

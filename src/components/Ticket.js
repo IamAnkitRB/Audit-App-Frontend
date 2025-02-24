@@ -12,6 +12,73 @@ const Ticket = ({ token, score_data }) => {
   const [firstDatapoint, setFirstDatapoint] = useState('subject');
   const [secondDataPoint, setSecondDataPoint] = useState('hs_ticket_priority');
 
+  const [ticketActiveListSelections, setTicketActiveListSelections] = useState({
+    group1: {
+      tickets_without_name: false,
+      tickets_without_owner: false,
+      tickets_without_num_associated_company: false,
+    },
+    group2: {
+      tickets_without_priority: false,
+      tickets_without_description: false,
+      tickets_without_pipeline_name: false,
+      tickets_without_status: false,
+    },
+    group3: {
+      tickets_without_name_and_owner: false,
+      tickets_without_activity_180: false,
+    },
+  });
+
+  const handleTicketCheckboxChange = (group, key, checked) => {
+    setTicketActiveListSelections((prev) => ({
+      ...prev,
+      [group]: {
+        ...prev[group],
+        [key]: checked,
+      },
+    }));
+  };
+
+  const handleCreateTicketActiveList = async (group) => {
+    const selectedKeys = Object.entries(ticketActiveListSelections[group])
+      .filter(([key, value]) => value)
+      .map(([key]) => key);
+
+    if (!selectedKeys.length) {
+      alert('Please select at least one property.');
+      return;
+    }
+
+    const payload = {
+      objectname: 'ticket',
+      propertynames: selectedKeys,
+    };
+
+    try {
+      const response = await fetch(
+        'https://deep-socially-polliwog.ngrok-free.app/createlist',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            state: token,
+          },
+          body: JSON.stringify(payload),
+        },
+      );
+      const data = await response.json();
+      if (response.ok) {
+        alert('Active list(s) created successfully!');
+      } else {
+        alert('Error creating active list: ' + data.error);
+      }
+    } catch (error) {
+      console.error('API error:', error);
+      alert('Network error. Please try again later.');
+    }
+  };
+
   const handleFirstDataPointChange = (dataPoint) => {
     setFirstDatapoint(dataPoint);
   };
@@ -206,7 +273,7 @@ const Ticket = ({ token, score_data }) => {
                   <div className="audit-report__chart">
                     <BarChart
                       token={token}
-                      reportId={'1'}
+                      reportId={'59'}
                       objectType={'tickets'}
                       dataPoint={firstDatapoint}
                     />
@@ -334,7 +401,7 @@ const Ticket = ({ token, score_data }) => {
                   <div className="audit-report__chart">
                     <BarChart
                       token={token}
-                      reportId={'1'}
+                      reportId={'59'}
                       objectType={'tickets'}
                       dataPoint={secondDataPoint}
                     />
@@ -414,7 +481,7 @@ const Ticket = ({ token, score_data }) => {
                 <div className="audit-report__chart">
                   <BarChart
                     token={token}
-                    reportId={'1'}
+                    reportId={'59'}
                     objectType={'tickets'}
                     dataPoint={firstDatapoint}
                   />
@@ -431,66 +498,199 @@ const Ticket = ({ token, score_data }) => {
         >
           <h4 className="report-details__action-title">Take Bulk Action</h4>
           <div className="report-details__action-group">
-            {/* <h5>Create Active Lists</h5> */}
             <div className="report-details__list">
+              {/* Group 1: Are You Kidding Me! */}
               <div className="report-details__checkbox-group">
                 <h5>Are You Kidding Me!</h5>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      ticketActiveListSelections.group1.tickets_without_name
+                    }
+                    onChange={(e) =>
+                      handleTicketCheckboxChange(
+                        'group1',
+                        'tickets_without_name',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Tickets without Name
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      ticketActiveListSelections.group1.tickets_without_owner
+                    }
+                    onChange={(e) =>
+                      handleTicketCheckboxChange(
+                        'group1',
+                        'tickets_without_owner',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Tickets without Owner
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  {/* Extra label remains unchanged */}
+                  <input
+                    type="checkbox"
+                    checked={
+                      ticketActiveListSelections.group1
+                        .tickets_without_num_associated_contact
+                    }
+                    onChange={(e) =>
+                      handleTicketCheckboxChange(
+                        'group1',
+                        'tickets_without_num_associated_contact',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Tickets without Associated Contact
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      ticketActiveListSelections.group1
+                        .tickets_without_num_associated_company
+                    }
+                    onChange={(e) =>
+                      handleTicketCheckboxChange(
+                        'group1',
+                        'tickets_without_num_associated_company',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Tickets without Associated Company
                 </label>
-
-                <button>Create Active List</button>
+                <button onClick={() => handleCreateTicketActiveList('group1')}>
+                  Create Active List
+                </button>
               </div>
+
+              {/* Group 2: Must Have */}
               <div className="report-details__checkbox-group">
                 <h5>Must Have</h5>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      ticketActiveListSelections.group2.tickets_without_priority
+                    }
+                    onChange={(e) =>
+                      handleTicketCheckboxChange(
+                        'group2',
+                        'tickets_without_priority',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Tickets without Priority
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      ticketActiveListSelections.group2
+                        .tickets_without_description
+                    }
+                    onChange={(e) =>
+                      handleTicketCheckboxChange(
+                        'group2',
+                        'tickets_without_description',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Tickets without Ticket Description
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      ticketActiveListSelections.group2
+                        .tickets_without_pipeline_name
+                    }
+                    onChange={(e) =>
+                      handleTicketCheckboxChange(
+                        'group2',
+                        'tickets_without_pipeline_name',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Lost Tickets without Pipeline Name
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      ticketActiveListSelections.group2.tickets_without_status
+                    }
+                    onChange={(e) =>
+                      handleTicketCheckboxChange(
+                        'group2',
+                        'tickets_without_status',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Tickets without Status
                 </label>
-
-                <button>Create Active List</button>
+                <button onClick={() => handleCreateTicketActiveList('group2')}>
+                  Create Active List
+                </button>
               </div>
             </div>
           </div>
           <div className="report-details__action-group">
             <div className="report-details__list">
+              {/* Group 3: Consider Deleting */}
               <div className="report-details__checkbox-group">
                 <h5>Consider Deleting</h5>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      ticketActiveListSelections.group3
+                        .tickets_without_activity_180
+                    }
+                    onChange={(e) =>
+                      handleTicketCheckboxChange(
+                        'group3',
+                        'tickets_without_activity_180',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Tickets have no activity in the last 180 days
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      ticketActiveListSelections.group3
+                        .tickets_without_name_and_owner
+                    }
+                    onChange={(e) =>
+                      handleTicketCheckboxChange(
+                        'group3',
+                        'tickets_without_name_and_owner',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Tickets without name and owner
                 </label>
-
-                <button>Create Active List</button>
+                <button onClick={() => handleCreateTicketActiveList('group3')}>
+                  Create Active List
+                </button>
               </div>
               <div className="report-details__checkbox-group">
                 <h5>Delete Junk</h5>

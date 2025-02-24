@@ -98,17 +98,24 @@ export const fetchGraphData = async (
   objectType,
   graphType,
   dataPoint,
+  riskLevel,
 ) => {
   try {
     const response = await fetch(
-      'https://deep-socially-polliwog.ngrok-free.app/get_graph_data',
+      'https://deep-socially-polliwog.ngrok-free.app/fetchgraphdata',
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           state: token,
         },
-        body: JSON.stringify({ reportId, objectType, dataPoint, graphType }),
+        body: JSON.stringify({
+          reportId: '59',
+          objectType,
+          dataPoint,
+          graphType,
+          riskLevel,
+        }),
       },
     );
 

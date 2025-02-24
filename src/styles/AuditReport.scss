@@ -167,6 +167,7 @@
       border-radius: 0.5rem;
       text-align: start;
       border: 1px solid gray;
+      position: relative;
 
       &-heading {
         font-size: medium;
@@ -183,6 +184,11 @@
         font-weight: normal;
       }
     }
+  }
+
+  &__data-div img {
+    height: 1rem;
+    margin-top: 12px;
   }
 
   &__data-div:hover {
@@ -378,6 +384,13 @@
     &__data-div {
       width: 100%;
       text-align: left;
+      position: relative;
+    }
+    &__data-div img {
+      position: relative;
+      bottom: 1.5rem;
+      height: 1rem;
+      left: 12.5rem;
     }
 
     .glassmorhp {
@@ -517,10 +530,12 @@
   box-shadow: none;
   color: #696969;
   border: none;
-  padding: 8px 12px;
   cursor: pointer;
   border-radius: 5px;
   font-size: small;
+  padding: 0px 5px;
+  height: 40px;
+  margin-top: 3px;
 }
 
 .dropdown-menu {

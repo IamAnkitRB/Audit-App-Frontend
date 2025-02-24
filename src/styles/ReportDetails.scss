@@ -108,9 +108,9 @@
 
   &__data-item p img {
     position: absolute;
-    height: 1.5rem;
-    top: 50%;
-    right: 10px;
+    height: 1rem;
+    top: 85%;
+    right: 15px;
   }
 
   &__data-div-heading {
@@ -364,6 +364,7 @@
 
 .audit-report__chart-container {
   display: flex;
+  justify-content: center;
 }
 .audit-report__chart {
   height: 27rem;
@@ -375,13 +376,29 @@
 
 .audit-report__chart canvas {
   height: 360px !important;
-  width: 45rem !important;
+  width: 65vw !important;
+  margin-left: 2rem;
+}
+
+@media (min-width: 1200px) {
+  /* Adjust this breakpoint as needed */
+  .audit-report__chart canvas {
+    height: 400px !important;
+    width: 65vw !important;
+    margin-left: 3rem;
+  }
 }
 
 .audit-report__risk-text {
   flex: 1;
   margin: 0 2rem;
   text-align: start;
+}
+
+.graph-text {
+  font-size: medium;
+  text-align: start;
+  margin-left: 2rem;
 }
 
 .risk-indicator {

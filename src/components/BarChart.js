@@ -36,7 +36,7 @@ const dummyDataBySource = {
   ],
   datasets: [
     {
-      label: 'By Source',
+      label: 'Via Source',
       data: [23, 87, 59, 75, 11, 55, 1, 95, 62, 51],
       backgroundColor: 'rgba(200, 200, 200, 0.5)',
     },
@@ -58,7 +58,7 @@ const dummyDataByOwners = {
   ],
   datasets: [
     {
-      label: 'By Owners',
+      label: 'Via Owners',
       data: [40, 65, 75, 50, 90, 33, 28, 66, 77, 45],
       backgroundColor: 'rgba(200, 200, 200, 0.5)',
     },
@@ -66,35 +66,73 @@ const dummyDataByOwners = {
 };
 
 const BarChart = ({ token, reportId, objectType, dataPoint }) => {
-  const [chartData, setChartData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [chartDataBySource, setChartDataBySource] = useState(null);
+  const [chartDataByOwners, setChartDataByOwners] = useState(null);
   const [view, setView] = useState('source'); // Toggle state ('source' or 'owners')
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchChartData = async () => {
+      setLoading(true);
       try {
         const result = await fetchGraphData(
           token,
           reportId,
           objectType,
-          'bar', // assuming graphType is 'bar'
+          'owner', // assuming graphType is 'bar'
           dataPoint,
+          'High Risk',
         );
 
         if (result && result.data) {
-          const labels = Object.keys(result.data);
-          const values = Object.values(result.data);
+          // Data for "By Source"
+          const labelsBySource = Object.keys(
+            result.data.graph_data_by_source[dataPoint],
+          );
+          const valuesBySource = Object.values(
+            result.data.graph_data_by_source[dataPoint],
+          );
 
-          setChartData({
-            labels,
+          setChartDataBySource({
+            labels: labelsBySource,
             datasets: [
               {
-                label: dataPoint,
-                data: values,
-                backgroundColor:
-                  view === 'source'
-                    ? 'rgba(54, 162, 235, 0.5)'
-                    : 'rgba(100, 181, 246, 0.5)',
+                label: `By Source - ${dataPoint}`,
+                data: valuesBySource,
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+              },
+            ],
+          });
+
+          const ownersData = Object.entries(
+            result.data.graph_data_by_owner[dataPoint],
+          );
+
+          ownersData.sort((a, b) => b[1] - a[1]);
+
+          const topOwners = ownersData.slice(0, 9);
+          const remainingOwners = ownersData.slice(9);
+
+          const othersValue = remainingOwners.reduce(
+            (sum, owner) => sum + owner[1],
+            0,
+          );
+
+          const labelsByOwners = topOwners.map((owner) => owner[0]);
+          const valuesByOwners = topOwners.map((owner) => owner[1]);
+
+          if (othersValue > 0) {
+            labelsByOwners.push('Others');
+            valuesByOwners.push(othersValue);
+          }
+
+          setChartDataByOwners({
+            labels: labelsByOwners,
+            datasets: [
+              {
+                label: `Via Owners - ${dataPoint}`,
+                data: valuesByOwners,
+                backgroundColor: 'rgba(100, 181, 246, 0.5)',
               },
             ],
           });
@@ -105,13 +143,13 @@ const BarChart = ({ token, reportId, objectType, dataPoint }) => {
         setLoading(false);
       }
     };
-
     fetchChartData();
-  }, [token, reportId, objectType, dataPoint, view]);
+  }, [token, reportId, objectType, dataPoint]);
 
   const options = {
     responsive: true,
     indexAxis: 'y',
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         display: false,
@@ -121,64 +159,79 @@ const BarChart = ({ token, reportId, objectType, dataPoint }) => {
       x: {
         beginAtZero: true,
         grid: { display: false },
+        ticks: {
+          color: '#000',
+        },
       },
       y: {
         grid: { display: false },
+        ticks: {
+          color: '#000',
+          align: 'start',
+          padding: 5,
+          callback: function (value) {
+            return this.getLabelForValue(value)
+              .replace(/_/g, ' ')
+              .toLowerCase()
+              .replace(/\b\w/g, (char) => char.toUpperCase());
+          },
+        },
       },
     },
   };
 
   return (
     <div>
-      {/* Graph */}
-      <div style={{ margin: '0.5rem 0' }}>
-        <p className="graph-text">
-          A critical gap in data integrity. Without email IDs, outreach,
-          automation, and lead nurturing are severely impacted. This
-          significantly reduces marketing and sales efficiency, making
-          attribution and engagement tracking impossible.
-        </p>
-        {/* Toggle Switch */}
-        <div className="toggle-container">
-          <span
-            className={view === 'source' ? 'active' : ''}
-            onClick={() => setView('source')}
-          >
-            By Source
-          </span>
+      <p className="graph-text">
+        A critical gap in data integrity. Without email IDs, outreach,
+        automation, and lead nurturing are severely impacted. This significantly
+        reduces marketing and sales efficiency, making attribution and
+        engagement tracking impossible.
+      </p>
+      {/* Toggle Switch */}
+      <div className="toggle-container">
+        <span
+          className={view === 'source' ? 'active' : ''}
+          onClick={() => setView('source')}
+        >
+          Via Source
+        </span>
+        <div
+          className="toggle-switch"
+          onClick={() => setView(view === 'source' ? 'owners' : 'source')}
+        >
           <div
-            className="toggle-switch"
-            onClick={() => setView(view === 'source' ? 'owners' : 'source')}
-          >
-            <div
-              className={`toggle-slider ${view === 'owners' ? 'right' : ''}`}
-            ></div>
-          </div>
-          <span
-            className={view === 'owners' ? 'active' : ''}
-            onClick={() => setView('owners')}
-          >
-            By Owners
-          </span>
+            className={`toggle-slider ${view === 'owners' ? 'right' : ''}`}
+          ></div>
         </div>
-
-        {loading || !chartData ? (
-          <div>
-            <div style={{ width: '100%', opacity: 0.6, marginLeft: '1.5rem' }}>
-              <Bar
-                data={view === 'source' ? dummyDataBySource : dummyDataByOwners}
-                options={options}
-              />
-            </div>
-            <div className="loading-container">
-              <div className="loader"></div>
-              <p style={{ fontSize: 'medium' }}>Generating Graph...</p>
-            </div>
-          </div>
-        ) : (
-          <Bar data={chartData} options={options} />
-        )}
+        <span
+          className={view === 'owners' ? 'active' : ''}
+          onClick={() => setView('owners')}
+        >
+          Via Owners
+        </span>
       </div>
+
+      {/* Graph */}
+      {loading ? (
+        <div className="loading-container">
+          <div className="loader"></div>
+          <Bar
+            data={view === 'source' ? dummyDataBySource : chartDataByOwners}
+            options={options}
+          />
+          <p>Generating Graph...</p>
+        </div>
+      ) : (
+        <Bar
+          data={
+            view === 'source'
+              ? chartDataBySource || dummyDataBySource
+              : chartDataByOwners || dummyDataByOwners
+          }
+          options={options}
+        />
+      )}
 
       {/* Styles */}
       <style>
@@ -188,7 +241,6 @@ const BarChart = ({ token, reportId, objectType, dataPoint }) => {
           justify-content: center;
           align-items: center;
           margin-bottom: 1rem;
-          width: 65%;
         }
 
         .toggle-switch {
@@ -210,7 +262,6 @@ const BarChart = ({ token, reportId, objectType, dataPoint }) => {
           top: 0;
           left: 0;
           transition: 0.3s;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .toggle-slider.right {
@@ -219,34 +270,15 @@ const BarChart = ({ token, reportId, objectType, dataPoint }) => {
 
         .toggle-container span {
           font-size: 1rem;
-          color: #777;
           cursor: pointer;
-          transition: color 0.3s;
-        }
-
-        .toggle-container span.active {
-          color: black;
-          font-weight: bold;
-        }
-
-        .graph-text {
-          color: #333;
-          font-size: medium;
-          text-align: start;
-          width: 71%;
-          margin-left: 1.6rem;
         }
 
         .loading-container {
           display: flex;
           flex-direction: column;
           align-items: center;
-          position: relative;
-          bottom: 22rem;
+          height: 200px;
           justify-content: center;
-          height: 360px;
-          width: 45rem;
-          backdrop-filter: blur(1px);
         }
 
         .loader {

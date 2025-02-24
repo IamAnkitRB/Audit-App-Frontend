@@ -18,6 +18,31 @@ const Company = ({ token, score_data }) => {
   );
   const [thirdDataPoint, setThirdDataPoint] = useState('numberofemployees');
 
+  const [activeListSelections, setActiveListSelections] = useState({
+    group1: {
+      companies_without_name: false,
+      companies_without_domain: false,
+      companies_without_num_associated_con: false,
+      companies_without_owner: false,
+    },
+    group2: {
+      companies_without_associated_deals: false,
+      companies_without_industry: false,
+      companies_without_lifecycle_stage: false,
+      companies_without_country_region: false,
+    },
+    group3: {
+      companies_without_num_of_employee: false,
+      companies_without_revenue: false,
+      companies_without_linkedin_url: false,
+      companies_without_phone_num: false,
+    },
+    group4: {
+      companies_without_name_and_domain: false,
+      companies_without_activity_180_days: false,
+    },
+  });
+
   const handleFirstDataPointChange = (dataPoint) => {
     setFirstDatapoint(dataPoint);
   };
@@ -28,6 +53,57 @@ const Company = ({ token, score_data }) => {
 
   const handleThirdDataPointChange = (dataPoint) => {
     setThirdDataPoint(dataPoint);
+  };
+
+  const handleCheckboxChange = (group, property, checked) => {
+    setActiveListSelections((prev) => ({
+      ...prev,
+      [group]: {
+        ...prev[group],
+        [property]: checked,
+      },
+    }));
+  };
+
+  const handleCreateActiveList = async (group) => {
+    // Gather selected property names for the group
+    const selectedProperties = Object.entries(activeListSelections[group])
+      .filter(([key, value]) => value)
+      .map(([key]) => key);
+
+    if (!selectedProperties.length) {
+      alert('Please select at least one property.');
+      return;
+    }
+
+    // Build the payload; using "company" as the object name in this example.
+    const payload = {
+      objectname: 'company',
+      propertynames: selectedProperties,
+    };
+
+    try {
+      const response = await fetch(
+        'https://deep-socially-polliwog.ngrok-free.app/createlist',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            state: token, // pass your token here
+          },
+          body: JSON.stringify(payload),
+        },
+      );
+      const data = await response.json();
+      if (response.ok) {
+        console.log('Active list(s) created successfully!');
+      } else {
+        console.log('Error creating active list: ' + data.error);
+      }
+    } catch (error) {
+      console.error('API error:', error);
+      alert('Network error. Please try again later.');
+    }
   };
 
   const getBorderColor = (score) => {
@@ -212,7 +288,7 @@ const Company = ({ token, score_data }) => {
                   <div className="audit-report__chart">
                     <BarChart
                       token={token}
-                      reportId={'1'}
+                      reportId={'59'}
                       objectType={'companies'}
                       dataPoint={firstDatapoint}
                     />
@@ -256,28 +332,28 @@ const Company = ({ token, score_data }) => {
 
                 <div
                   className={`report-details__data-div ${
-                    secondRowSelectedItem === 'without_lead_source'
+                    secondRowSelectedItem === 'without_industry'
                       ? 'selected-item'
                       : ''
                   }  ${getBorderColor(
-                    missing_data?.without_lead_source?.percent,
+                    missing_data?.without_industry?.percent,
                   )}`}
                   onClick={() => {
-                    setSecondRowSelectedItem('without_lead_source');
-                    handleSecondDataPointChange('lead_source');
+                    setSecondRowSelectedItem('without_industry');
+                    handleSecondDataPointChange('industry');
                   }}
                 >
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
-                      <p> Companies without Lead Source</p>
+                      <p> Companies without Industry</p>
                     </p>
                     <p className="report-details__data-div-score">
                       <strong>
-                        {missing_data?.without_lead_source?.percent}%
+                        {missing_data?.without_industry?.percent}%
                       </strong>
                     </p>
                     <p className="report-details__data-div-total">
-                      {missing_data?.without_lead_source?.count}{' '}
+                      {missing_data?.without_industry?.count}{' '}
                       <span>/ {total_companies}</span>
                     </p>
                   </div>
@@ -344,7 +420,7 @@ const Company = ({ token, score_data }) => {
                   <div className="audit-report__chart">
                     <BarChart
                       token={token}
-                      reportId={'1'}
+                      reportId={'59'}
                       objectType={'companies'}
                       dataPoint={secondDataPoint}
                     />
@@ -472,7 +548,7 @@ const Company = ({ token, score_data }) => {
                   <div className="audit-report__chart">
                     <BarChart
                       token={token}
-                      reportId={'1'}
+                      reportId={'59'}
                       objectType={'companies'}
                       dataPoint={thirdDataPoint}
                     />
@@ -555,7 +631,7 @@ const Company = ({ token, score_data }) => {
                 <div className="audit-report__chart">
                   <BarChart
                     token={token}
-                    reportId={'1'}
+                    reportId={'59'}
                     objectType={'companies'}
                     dataPoint={firstDatapoint}
                   />
@@ -570,72 +646,225 @@ const Company = ({ token, score_data }) => {
           className="report-details__take-action report-details__subSection"
           id="take_action"
         >
-          <h4 className="report-details__action-title">Take Bulk Action</h4>
+          <h4 className="report-details__action-title">Take Action</h4>
           <div className="report-details__action-group">
-            {/* <h5>Create Active Lists</h5> */}
             <div className="report-details__list">
+              {/* Group 1: Are You Kidding Me! */}
               <div className="report-details__checkbox-group">
                 <h5>Are You Kidding Me!</h5>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={activeListSelections.group1.companies_without_name}
+                    onChange={(e) =>
+                      handleCheckboxChange(
+                        'group1',
+                        'companies_without_name',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Companies without Name
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      activeListSelections.group1.companies_without_domain
+                    }
+                    onChange={(e) =>
+                      handleCheckboxChange(
+                        'group1',
+                        'companies_without_domain',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Companies without Domain
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      activeListSelections.group1
+                        .companies_without_num_associated_con
+                    }
+                    onChange={(e) =>
+                      handleCheckboxChange(
+                        'group1',
+                        'companies_without_num_associated_con',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Companies without Associated Contact
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      activeListSelections.group1.companies_without_owner
+                    }
+                    onChange={(e) =>
+                      handleCheckboxChange(
+                        'group1',
+                        'companies_without_owner',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Companies without an Owner
                 </label>
 
-                <button>Create Active List</button>
+                <button onClick={() => handleCreateActiveList('group1')}>
+                  Create Active List
+                </button>
               </div>
               <div className="report-details__checkbox-group">
                 <h5>Must Have</h5>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      activeListSelections.group2
+                        .companies_without_associated_deals
+                    }
+                    onChange={(e) =>
+                      handleCheckboxChange(
+                        'group2',
+                        'companies_without_associated_deals',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Companies without Deals
                 </label>
                 <label>
-                  <input type="checkbox" />
-                  Companies without Lead Source
+                  <input
+                    type="checkbox"
+                    checked={
+                      activeListSelections.group2.companies_without_industry
+                    }
+                    onChange={(e) =>
+                      handleCheckboxChange(
+                        'group2',
+                        'companies_without_industry',
+                        e.target.checked,
+                      )
+                    }
+                  />
+                  Companies without Industry
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      activeListSelections.group2
+                        .companies_without_lifecycle_stage
+                    }
+                    onChange={(e) =>
+                      handleCheckboxChange(
+                        'group2',
+                        'companies_without_lifecycle_stage',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Companies without Lifecycle Stage
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      activeListSelections.group2
+                        .companies_without_country_region
+                    }
+                    onChange={(e) =>
+                      handleCheckboxChange(
+                        'group2',
+                        'companies_without_country_region',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Companies without Country/Region
                 </label>
 
-                <button>Create Active List</button>
+                <button onClick={() => handleCreateActiveList('group2')}>
+                  Create Active List
+                </button>
               </div>
               <div className="report-details__checkbox-group">
                 <h5>Good To Have</h5>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      activeListSelections.group3
+                        .companies_without_num_of_employee
+                    }
+                    onChange={(e) =>
+                      handleCheckboxChange(
+                        'group3',
+                        'companies_without_num_of_employee',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Companies without Number of Employees
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      activeListSelections.group3.companies_without_revenue
+                    }
+                    onChange={(e) =>
+                      handleCheckboxChange(
+                        'group3',
+                        'companies_without_revenue',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Companies without Revenue
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      activeListSelections.group3.companies_without_linkedin_url
+                    }
+                    onChange={(e) =>
+                      handleCheckboxChange(
+                        'group3',
+                        'companies_without_linkedin_url',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Companies without LinkedIn Page URL
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      activeListSelections.group3.companies_without_phone_num
+                    }
+                    onChange={(e) =>
+                      handleCheckboxChange(
+                        'group3',
+                        'companies_without_phone_num',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Companies without Phone No
                 </label>
 
-                <button>Create Active List</button>
+                <button onClick={() => handleCreateActiveList('group3')}>
+                  Create Active List
+                </button>
               </div>
             </div>
           </div>
@@ -644,15 +873,43 @@ const Company = ({ token, score_data }) => {
               <div className="report-details__checkbox-group">
                 <h5>Consider Deleting</h5>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      activeListSelections.group4
+                        .companies_without_activity_180_days
+                    }
+                    onChange={(e) =>
+                      handleCheckboxChange(
+                        'group4',
+                        'companies_without_activity_180_days',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Company without activity in the last 180 days
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      activeListSelections.group4
+                        .companies_without_name_and_domain
+                    }
+                    onChange={(e) =>
+                      handleCheckboxChange(
+                        'group4',
+                        'companies_without_name_and_domain',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Companies without name and domain
                 </label>
 
-                <button>Create Active List</button>
+                <button onClick={() => handleCreateActiveList('group4')}>
+                  Create Active List
+                </button>
               </div>
               <div className="report-details__checkbox-group">
                 <h5>Delete Junk</h5>

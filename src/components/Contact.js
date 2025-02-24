@@ -18,6 +18,81 @@ const Contact = ({ token, score_data }) => {
   );
   const [thirdDataPoint, setThirdDataPoint] = useState('jobtitle');
 
+  const [contactActiveListSelections, setContactActiveListSelections] =
+    useState({
+      group1: {
+        no_firstname: false,
+        no_email: false,
+        no_associated_company: false,
+        no_owner: false,
+      },
+      group2: {
+        no_associated_deals: false,
+        no_lead_source: false,
+        no_lifecycle_stage: false,
+        no_lead_status: false,
+      },
+      group3: {
+        no_jobtitle: false,
+        no_market_status: false,
+        no_hubspotscore: false,
+        no_phone: false,
+      },
+      group4: {
+        no_name_and_domain: false,
+        no_activity_180: false,
+      },
+    });
+
+  const handleContactCheckboxChange = (group, key, checked) => {
+    setContactActiveListSelections((prev) => ({
+      ...prev,
+      [group]: {
+        ...prev[group],
+        [key]: checked,
+      },
+    }));
+  };
+
+  const handleCreateContactActiveList = async (group) => {
+    const selectedKeys = Object.entries(contactActiveListSelections[group])
+      .filter(([key, value]) => value)
+      .map(([key]) => key);
+
+    if (!selectedKeys.length) {
+      alert('Please select at least one property.');
+      return;
+    }
+
+    const payload = {
+      objectname: 'contact',
+      propertynames: selectedKeys,
+    };
+
+    try {
+      const response = await fetch(
+        'https://deep-socially-polliwog.ngrok-free.app/createlist',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            state: token,
+          },
+          body: JSON.stringify(payload),
+        },
+      );
+      const data = await response.json();
+      if (response.ok) {
+        console.log('Active list(s) created successfully!');
+      } else {
+        console.log('Error creating active list: ' + data.error);
+      }
+    } catch (error) {
+      console.error('API error:', error);
+      alert('Network error. Please try again later.');
+    }
+  };
+
   const handleFirstDataPointChange = (dataPoint) => {
     setFirstDatapoint(dataPoint);
   };
@@ -224,9 +299,10 @@ const Contact = ({ token, score_data }) => {
                   <div className="audit-report__chart">
                     <BarChart
                       token={token}
-                      reportId={'1'}
+                      reportId={'59'}
                       objectType={'contacts'}
                       dataPoint={firstDatapoint}
+                      riskLevel={missing_data?.without_owner?.risk}
                     />
                   </div>
                 </div>
@@ -370,7 +446,7 @@ const Contact = ({ token, score_data }) => {
                   <div className="audit-report__chart">
                     <BarChart
                       token={token}
-                      reportId={'1'}
+                      reportId={'59'}
                       objectType={'contacts'}
                       dataPoint={secondDataPoint}
                     />
@@ -516,7 +592,7 @@ const Contact = ({ token, score_data }) => {
                   <div className="audit-report__chart">
                     <BarChart
                       token={token}
-                      reportId={'1'}
+                      reportId={'59'}
                       objectType={'contacts'}
                       dataPoint={thirdDataPoint}
                     />
@@ -627,7 +703,7 @@ const Contact = ({ token, score_data }) => {
                 <div className="audit-report__chart">
                   <BarChart
                     token={token}
-                    reportId={'1'}
+                    reportId={'59'}
                     objectType={'contacts'}
                     dataPoint={firstDatapoint}
                   />
@@ -645,87 +721,246 @@ const Contact = ({ token, score_data }) => {
         >
           <h4 className="report-details__action-title">Take Bulk Action</h4>
           <div className="report-details__action-group">
-            {/* <h5>Create Active Lists</h5> */}
             <div className="report-details__list">
+              {/* Group 1: Are You Kidding Me! */}
               <div className="report-details__checkbox-group">
                 <h5>Are You Kidding Me!</h5>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={contactActiveListSelections.group1.no_firstname}
+                    onChange={(e) =>
+                      handleContactCheckboxChange(
+                        'group1',
+                        'no_firstname',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Contacts without First Name
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={contactActiveListSelections.group1.no_email}
+                    onChange={(e) =>
+                      handleContactCheckboxChange(
+                        'group1',
+                        'no_email',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Contacts without Email ID
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      contactActiveListSelections.group1.no_associated_company
+                    }
+                    onChange={(e) =>
+                      handleContactCheckboxChange(
+                        'group1',
+                        'no_associated_company',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Contacts without Associated Company
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={contactActiveListSelections.group1.no_owner}
+                    onChange={(e) =>
+                      handleContactCheckboxChange(
+                        'group1',
+                        'no_owner',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Contacts without Owner
                 </label>
-
-                <button>Create Active List</button>
+                <button onClick={() => handleCreateContactActiveList('group1')}>
+                  Create Active List
+                </button>
               </div>
+
+              {/* Group 2: Must Have */}
               <div className="report-details__checkbox-group">
                 <h5>Must Have</h5>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      contactActiveListSelections.group2.no_associated_deals
+                    }
+                    onChange={(e) =>
+                      handleContactCheckboxChange(
+                        'group2',
+                        'no_associated_deals',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Contacts without Deals
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={contactActiveListSelections.group2.no_lead_source}
+                    onChange={(e) =>
+                      handleContactCheckboxChange(
+                        'group2',
+                        'no_lead_source',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Contacts without Lead Source
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      contactActiveListSelections.group2.no_lifecycle_stage
+                    }
+                    onChange={(e) =>
+                      handleContactCheckboxChange(
+                        'group2',
+                        'no_lifecycle_stage',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Contacts without Lifecycle Stage
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={contactActiveListSelections.group2.no_lead_status}
+                    onChange={(e) =>
+                      handleContactCheckboxChange(
+                        'group2',
+                        'no_lead_status',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Contacts without Lead Status
                 </label>
-
-                <button>Create Active List</button>
+                <button onClick={() => handleCreateContactActiveList('group2')}>
+                  Create Active List
+                </button>
               </div>
+
+              {/* Group 3: Good To Have */}
               <div className="report-details__checkbox-group">
                 <h5>Good To Have</h5>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={contactActiveListSelections.group3.no_jobtitle}
+                    onChange={(e) =>
+                      handleContactCheckboxChange(
+                        'group3',
+                        'no_jobtitle',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Contacts without Job Title
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      contactActiveListSelections.group3.no_market_status
+                    }
+                    onChange={(e) =>
+                      handleContactCheckboxChange(
+                        'group3',
+                        'no_market_status',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Contacts without Marketing Status
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={contactActiveListSelections.group3.no_hubspotscore}
+                    onChange={(e) =>
+                      handleContactCheckboxChange(
+                        'group3',
+                        'no_hubspotscore',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Contacts without Lead Score
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={contactActiveListSelections.group3.no_phone}
+                    onChange={(e) =>
+                      handleContactCheckboxChange(
+                        'group3',
+                        'no_phone',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Contacts without Phone No
                 </label>
-
-                <button>Create Active List</button>
+                <button onClick={() => handleCreateContactActiveList('group3')}>
+                  Create Active List
+                </button>
               </div>
             </div>
           </div>
+          {/* You can keep or adjust the Consider Deleting / Delete Junk groups as needed */}
           <div className="report-details__action-group">
             <div className="report-details__list">
               <div className="report-details__checkbox-group">
                 <h5>Consider Deleting</h5>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={contactActiveListSelections.group4.no_activity_180}
+                    onChange={(e) =>
+                      handleContactCheckboxChange(
+                        'group4',
+                        'no_activity_180',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Contacts have no activity in the last 180 days
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      contactActiveListSelections.group4.internal_members
+                    }
+                    onChange={(e) =>
+                      handleContactCheckboxChange(
+                        'group4',
+                        'internal_members',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Contacts are internal team members
                 </label>
-
-                <button>Create Active List</button>
+                <button onClick={() => handleCreateContactActiveList('group4')}>
+                  Create Active List
+                </button>
               </div>
               <div className="report-details__checkbox-group">
                 <h5>Delete Junk</h5>

@@ -12,6 +12,74 @@ const Deal = ({ token, score_data }) => {
   const [secondRowSelectedItem, setSecondRowSelectedItem] =
     useState('without_close_date');
 
+  const [dealActiveListSelections, setDealActiveListSelections] = useState({
+    group1: {
+      deals_without_name: false,
+      deals_without_owner: false,
+      deals_without_num_associated_con: false,
+      deals_without_num_associated_comp: false,
+    },
+    group2: {
+      deals_without_closing_date: false,
+      deals_without_amount: false,
+      deals_lost_without_lost_reason: false,
+      deals_without_deal_type: false,
+    },
+    group3: {
+      deals_without_name_and_owner: false,
+      deals_without_activity_180: false,
+    },
+  });
+
+  const handleDealCheckboxChange = (group, key, checked) => {
+    setDealActiveListSelections((prev) => ({
+      ...prev,
+      [group]: {
+        ...prev[group],
+        [key]: checked,
+      },
+    }));
+  };
+
+  const handleCreateDealActiveList = async (group) => {
+    const selectedKeys = Object.entries(dealActiveListSelections[group])
+      .filter(([key, value]) => value)
+      .map(([key]) => key);
+
+    if (!selectedKeys.length) {
+      alert('Please select at least one property.');
+      return;
+    }
+
+    const payload = {
+      objectname: 'deal',
+      propertynames: selectedKeys,
+    };
+
+    try {
+      const response = await fetch(
+        'https://deep-socially-polliwog.ngrok-free.app/createlist',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            state: token,
+          },
+          body: JSON.stringify(payload),
+        },
+      );
+      const data = await response.json();
+      if (response.ok) {
+        alert('Active list(s) created successfully!');
+      } else {
+        alert('Error creating active list: ' + data.error);
+      }
+    } catch (error) {
+      console.error('API error:', error);
+      alert('Network error. Please try again later.');
+    }
+  };
+
   const handleFirstDataPointChange = (dataPoint) => {
     setFirstDatapoint(dataPoint);
   };
@@ -205,7 +273,7 @@ const Deal = ({ token, score_data }) => {
                   <div className="audit-report__chart">
                     <BarChart
                       token={token}
-                      reportId={'1'}
+                      reportId={'59'}
                       objectType={'deals'}
                       dataPoint={firstDatapoint}
                     />
@@ -333,7 +401,7 @@ const Deal = ({ token, score_data }) => {
                   <div className="audit-report__chart">
                     <BarChart
                       token={token}
-                      reportId={'1'}
+                      reportId={'59'}
                       objectType={'deals'}
                       dataPoint={secondDataPoint}
                     />
@@ -413,7 +481,7 @@ const Deal = ({ token, score_data }) => {
                 <div className="audit-report__chart">
                   <BarChart
                     token={token}
-                    reportId={'1'}
+                    reportId={'59'}
                     objectType={'deals'}
                     dataPoint={firstDatapoint}
                   />
@@ -430,66 +498,194 @@ const Deal = ({ token, score_data }) => {
         >
           <h4 className="report-details__action-title">Take Bulk Action</h4>
           <div className="report-details__action-group">
-            {/* <h5>Create Active Lists</h5> */}
             <div className="report-details__list">
+              {/* Group 1: Are You Kidding Me! */}
               <div className="report-details__checkbox-group">
                 <h5>Are You Kidding Me!</h5>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={dealActiveListSelections.group1.deals_without_name}
+                    onChange={(e) =>
+                      handleDealCheckboxChange(
+                        'group1',
+                        'deals_without_name',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Deals without Name
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      dealActiveListSelections.group1.deals_without_owner
+                    }
+                    onChange={(e) =>
+                      handleDealCheckboxChange(
+                        'group1',
+                        'deals_without_owner',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Deals without Owner
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      dealActiveListSelections.group1
+                        .deals_without_num_associated_con
+                    }
+                    onChange={(e) =>
+                      handleDealCheckboxChange(
+                        'group1',
+                        'deals_without_num_associated_con',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Deals without Associated Contact
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      dealActiveListSelections.group1
+                        .deals_without_num_associated_comp
+                    }
+                    onChange={(e) =>
+                      handleDealCheckboxChange(
+                        'group1',
+                        'deals_without_num_associated_comp',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Deals without Associated Company
                 </label>
-
-                <button>Create Active List</button>
+                <button onClick={() => handleCreateDealActiveList('group1')}>
+                  Create Active List
+                </button>
               </div>
+
+              {/* Group 2: Must Have */}
               <div className="report-details__checkbox-group">
                 <h5>Must Have</h5>
                 <label>
-                  <input type="checkbox" />
-                  Deals without Close Date
+                  <input
+                    type="checkbox"
+                    checked={
+                      dealActiveListSelections.group2.deals_without_closing_date
+                    }
+                    onChange={(e) =>
+                      handleDealCheckboxChange(
+                        'group2',
+                        'deals_without_closing_date',
+                        e.target.checked,
+                      )
+                    }
+                  />
+                  Deals without Closing Date
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      dealActiveListSelections.group2.deals_without_amount
+                    }
+                    onChange={(e) =>
+                      handleDealCheckboxChange(
+                        'group2',
+                        'deals_without_amount',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Deals without Amount
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      dealActiveListSelections.group2
+                        .deals_lost_without_lost_reason
+                    }
+                    onChange={(e) =>
+                      handleDealCheckboxChange(
+                        'group2',
+                        'deals_lost_without_lost_reason',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Lost Deals without Lost Reason
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      dealActiveListSelections.group2.deals_without_deal_type
+                    }
+                    onChange={(e) =>
+                      handleDealCheckboxChange(
+                        'group2',
+                        'deals_without_deal_type',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Deals without Deal Type
                 </label>
-
-                <button>Create Active List</button>
+                <button onClick={() => handleCreateDealActiveList('group2')}>
+                  Create Active List
+                </button>
               </div>
             </div>
           </div>
           <div className="report-details__action-group">
             <div className="report-details__list">
+              {/* Group 3: Consider Deleting */}
               <div className="report-details__checkbox-group">
                 <h5>Consider Deleting</h5>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      dealActiveListSelections.group3.deals_without_activity_180
+                    }
+                    onChange={(e) =>
+                      handleDealCheckboxChange(
+                        'group3',
+                        'deals_without_activity_180',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Deals without activity in the last 180 days
                 </label>
                 <label>
-                  <input type="checkbox" />
-                  Deals without name and owner
+                  <input
+                    type="checkbox"
+                    checked={
+                      dealActiveListSelections.group3
+                        .deals_without_name_and_owner
+                    }
+                    onChange={(e) =>
+                      handleDealCheckboxChange(
+                        'group3',
+                        'deals_without_name_and_owner',
+                        e.target.checked,
+                      )
+                    }
+                  />
+                  Deals without Name and Owner
                 </label>
-
-                <button>Create Active List</button>
+                <button onClick={() => handleCreateDealActiveList('group3')}>
+                  Create Active List
+                </button>
               </div>
               <div className="report-details__checkbox-group">
                 <h5>Delete Junk</h5>
@@ -499,7 +695,7 @@ const Deal = ({ token, score_data }) => {
                 </label>
                 <label>
                   <input type="checkbox" />
-                  Deals without name and owner
+                  Deals without Name and Owner
                 </label>
                 <button>Delete Junk</button>
               </div>

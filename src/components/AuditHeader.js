@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { UserCircleIcon } from '@heroicons/react/24/solid';
 import { generateNewReport, triggerReportGeneration } from '../utils/api';
 import { useAuth } from '../App';
@@ -17,6 +17,7 @@ const AuditHeader = ({
   const [selectedHub, setSelectedHub] = useState(userData?.hub_details || null);
   const [generateButton, setGenerateButton] = useState(isGenerating);
   const [showModal, setShowModal] = useState(false);
+  const dropdownRef = useRef(null);
 
   const tooltipText = 'Generating New Report. Please wait!';
 
@@ -113,7 +114,7 @@ const AuditHeader = ({
             </div>
 
             {showDropdown && (
-              <div className="dropdown-menu">
+              <div className="dropdown-menu" ref={dropdownRef}>
                 {userData?.unique_hub_ids
                   .filter((hub) => hub.hub_domain !== selectedHub?.hub_domain)
                   .map((hub) => (
@@ -212,6 +213,10 @@ const AuditHeader = ({
               You are about to Generate a New Report for Hub:{' '}
               {selectedHub?.hub_id}
             </p>
+            <div>
+              <p>({selectedHub?.hub_domain})</p>
+            </div>
+
             <button
               onClick={triggerNewReportGeneration}
               className="confirm-btn"

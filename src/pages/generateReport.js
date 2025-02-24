@@ -16,7 +16,7 @@ import { useAuth } from '../App';
 const GenerateReport = () => {
   const { token } = useAuth();
 
-  const [isGenerating, setIsGenerating] = useState(true);
+  const [isGenerating, setIsGenerating] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [auditData, setAuditData] = useState(null);
@@ -34,7 +34,6 @@ const GenerateReport = () => {
       const data = await triggerCheckReport(token, hubId);
 
       if (!data.success) {
-        setIsLoading(false);
         throw new Error('Failed to check report status.');
       }
 
@@ -43,7 +42,6 @@ const GenerateReport = () => {
         (data?.report_details?.status === 'Pending' ||
           data?.report_details?.status === 'In Progress')
       ) {
-        setIsLoading(false);
         setIsGenerating(true);
         setProgress(data?.report_details?.progress);
         setTimeout(checkReport, 10000, hubId);
@@ -55,18 +53,19 @@ const GenerateReport = () => {
           token,
           data.report_details.report_id,
         );
-        setIsLoading(false);
         setAuditData(response);
         setProgress(100);
         setIsGenerating(false);
       } else if (data.generate_report) {
-        setIsLoading(false);
         setIsGenerating(true);
         setProgress(0);
         setTimeout(checkReport, 10000, hubId);
         await generateNewReport();
       }
+
+      setIsLoading(false);
     } catch (err) {
+      setIsLoading(false);
       setError('Something went wrong! Please try again later.');
       console.error('Error occurred:', err);
     }
@@ -108,9 +107,8 @@ const GenerateReport = () => {
         }
 
         setUserData(result);
-        setHubId(result.hub_details.hub_id); // Dynamically set hub ID
-
-        checkReport(result.hub_details.hub_id);
+        setHubId(result.hub_details.hub_id);
+        setIsLoading(false);
       } catch (error) {
         console.error('Error fetching user data:', error);
         setError(error.message);
@@ -118,7 +116,20 @@ const GenerateReport = () => {
     };
 
     fetchUserDetails();
-  }, [token]); // Runs when token changes
+  }, [token]);
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        checkReport(hubId);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        setError(error.message);
+      }
+    };
+
+    fetchUserDetails();
+  }, [token, hubId]); // Runs when token or hubID changes
 
   if (error) {
     return <Error />;
@@ -160,6 +171,7 @@ const GenerateReport = () => {
                   fontSize: 'small',
                   textAlign: 'right',
                   margin: 0,
+                  marginBottom: '1rem',
                 }}
               >
                 Last Updated: {new Date().toLocaleString()}

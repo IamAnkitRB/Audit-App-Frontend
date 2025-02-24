@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ReportProgressBar } from './ProgressBar';
 import ReportDetails from './ReportDetails';
+import { findRiskImageForObject } from '../utils/riskManager';
 
 const ScoreSection = ({
   token,
@@ -314,9 +315,19 @@ const ScoreSection = ({
                     <p className="audit-report__data-div-heading">
                       {formattedKey}
                     </p>
-                    <p className="audit-report__data-div-score">
-                      {value !== null ? `${value}/100` : 'Not in Use'}
-                    </p>
+
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      {' '}
+                      <p className="audit-report__data-div-score">
+                        {value !== null ? `${value}/100` : 'Not in Use'}
+                      </p>
+                      <img src={findRiskImageForObject(value)}></img>
+                    </div>
                   </div>
                 </div>
               );
