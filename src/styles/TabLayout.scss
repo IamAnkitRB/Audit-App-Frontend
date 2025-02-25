@@ -17,6 +17,7 @@
   padding: 16px;
   box-sizing: border-box;
   overflow-y: auto;
+  position: relative;
 }
 
 .sidebar-title {
@@ -90,4 +91,19 @@
   .content {
     min-width: 28rem;
   }
+}
+
+.available_credits {
+  position: absolute;
+  bottom: 0;
+  font-size: medium;
+  bottom: 4rem;
+  left: 2rem;
+}
+
+.available_credits button {
+  cursor: not-allowed;
+  opacity: 0.6;
+  background-color: #000;
+  margin-left: 0;
 }

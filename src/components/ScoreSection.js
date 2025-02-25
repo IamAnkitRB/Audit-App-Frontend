@@ -145,15 +145,30 @@ const ScoreSection = ({
                     </p>
                   </div>
 
-                  <p className="audit-report__data-div-score">
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      width: '100%',
+                    }}
+                  >
                     {score_breakdown?.data_quality?.score ? (
-                      <>{score_breakdown?.data_quality?.score}/100</>
+                      <>
+                        <p className="audit-report__data-div-score">
+                          {score_breakdown?.data_quality?.score}/100
+                        </p>
+                        <img
+                          src={findRiskImageForObject(
+                            score_breakdown?.data_quality?.score,
+                          )}
+                        ></img>
+                      </>
                     ) : (
                       <span className="audit-report__unavailable">
                         Not in Use
                       </span>
                     )}
-                  </p>
+                  </div>
                 </div>
               </div>
             </div>

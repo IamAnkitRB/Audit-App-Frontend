@@ -70,3 +70,55 @@ h5,
 h6 {
   color: black;
 }
+
+.tooltip-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip-text {
+  color: black;
+  text-align: start;
+  padding: 5px 8px;
+  position: absolute;
+  font-size: medium;
+  background-color: white;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  border-radius: 10px;
+  bottom: 90%;
+  left: 60%;
+  transform: translateX(-50%);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s;
+}
+
+.tooltip-content {
+  color: black;
+  text-align: start;
+  padding: 1rem;
+  position: absolute;
+  font-size: small;
+  background-color: white;
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  top: 90%;
+  left: 55%;
+  transform: translateX(-50%);
+  opacity: 0;
+  visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: opacity 0.3s;
+}
+
+.tooltip-wrapper:hover .tooltip-text {
+  opacity: 1;
+  visibility: visible;
+}
+.tooltip-wrapper:hover .tooltip-content {
+  opacity: 1;
+  visibility: visible;
+}

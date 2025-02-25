@@ -1,7 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UserCircleIcon } from '@heroicons/react/24/solid';
-import { generateNewReport, triggerReportGeneration } from '../utils/api';
+import {
+  generateNewReport,
+  triggerReportGeneration,
+  fetchAuditDataByID,
+} from '../utils/api';
 import { useAuth } from '../App';
+import { DropdownTooltip } from './Tooltip';
 
 const AuditHeader = ({
   userData,
@@ -9,7 +14,9 @@ const AuditHeader = ({
   setIsGenerating,
   checkReport,
   setProgress,
+  hubId,
   setHubId,
+  setAuditData,
 }) => {
   const { token } = useAuth();
   const [showDropdown, setShowDropdown] = useState(false);
@@ -17,7 +24,6 @@ const AuditHeader = ({
   const [selectedHub, setSelectedHub] = useState(userData?.hub_details || null);
   const [generateButton, setGenerateButton] = useState(isGenerating);
   const [showModal, setShowModal] = useState(false);
-  const dropdownRef = useRef(null);
 
   const tooltipText = 'Generating New Report. Please wait!';
 
@@ -36,6 +42,21 @@ const AuditHeader = ({
       setSelectedHub(userData.hub_details);
     }
   }, [userData]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const latestReportData = userData?.unique_hub_ids.filter((report) => {
+        return hubId == report.hub_id;
+      });
+
+      const latestReportId = latestReportData[0]?.latest_report_id;
+
+      const result = await fetchAuditDataByID(token, latestReportId);
+      console.log('resukt:::', result);
+      setAuditData(result);
+    };
+    fetchData();
+  }, [hubId]);
 
   // Logout & Remove Token
   const handleLogout = () => {
@@ -73,7 +94,7 @@ const AuditHeader = ({
 
       document.cookie = `state=${result.token}; path=/; secure; SameSite=Strict`;
 
-      setTimeout(checkReport, 10000, selectedHub.hub_id);
+      setTimeout(checkReport, 10000, selectedHub.hub_id, result.token);
       setProgress(0);
       setIsGenerating(true);
 
@@ -101,19 +122,28 @@ const AuditHeader = ({
           <p>Hi {userData?.hub_details?.hs_user}</p>
           <div className="dropdown" style={{ marginTop: '6px' }}>
             <div className="tooltip-container">
-              <button
-                className="dropdown-toggle"
-                onClick={() =>
-                  !generateButton && setShowDropdown(!showDropdown)
-                }
-                disabled={generateButton}
+              <DropdownTooltip
+                hubs={userData?.unique_hub_ids.filter(
+                  (hub) => hub.hub_domain !== selectedHub?.hub_domain,
+                )}
+                handleHubSelection={handleHubSelection}
+                generateButton={generateButton}
+                token={token}
               >
-                Hub ID: {selectedHub?.hub_id} ({selectedHub?.hub_domain}) ▼
-              </button>
+                <button
+                  className="dropdown-toggle"
+                  onClick={() =>
+                    !generateButton && setShowDropdown(!showDropdown)
+                  }
+                  disabled={generateButton}
+                >
+                  Hub ID: {selectedHub?.hub_id} ({selectedHub?.hub_domain})
+                </button>
+              </DropdownTooltip>
               {generateButton && <span className="tooltip">{tooltipText}</span>}
             </div>
 
-            {showDropdown && (
+            {/* {showDropdown && (
               <div className="dropdown-menu" ref={dropdownRef}>
                 {userData?.unique_hub_ids
                   .filter((hub) => hub.hub_domain !== selectedHub?.hub_domain)
@@ -129,14 +159,14 @@ const AuditHeader = ({
                     >
                       Hub ID: {hub.hub_id}({hub.hub_domain})
                     </div>
-                  ))}
-                <button
+                  ))} */}
+            {/* <button
                   onClick={() => {
                     if (!generateButton) {
                       window.location.href =
                         `https://app.hubspot.com/oauth/authorize
       ?client_id=2bc2fab4-0ff2-4f13-9400-dc12d07b6dd9
-      &redirect_uri=https://deep-socially-polliwog.ngrok-free.app/getcode
+      &redirect_uri=https://enabling-condor-instantly.ngrok-free.app/getcode
       &scope=tickets%20crm.objects.owners.read%20crm.objects.companies.read
       %20crm.objects.deals.read%20crm.objects.contacts.read&state=${token}`.replace(
                           /\s+/g,
@@ -151,9 +181,9 @@ const AuditHeader = ({
                   }}
                 >
                   + Add New
-                </button>
-              </div>
-            )}
+                </button> */}
+            {/* </div> */}
+            {/* )} */}
           </div>
         </div>
         <div>

@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../styles/TabLayout.scss';
+import { fetchReportList } from '../utils/api';
+import { useAuth } from '../App';
 
 export default function TabLayout({ children, sidebarContent }) {
   const [activeTab, setActiveTab] = useState(0);
+  const { token } = useAuth();
+  const [credits, setCredits] = useState(0);
   const [expandedSection, setExpandedSection] = useState(null);
 
   const childArray = React.Children.toArray(children);
@@ -10,6 +14,14 @@ export default function TabLayout({ children, sidebarContent }) {
   const toggleSection = (index) => {
     setExpandedSection((prev) => (prev === index ? null : index));
   };
+
+  useEffect(() => {
+    const reportList = async () => {
+      const result = await fetchReportList(token);
+      setCredits(100 - result?.data?.length * 10);
+    };
+    reportList();
+  }, []);
 
   return (
     <div className="tab-layout">
@@ -51,6 +63,15 @@ export default function TabLayout({ children, sidebarContent }) {
             </div>
           ))}
         </nav>
+        <div className="available_credits">
+          <p>
+            Available Credits{' '}
+            <span style={{ fontWeight: '600', fontSize: 'large' }}>
+              {credits}/100
+            </span>{' '}
+          </p>
+          <button>+ Add Credits</button>
+        </div>
       </aside>
 
       <main className="content">{childArray[activeTab]}</main>

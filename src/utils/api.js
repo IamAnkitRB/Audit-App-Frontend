@@ -1,7 +1,7 @@
 export const fetchAuditDataByID = async (token, reportId) => {
   try {
     const response = await fetch(
-      'https://deep-socially-polliwog.ngrok-free.app/fetchreport',
+      'https://enabling-condor-instantly.ngrok-free.app/fetchreport',
       {
         method: 'POST',
         headers: {
@@ -27,7 +27,7 @@ export const fetchAuditDataByID = async (token, reportId) => {
 export const fetchReportList = async (token) => {
   try {
     const response = await fetch(
-      'https://deep-socially-polliwog.ngrok-free.app/pastreports',
+      'https://enabling-condor-instantly.ngrok-free.app/pastreports',
       {
         method: 'POST',
         headers: {
@@ -52,7 +52,7 @@ export const fetchReportList = async (token) => {
 export const triggerCheckReport = async (token, hubID) => {
   try {
     const response = await fetch(
-      'https://deep-socially-polliwog.ngrok-free.app/checkreport',
+      'https://enabling-condor-instantly.ngrok-free.app/checkreport',
       {
         method: 'POST',
         headers: {
@@ -73,7 +73,7 @@ export const triggerCheckReport = async (token, hubID) => {
 export const triggerReportGeneration = async (token, hubID) => {
   try {
     const response = await fetch(
-      'https://deep-socially-polliwog.ngrok-free.app/getreport',
+      'https://enabling-condor-instantly.ngrok-free.app/getreport',
       {
         method: 'POST',
         headers: {
@@ -102,7 +102,7 @@ export const fetchGraphData = async (
 ) => {
   try {
     const response = await fetch(
-      'https://deep-socially-polliwog.ngrok-free.app/fetchgraphdata',
+      'https://enabling-condor-instantly.ngrok-free.app/fetchgraphdata',
       {
         method: 'POST',
         headers: {
@@ -130,7 +130,7 @@ export const fetchGraphData = async (
 export const fetchUserData = async (token) => {
   try {
     const response = await fetch(
-      'https://deep-socially-polliwog.ngrok-free.app/gethubinfo',
+      'https://enabling-condor-instantly.ngrok-free.app/gethubinfo',
       {
         method: 'POST',
         headers: {
@@ -151,7 +151,7 @@ export const fetchUserData = async (token) => {
 export const generateNewReport = async (token, hubId) => {
   try {
     const response = await fetch(
-      'https://deep-socially-polliwog.ngrok-free.app/generatenewreport',
+      'https://enabling-condor-instantly.ngrok-free.app/generatenewreport',
       {
         method: 'POST',
         headers: {
@@ -166,6 +166,28 @@ export const generateNewReport = async (token, hubId) => {
     return data;
   } catch (error) {
     console.log(`Error while fetching user data:`, error);
+    throw error;
+  }
+};
+
+export const addNewAccount = async (token) => {
+  try {
+    const response = await fetch(
+      'https://enabling-condor-instantly.ngrok-free.app/addnewaccount',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          state: token,
+        },
+      },
+    );
+
+    const data = await response.json();
+
+    return data;
+  } catch (error) {
+    console.log(`Error while adding new hubspot porta:`, error);
     throw error;
   }
 };

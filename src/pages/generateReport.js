@@ -24,7 +24,7 @@ const GenerateReport = () => {
   const [hubId, setHubId] = useState(null);
   const [progress, setProgress] = useState(0);
 
-  const checkReport = async (hubId) => {
+  const checkReport = async (hubId, token) => {
     try {
       if (!token || !hubId) {
         console.error('Token or Hub ID is missing');
@@ -37,6 +37,8 @@ const GenerateReport = () => {
         throw new Error('Failed to check report status.');
       }
 
+      let timeout = null;
+
       if (
         !data.generate_report &&
         (data?.report_details?.status === 'Pending' ||
@@ -44,7 +46,8 @@ const GenerateReport = () => {
       ) {
         setIsGenerating(true);
         setProgress(data?.report_details?.progress);
-        setTimeout(checkReport, 10000, hubId);
+        timeout = setTimeout(checkReport, 10000, hubId, token);
+        console.log('timeout:::', timeout);
       } else if (
         !data.generate_report &&
         data?.report_details?.status === 'Completed'
@@ -59,8 +62,9 @@ const GenerateReport = () => {
       } else if (data.generate_report) {
         setIsGenerating(true);
         setProgress(0);
-        setTimeout(checkReport, 10000, hubId);
-        await generateNewReport();
+        timeout = setTimeout(checkReport, 10000, hubId, token);
+        console.log('timeout2:::', timeout);
+        await generateNewReport(hubId, timeout);
       }
 
       setIsLoading(false);
@@ -71,8 +75,9 @@ const GenerateReport = () => {
     }
   };
 
-  const generateNewReport = async () => {
+  const generateNewReport = async (hubId, timeout) => {
     try {
+      console.log('token:::', token, 'hub:::', hubId);
       if (!token || !hubId) {
         throw new Error('Token or Hub ID is missing');
       }
@@ -82,8 +87,9 @@ const GenerateReport = () => {
 
       const data = await triggerReportGeneration(token, hubId);
 
-      if (data.success && data?.report_details?.status === 'completed') {
+      if (data.success) {
         setIsGenerating(false);
+        clearTimeout(timeout);
       } else {
         throw new Error(data.message || 'Failed to generate the report.');
       }
@@ -108,6 +114,7 @@ const GenerateReport = () => {
 
         setUserData(result);
         setHubId(result.hub_details.hub_id);
+        checkReport(result.hub_details.hub_id, token);
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -117,19 +124,6 @@ const GenerateReport = () => {
 
     fetchUserDetails();
   }, [token]);
-
-  useEffect(() => {
-    const fetchUserDetails = async () => {
-      try {
-        checkReport(hubId);
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-        setError(error.message);
-      }
-    };
-
-    fetchUserDetails();
-  }, [token, hubId]); // Runs when token or hubID changes
 
   if (error) {
     return <Error />;
@@ -157,7 +151,9 @@ const GenerateReport = () => {
         setIsGenerating={setIsGenerating}
         checkReport={checkReport}
         setProgress={setProgress}
+        hubId={hubId}
         setHubId={setHubId}
+        setAuditData={setAuditData}
       />
       {isGenerating ? (
         <ReportGenerate progress={progress} />
