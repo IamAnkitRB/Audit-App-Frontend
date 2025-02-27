@@ -6,10 +6,10 @@ import { findRiskImageForObject } from '../utils/riskManager';
 const ScoreSection = ({
   token,
   overall_audit_score = { score: 0, global_average_difference: 0 },
-  hub_domian,
   object_scores = {},
   score_breakdown = {},
   data_audit = {},
+  graphData,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState('contacts');
   const [overall_score, setOverallScore] = useState(0);
@@ -339,6 +339,7 @@ const ScoreSection = ({
           token={token}
           category={selectedCategory}
           score_data={data_audit[selectedCategory]}
+          graphData={graphData}
         />
       )}
     </>

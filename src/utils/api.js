@@ -92,14 +92,7 @@ export const triggerReportGeneration = async (token, hubID) => {
   }
 };
 
-export const fetchGraphData = async (
-  token,
-  reportId,
-  objectType,
-  graphType,
-  dataPoint,
-  riskLevel,
-) => {
+export const fetchGraphData = async (token, reportId, objectType) => {
   try {
     const response = await fetch(
       'https://enabling-condor-instantly.ngrok-free.app/fetchgraphdata',
@@ -110,11 +103,8 @@ export const fetchGraphData = async (
           state: token,
         },
         body: JSON.stringify({
-          reportId: '59',
+          reportId,
           objectType,
-          dataPoint,
-          graphType,
-          riskLevel,
         }),
       },
     );
@@ -180,6 +170,52 @@ export const addNewAccount = async (token) => {
           'Content-Type': 'application/json',
           state: token,
         },
+      },
+    );
+
+    const data = await response.json();
+
+    return data;
+  } catch (error) {
+    console.log(`Error while adding new hubspot porta:`, error);
+    throw error;
+  }
+};
+
+export const triggerGraphGeneration = async (token, reportId, hubId) => {
+  try {
+    const response = await fetch(
+      'https://enabling-condor-instantly.ngrok-free.app/savegraphs',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          state: token,
+        },
+        body: JSON.stringify({ report_id: reportId, hub_id: hubId }),
+      },
+    );
+
+    const data = await response.json();
+
+    return data;
+  } catch (error) {
+    console.log(`Error while adding new hubspot porta:`, error);
+    throw error;
+  }
+};
+
+export const checkGraphProgress = async (token, reportId, hubId) => {
+  try {
+    const response = await fetch(
+      'https://enabling-condor-instantly.ngrok-free.app/checkgraphs',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          state: token,
+        },
+        body: JSON.stringify({ report_id: reportId, hub_id: hubId }),
       },
     );
 

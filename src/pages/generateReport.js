@@ -10,6 +10,9 @@ import {
   fetchAuditDataByID,
   triggerCheckReport,
   triggerReportGeneration,
+  triggerGraphGeneration,
+  checkGraphProgress,
+  fetchGraphData,
 } from '../utils/api';
 import { useAuth } from '../App';
 
@@ -23,6 +26,8 @@ const GenerateReport = () => {
   const [userData, setUserData] = useState(null);
   const [hubId, setHubId] = useState(null);
   const [progress, setProgress] = useState(0);
+  const [reportId, setReportId] = useState(null);
+  const [graphData, setGraphData] = useState(null);
 
   const checkReport = async (hubId, token) => {
     try {
@@ -46,8 +51,7 @@ const GenerateReport = () => {
       ) {
         setIsGenerating(true);
         setProgress(data?.report_details?.progress);
-        timeout = setTimeout(checkReport, 10000, hubId, token);
-        console.log('timeout:::', timeout);
+        setTimeout(checkReport, 10000, hubId, token);
       } else if (
         !data.generate_report &&
         data?.report_details?.status === 'Completed'
@@ -56,14 +60,14 @@ const GenerateReport = () => {
           token,
           data.report_details.report_id,
         );
+        setReportId(data.report_details.report_id);
         setAuditData(response);
         setProgress(100);
         setIsGenerating(false);
       } else if (data.generate_report) {
         setIsGenerating(true);
-        setProgress(0);
+        setProgress(2);
         timeout = setTimeout(checkReport, 10000, hubId, token);
-        console.log('timeout2:::', timeout);
         await generateNewReport(hubId, timeout);
       }
 
@@ -77,7 +81,6 @@ const GenerateReport = () => {
 
   const generateNewReport = async (hubId, timeout) => {
     try {
-      console.log('token:::', token, 'hub:::', hubId);
       if (!token || !hubId) {
         throw new Error('Token or Hub ID is missing');
       }
@@ -89,7 +92,45 @@ const GenerateReport = () => {
 
       if (data.success) {
         setIsGenerating(false);
-        clearTimeout(timeout);
+        triggerGraphGeneration(token, data.report_id, hubId);
+
+        let graphProgress = await checkGraphProgress(
+          token,
+          data.report_id,
+          hubId,
+        );
+
+        // Wait until the status is 'completed'
+        while (graphProgress?.graph_details?.graph_status !== 'completed') {
+          console.log('Graph is not completed. Retrying...');
+
+          // Wait for 10 seconds before checking the progress again
+          await new Promise((resolve) => setTimeout(resolve, 10000));
+
+          graphProgress = await checkGraphProgress(
+            token,
+            data.report_id,
+            hubId,
+          );
+        }
+
+        if (graphProgress?.graph_details?.graph_status === 'completed') {
+          const fetchChartData = async () => {
+            try {
+              const result = await fetchGraphData(token, reportId);
+
+              if (result && result.data) {
+                setGraphData(result.data);
+              }
+            } catch (error) {
+              console.error('Error fetching chart data:', error);
+            }
+          };
+
+          fetchChartData();
+        }
+
+        console.log('Graph generation completed!');
       } else {
         throw new Error(data.message || 'Failed to generate the report.');
       }
@@ -154,6 +195,7 @@ const GenerateReport = () => {
         hubId={hubId}
         setHubId={setHubId}
         setAuditData={setAuditData}
+        setReportId={setReportId}
       />
       {isGenerating ? (
         <ReportGenerate progress={progress} />
@@ -178,6 +220,7 @@ const GenerateReport = () => {
                 object_scores={object_scores}
                 score_breakdown={score_breakdown}
                 data_audit={data_audit}
+                graphData={graphData}
               />
             </>
           )}

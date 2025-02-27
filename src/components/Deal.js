@@ -3,7 +3,7 @@ import BarChart from './BarChart';
 import { Tooltip } from './Tooltip';
 import { findRiskImage, getBorderColor } from '../utils/riskManager';
 
-const Deal = ({ token, score_data, reportId, graphData }) => {
+const Deal = ({ token, score_data, graphData }) => {
   const { missing_data, junk_data, total_deals } = score_data;
   const [firstDatapoint, setFirstDatapoint] = useState('dealname');
   const [secondDataPoint, setSecondDataPoint] = useState('closedate');

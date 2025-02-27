@@ -3,7 +3,7 @@ import BarChart from './BarChart';
 import { Tooltip } from './Tooltip';
 import { findRiskImage, getBorderColor } from '../utils/riskManager';
 
-const Ticket = ({ token, reportId, score_data, graphData }) => {
+const Ticket = ({ token, score_data, graphData }) => {
   const { missing_data, junk_data, total_tickets } = score_data;
   const [isMissingDataExpanded, setIsMissingDataExpanded] = useState(true);
   const [isDeletingDataExpanded, setIsDeletingDataExpanded] = useState(true);

@@ -3,6 +3,8 @@ import { UserCircleIcon } from '@heroicons/react/24/solid';
 import {
   generateNewReport,
   triggerReportGeneration,
+  triggerGraphGeneration,
+  checkGraphProgress,
   fetchAuditDataByID,
 } from '../utils/api';
 import { useAuth } from '../App';
@@ -17,6 +19,8 @@ const AuditHeader = ({
   hubId,
   setHubId,
   setAuditData,
+  showGenerate = true,
+  setReportId,
 }) => {
   const { token } = useAuth();
   const [showDropdown, setShowDropdown] = useState(false);
@@ -50,9 +54,9 @@ const AuditHeader = ({
       });
 
       const latestReportId = latestReportData[0]?.latest_report_id;
+      setReportId(latestReportId);
 
       const result = await fetchAuditDataByID(token, latestReportId);
-      console.log('resukt:::', result);
       setAuditData(result);
     };
     fetchData();
@@ -103,11 +107,34 @@ const AuditHeader = ({
         selectedHub.hub_id,
       );
 
+      console.log('respone:::', response);
+
       if (response) {
         console.log('Report generation started successfully.');
       } else {
         console.error('Failed to start report generation.');
       }
+      triggerGraphGeneration(
+        result.token,
+        response.report_id,
+        selectedHub.hub_id,
+      );
+      setTimeout(() => {
+        const checkProgressInterval = setInterval(async () => {
+          const status = await checkGraphProgress(
+            result.token,
+            response.report_id,
+            selectedHub.hub_id,
+          );
+
+          if (status === 'completed') {
+            console.log('Report generation completed.');
+            clearInterval(checkProgressInterval);
+          } else {
+            console.log('Report generation still in progress...');
+          }
+        }, 60000);
+      }, 10000);
     } catch (error) {
       console.error('Error while triggering new report generation:', error);
     } finally {
@@ -120,71 +147,33 @@ const AuditHeader = ({
       <div className="report-header">
         <div>
           <p>Hi {userData?.hub_details?.hs_user}</p>
-          <div className="dropdown" style={{ marginTop: '6px' }}>
-            <div className="tooltip-container">
-              <DropdownTooltip
-                hubs={userData?.unique_hub_ids.filter(
-                  (hub) => hub.hub_domain !== selectedHub?.hub_domain,
-                )}
-                handleHubSelection={handleHubSelection}
-                generateButton={generateButton}
-                token={token}
-              >
-                <button
-                  className="dropdown-toggle"
-                  onClick={() =>
-                    !generateButton && setShowDropdown(!showDropdown)
-                  }
-                  disabled={generateButton}
+          {showGenerate && (
+            <div className="dropdown" style={{ marginTop: '6px' }}>
+              <div className="tooltip-container">
+                <DropdownTooltip
+                  hubs={userData?.unique_hub_ids.filter(
+                    (hub) => hub.hub_domain !== selectedHub?.hub_domain,
+                  )}
+                  handleHubSelection={handleHubSelection}
+                  generateButton={generateButton}
+                  token={token}
                 >
-                  Hub ID: {selectedHub?.hub_id} ({selectedHub?.hub_domain})
-                </button>
-              </DropdownTooltip>
-              {generateButton && <span className="tooltip">{tooltipText}</span>}
-            </div>
-
-            {/* {showDropdown && (
-              <div className="dropdown-menu" ref={dropdownRef}>
-                {userData?.unique_hub_ids
-                  .filter((hub) => hub.hub_domain !== selectedHub?.hub_domain)
-                  .map((hub) => (
-                    <div
-                      key={hub.hub_id}
-                      className="dropdown-item"
-                      style={{
-                        cursor: generateButton ? 'not-allowed' : 'pointer',
-                        opacity: generateButton ? 0.6 : 1,
-                      }}
-                      onClick={() => handleHubSelection(hub)}
-                    >
-                      Hub ID: {hub.hub_id}({hub.hub_domain})
-                    </div>
-                  ))} */}
-            {/* <button
-                  onClick={() => {
-                    if (!generateButton) {
-                      window.location.href =
-                        `https://app.hubspot.com/oauth/authorize
-      ?client_id=2bc2fab4-0ff2-4f13-9400-dc12d07b6dd9
-      &redirect_uri=https://enabling-condor-instantly.ngrok-free.app/getcode
-      &scope=tickets%20crm.objects.owners.read%20crm.objects.companies.read
-      %20crm.objects.deals.read%20crm.objects.contacts.read&state=${token}`.replace(
-                          /\s+/g,
-                          '',
-                        );
+                  <button
+                    className="dropdown-toggle"
+                    onClick={() =>
+                      !generateButton && setShowDropdown(!showDropdown)
                     }
-                  }}
-                  disabled={generateButton}
-                  style={{
-                    opacity: generateButton ? 0.6 : 1,
-                    cursor: generateButton ? 'not-allowed' : 'pointer',
-                  }}
-                >
-                  + Add New
-                </button> */}
-            {/* </div> */}
-            {/* )} */}
-          </div>
+                    disabled={generateButton}
+                  >
+                    Hub ID: {selectedHub?.hub_id} ({selectedHub?.hub_domain})▼
+                  </button>
+                </DropdownTooltip>
+                {generateButton && (
+                  <span className="tooltip">{tooltipText}</span>
+                )}
+              </div>
+            </div>
+          )}
         </div>
         <div>
           <button
@@ -197,18 +186,20 @@ const AuditHeader = ({
           >
             Take Bulk Action ↓
           </button>
-          <div className="tooltip-container">
-            <button
-              className="generate-report-button"
-              onClick={() => setShowModal(true)}
-              disabled={generateButton}
-            >
-              {generateButton
-                ? 'Generating New Report...'
-                : 'Generate New Report'}
-            </button>
-            {generateButton && <span className="tooltip">{tooltipText}</span>}
-          </div>
+          {showGenerate && (
+            <div className="tooltip-container">
+              <button
+                className="generate-report-button"
+                onClick={() => setShowModal(true)}
+                disabled={generateButton}
+              >
+                {generateButton
+                  ? 'Generating New Report...'
+                  : 'Generate New Report'}
+              </button>
+              {generateButton && <span className="tooltip">{tooltipText}</span>}
+            </div>
+          )}
 
           <div className="header__user">
             <div
@@ -223,7 +214,6 @@ const AuditHeader = ({
                 <button
                   className="header__dropdown-button"
                   onClick={handleLogout}
-                  disabled={generateButton}
                   style={{
                     opacity: generateButton ? 0.6 : 1,
                     cursor: generateButton ? 'not-allowed' : 'pointer',
