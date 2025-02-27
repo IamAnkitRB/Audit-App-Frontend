@@ -3,7 +3,7 @@ import BarChart from './BarChart';
 import { Tooltip } from './Tooltip';
 import { findRiskImage, getBorderColor } from '../utils/riskManager';
 
-const Ticket = ({ token, reportId, score_data }) => {
+const Ticket = ({ token, reportId, score_data, graphData }) => {
   const { missing_data, junk_data, total_tickets } = score_data;
   const [isMissingDataExpanded, setIsMissingDataExpanded] = useState(true);
   const [isDeletingDataExpanded, setIsDeletingDataExpanded] = useState(true);
@@ -311,9 +311,7 @@ const Ticket = ({ token, reportId, score_data }) => {
                 <div className="audit-report__chart-container">
                   <div className="audit-report__chart">
                     <BarChart
-                      token={token}
-                      reportId={reportId}
-                      objectType={'tickets'}
+                      graphData={graphData}
                       dataPoint={firstDatapoint}
                     />
                   </div>
@@ -481,9 +479,7 @@ const Ticket = ({ token, reportId, score_data }) => {
                 <div className="audit-report__chart-container">
                   <div className="audit-report__chart">
                     <BarChart
-                      token={token}
-                      reportId={reportId}
-                      objectType={'tickets'}
+                      graphData={graphData}
                       dataPoint={secondDataPoint}
                     />
                   </div>
@@ -628,12 +624,7 @@ const Ticket = ({ token, reportId, score_data }) => {
               <div>
                 <div className="audit-report__chart-container">
                   <div className="audit-report__chart">
-                    <BarChart
-                      token={token}
-                      reportId={reportId}
-                      objectType={'tickets'}
-                      dataPoint={lastDataPoint}
-                    />
+                    <BarChart graphData={graphData} dataPoint={lastDataPoint} />
                   </div>
                 </div>
               </div>

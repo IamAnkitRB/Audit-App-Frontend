@@ -327,12 +327,8 @@ const Contact = ({ token, reportId, score_data, graphData }) => {
                 <div className="audit-report__chart-container">
                   <div className="audit-report__chart">
                     <BarChart
-                      token={token}
-                      reportId={reportId}
-                      objectType={'contacts'}
                       dataPoint={firstDatapoint}
                       graphData={graphData}
-                      riskLevel={missing_data?.without_owner?.risk}
                     />
                   </div>
                 </div>
@@ -505,9 +501,6 @@ const Contact = ({ token, reportId, score_data, graphData }) => {
                 <div className="audit-report__chart-container">
                   <div className="audit-report__chart">
                     <BarChart
-                      token={token}
-                      reportId={reportId}
-                      objectType={'contacts'}
                       graphData={graphData}
                       dataPoint={secondDataPoint}
                     />
@@ -682,9 +675,6 @@ const Contact = ({ token, reportId, score_data, graphData }) => {
                 <div className="audit-report__chart-container">
                   <div className="audit-report__chart">
                     <BarChart
-                      token={token}
-                      reportId={reportId}
-                      objectType={'contacts'}
                       graphData={graphData}
                       dataPoint={thirdDataPoint}
                     />
@@ -820,13 +810,7 @@ const Contact = ({ token, reportId, score_data, graphData }) => {
             <div>
               <div className="audit-report__chart-container">
                 <div className="audit-report__chart">
-                  <BarChart
-                    token={token}
-                    reportId={reportId}
-                    objectType={'contacts'}
-                    graphData={graphData}
-                    dataPoint={firstDatapoint}
-                  />
+                  <BarChart graphData={graphData} dataPoint={firstDatapoint} />
                 </div>
               </div>
             </div>

@@ -3,7 +3,7 @@ import BarChart from './BarChart';
 import { Tooltip } from './Tooltip';
 import { findRiskImage, getBorderColor } from '../utils/riskManager';
 
-const Deal = ({ token, score_data, reportId }) => {
+const Deal = ({ token, score_data, reportId, graphData }) => {
   const { missing_data, junk_data, total_deals } = score_data;
   const [firstDatapoint, setFirstDatapoint] = useState('dealname');
   const [secondDataPoint, setSecondDataPoint] = useState('closedate');
@@ -311,9 +311,7 @@ const Deal = ({ token, score_data, reportId }) => {
                 <div className="audit-report__chart-container">
                   <div className="audit-report__chart">
                     <BarChart
-                      token={token}
-                      reportId={reportId}
-                      objectType={'deals'}
+                      graphData={graphData}
                       dataPoint={firstDatapoint}
                     />
                   </div>
@@ -481,9 +479,7 @@ const Deal = ({ token, score_data, reportId }) => {
                 <div className="audit-report__chart-container">
                   <div className="audit-report__chart">
                     <BarChart
-                      token={token}
-                      reportId={reportId}
-                      objectType={'deals'}
+                      graphData={graphData}
                       dataPoint={secondDataPoint}
                     />
                   </div>
@@ -617,12 +613,7 @@ const Deal = ({ token, score_data, reportId }) => {
             <div>
               <div className="audit-report__chart-container">
                 <div className="audit-report__chart">
-                  <BarChart
-                    token={token}
-                    reportId={reportId}
-                    objectType={'deals'}
-                    dataPoint={firstDatapoint}
-                  />
+                  <BarChart graphData={graphData} dataPoint={firstDatapoint} />
                 </div>
               </div>
             </div>
