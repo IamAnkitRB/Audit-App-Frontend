@@ -3,7 +3,7 @@ import BarChart from './BarChart';
 import { Tooltip } from './Tooltip';
 import { findRiskImage, getBorderColor } from '../utils/riskManager';
 
-const Deal = ({ token, score_data }) => {
+const Deal = ({ token, score_data, reportId }) => {
   const { missing_data, junk_data, total_deals } = score_data;
   const [firstDatapoint, setFirstDatapoint] = useState('dealname');
   const [secondDataPoint, setSecondDataPoint] = useState('closedate');
@@ -159,141 +159,160 @@ const Deal = ({ token, score_data }) => {
                 <p>Are you kidding me!</p>
               </div>
               <div className="report-details__card">
-                <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
-                  <div
-                    className={`report-details__data-div ${
-                      firstRowSelectedItem === 'without_name'
-                        ? 'selected-item'
-                        : ''
-                    }  ${getBorderColor(missing_data?.without_name?.risk)}`}
-                    onClick={() => {
-                      setfirstRowSelectedItem('without_name');
-                      handleFirstDataPointChange('dealname');
-                    }}
-                  >
-                    <div className="report-details__data-item">
-                      <p className="report-details__data-div-heading">
-                        <p>Deals without Name</p>
+                <div
+                  className={`report-details__data-div ${
+                    firstRowSelectedItem === 'without_name'
+                      ? 'selected-item'
+                      : ''
+                  }  ${getBorderColor(missing_data?.without_name?.risk)}`}
+                  onClick={() => {
+                    setfirstRowSelectedItem('without_name');
+                    handleFirstDataPointChange('dealname');
+                  }}
+                >
+                  <div className="report-details__data-item">
+                    <p className="report-details__data-div-heading">
+                      <p>Deals without Name</p>
+                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
                         <img
-                          src={findRiskImage(missing_data?.without_name?.risk)}
-                        ></img>
-                      </p>
-                      <p className="report-details__data-div-score">
-                        <strong>{missing_data?.without_name?.percent}%</strong>
-                      </p>
-                      <p className="report-details__data-div-total">
-                        {missing_data?.without_name?.count?.toLocaleString()}{' '}
-                        <span>/ {total_deals?.toLocaleString()}</span>
-                      </p>
-                    </div>
+                          className="info-image"
+                          src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
+                        />
+                      </Tooltip>
+                      <img
+                        src={findRiskImage(missing_data?.without_name?.risk)}
+                      ></img>
+                    </p>
+                    <p className="report-details__data-div-score">
+                      <strong>{missing_data?.without_name?.percent}%</strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_name?.count?.toLocaleString()}{' '}
+                      <span>/ {total_deals?.toLocaleString()}</span>
+                    </p>
                   </div>
-                </Tooltip>
-                <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
-                  <div
-                    className={`report-details__data-div ${
-                      firstRowSelectedItem === 'without_owner'
-                        ? 'selected-item'
-                        : ''
-                    }  ${getBorderColor(missing_data?.without_owner?.risk)}`}
-                    onClick={() => {
-                      setfirstRowSelectedItem('without_owner');
-                      handleFirstDataPointChange('hubspot_owner_id');
-                    }}
-                  >
-                    <div className="report-details__data-item">
-                      <p className="report-details__data-div-heading">
-                        <p> Deals without Owner</p>
+                </div>
+
+                <div
+                  className={`report-details__data-div ${
+                    firstRowSelectedItem === 'without_owner'
+                      ? 'selected-item'
+                      : ''
+                  }  ${getBorderColor(missing_data?.without_owner?.risk)}`}
+                  onClick={() => {
+                    setfirstRowSelectedItem('without_owner');
+                    handleFirstDataPointChange('hubspot_owner_id');
+                  }}
+                >
+                  <div className="report-details__data-item">
+                    <p className="report-details__data-div-heading">
+                      <p> Deals without Owner</p>
+                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
                         <img
-                          src={findRiskImage(missing_data?.without_owner?.risk)}
-                        ></img>
-                      </p>
-                      <p className="report-details__data-div-score">
-                        <strong>{missing_data?.without_owner?.percent}%</strong>
-                      </p>
-                      <p className="report-details__data-div-total">
-                        {missing_data?.without_owner?.count?.toLocaleString()}{' '}
-                        <span>/ {total_deals?.toLocaleString()}</span>
-                      </p>
-                    </div>
+                          className="info-image"
+                          src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
+                        />
+                      </Tooltip>
+                      <img
+                        src={findRiskImage(missing_data?.without_owner?.risk)}
+                      ></img>
+                    </p>
+                    <p className="report-details__data-div-score">
+                      <strong>{missing_data?.without_owner?.percent}%</strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_owner?.count?.toLocaleString()}{' '}
+                      <span>/ {total_deals?.toLocaleString()}</span>
+                    </p>
                   </div>
-                </Tooltip>
-                <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
-                  <div
-                    className={`report-details__data-div ${
-                      firstRowSelectedItem === 'without_associated_contacts'
-                        ? 'selected-item'
-                        : ''
-                    }  ${getBorderColor(
-                      missing_data?.without_associated_contacts?.risk,
-                    )}`}
-                    onClick={() => {
-                      setfirstRowSelectedItem('without_associated_contacts');
-                      handleFirstDataPointChange('num_associated_contacts');
-                    }}
-                  >
-                    <div className="report-details__data-item">
-                      <p className="report-details__data-div-heading">
-                        <p>Deals with Associated Contact</p>
+                </div>
+
+                <div
+                  className={`report-details__data-div ${
+                    firstRowSelectedItem === 'without_associated_contacts'
+                      ? 'selected-item'
+                      : ''
+                  }  ${getBorderColor(
+                    missing_data?.without_associated_contacts?.risk,
+                  )}`}
+                  onClick={() => {
+                    setfirstRowSelectedItem('without_associated_contacts');
+                    handleFirstDataPointChange('num_associated_contacts');
+                  }}
+                >
+                  <div className="report-details__data-item">
+                    <p className="report-details__data-div-heading">
+                      <p>Deals with Associated Contact</p>
+                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
                         <img
-                          src={findRiskImage(
-                            missing_data?.without_associated_contacts?.risk,
-                          )}
-                        ></img>
-                      </p>
-                      <p className="report-details__data-div-score">
-                        <strong>
-                          {missing_data?.without_associated_contacts?.percent}%
-                        </strong>
-                      </p>
-                      <p className="report-details__data-div-total">
-                        {missing_data?.without_associated_contacts?.count?.toLocaleString()}{' '}
-                        <span>/ {total_deals?.toLocaleString()}</span>
-                      </p>
-                    </div>
+                          className="info-image"
+                          src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
+                        />
+                      </Tooltip>
+                      <img
+                        src={findRiskImage(
+                          missing_data?.without_associated_contacts?.risk,
+                        )}
+                      ></img>
+                    </p>
+                    <p className="report-details__data-div-score">
+                      <strong>
+                        {missing_data?.without_associated_contacts?.percent}%
+                      </strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_associated_contacts?.count?.toLocaleString()}{' '}
+                      <span>/ {total_deals?.toLocaleString()}</span>
+                    </p>
                   </div>
-                </Tooltip>
-                <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
-                  <div
-                    className={`report-details__data-div ${
-                      firstRowSelectedItem === 'without_associated_company'
-                        ? 'selected-item'
-                        : ''
-                    }  ${getBorderColor(
-                      missing_data?.without_associated_company?.risk,
-                    )}`}
-                    onClick={() => {
-                      setfirstRowSelectedItem('without_associated_company');
-                      handleFirstDataPointChange('associations.company');
-                    }}
-                  >
-                    <div className="report-details__data-item">
-                      <p className="report-details__data-div-heading">
-                        <p>Deals without Associated Company</p>
+                </div>
+
+                <div
+                  className={`report-details__data-div ${
+                    firstRowSelectedItem === 'without_associated_company'
+                      ? 'selected-item'
+                      : ''
+                  }  ${getBorderColor(
+                    missing_data?.without_associated_company?.risk,
+                  )}`}
+                  onClick={() => {
+                    setfirstRowSelectedItem('without_associated_company');
+                    handleFirstDataPointChange('associations.company');
+                  }}
+                >
+                  <div className="report-details__data-item">
+                    <p className="report-details__data-div-heading">
+                      <p>Deals without Associated Company</p>
+                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
                         <img
-                          src={findRiskImage(
-                            missing_data?.without_associated_company?.risk,
-                          )}
-                        ></img>
-                      </p>
-                      <p className="report-details__data-div-score">
-                        <strong>
-                          {missing_data?.without_associated_company?.percent}%
-                        </strong>
-                      </p>
-                      <p className="report-details__data-div-total">
-                        {missing_data?.without_associated_company?.count?.toLocaleString()}{' '}
-                        <span>/ {total_deals?.toLocaleString()}</span>
-                      </p>
-                    </div>
+                          className="info-image"
+                          src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
+                        />
+                      </Tooltip>
+                      <img
+                        src={findRiskImage(
+                          missing_data?.without_associated_company?.risk,
+                        )}
+                      ></img>
+                    </p>
+                    <p className="report-details__data-div-score">
+                      <strong>
+                        {missing_data?.without_associated_company?.percent}%
+                      </strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_associated_company?.count?.toLocaleString()}{' '}
+                      <span>/ {total_deals?.toLocaleString()}</span>
+                    </p>
                   </div>
-                </Tooltip>
+                </div>
               </div>
               <div>
                 <div className="audit-report__chart-container">
                   <div className="audit-report__chart">
                     <BarChart
                       token={token}
-                      reportId={'59'}
+                      reportId={reportId}
                       objectType={'deals'}
                       dataPoint={firstDatapoint}
                     />
@@ -306,151 +325,164 @@ const Deal = ({ token, score_data }) => {
                 <p>Must-Have</p>
               </div>
               <div className="report-details__card">
-                <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
-                  <div
-                    className={`report-details__data-div ${
-                      secondRowSelectedItem === 'without_close_date'
-                        ? 'selected-item'
-                        : ''
-                    }  ${getBorderColor(
-                      missing_data?.without_closing_date?.risk,
-                    )}`}
-                    onClick={() => {
-                      setSecondRowSelectedItem('without_close_date');
-                      handleSecondDataPointChange('closedate');
-                    }}
-                  >
-                    <div className="report-details__data-item">
-                      <p className="report-details__data-div-heading">
-                        <p>Deals without Close Date</p>
+                <div
+                  className={`report-details__data-div ${
+                    secondRowSelectedItem === 'without_close_date'
+                      ? 'selected-item'
+                      : ''
+                  }  ${getBorderColor(
+                    missing_data?.without_closing_date?.risk,
+                  )}`}
+                  onClick={() => {
+                    setSecondRowSelectedItem('without_close_date');
+                    handleSecondDataPointChange('closedate');
+                  }}
+                >
+                  <div className="report-details__data-item">
+                    <p className="report-details__data-div-heading">
+                      <p>Deals without Close Date</p>
+                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
                         <img
-                          src={findRiskImage(
-                            missing_data?.without_closing_date?.risk,
-                          )}
-                        ></img>
-                      </p>
-                      <p className="report-details__data-div-score">
-                        <strong>
-                          {missing_data?.without_closing_date?.percent}%
-                        </strong>
-                      </p>
-                      <p className="report-details__data-div-total">
-                        {missing_data?.without_closing_date?.count?.toLocaleString()}{' '}
-                        <span>/ {total_deals?.toLocaleString()}</span>
-                      </p>
-                    </div>
+                          className="info-image"
+                          src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
+                        />
+                      </Tooltip>
+                      <img
+                        src={findRiskImage(
+                          missing_data?.without_closing_date?.risk,
+                        )}
+                      ></img>
+                    </p>
+                    <p className="report-details__data-div-score">
+                      <strong>
+                        {missing_data?.without_closing_date?.percent}%
+                      </strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_closing_date?.count?.toLocaleString()}{' '}
+                      <span>/ {total_deals?.toLocaleString()}</span>
+                    </p>
                   </div>
-                </Tooltip>
-                <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
-                  <div
-                    className={`report-details__data-div ${
-                      secondRowSelectedItem === 'without_amount'
-                        ? 'selected-item'
-                        : ''
-                    }  ${getBorderColor(missing_data?.without_amount?.risk)}`}
-                    onClick={() => {
-                      setSecondRowSelectedItem('without_amount');
-                      handleSecondDataPointChange('amount');
-                    }}
-                  >
-                    <div className="report-details__data-item">
-                      <p className="report-details__data-div-heading">
-                        <p> Deals without Amount</p>
+                </div>
+
+                <div
+                  className={`report-details__data-div ${
+                    secondRowSelectedItem === 'without_amount'
+                      ? 'selected-item'
+                      : ''
+                  }  ${getBorderColor(missing_data?.without_amount?.risk)}`}
+                  onClick={() => {
+                    setSecondRowSelectedItem('without_amount');
+                    handleSecondDataPointChange('amount');
+                  }}
+                >
+                  <div className="report-details__data-item">
+                    <p className="report-details__data-div-heading">
+                      <p> Deals without Amount</p>
+                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
                         <img
-                          src={findRiskImage(
-                            missing_data?.without_amount?.risk,
-                          )}
-                        ></img>
-                      </p>
-                      <p className="report-details__data-div-score">
-                        <strong>
-                          {missing_data?.without_amount?.percent}%
-                        </strong>
-                      </p>
-                      <p className="report-details__data-div-total">
-                        {missing_data?.without_amount?.count?.toLocaleString()}{' '}
-                        <span>/ {total_deals?.toLocaleString()}</span>
-                      </p>
-                    </div>
+                          className="info-image"
+                          src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
+                        />
+                      </Tooltip>
+                      <img
+                        src={findRiskImage(missing_data?.without_amount?.risk)}
+                      ></img>
+                    </p>
+                    <p className="report-details__data-div-score">
+                      <strong>{missing_data?.without_amount?.percent}%</strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_amount?.count?.toLocaleString()}{' '}
+                      <span>/ {total_deals?.toLocaleString()}</span>
+                    </p>
                   </div>
-                </Tooltip>
-                <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
-                  <div
-                    className={`report-details__data-div ${
-                      secondRowSelectedItem === 'without_lost_reason'
-                        ? 'selected-item'
-                        : ''
-                    }  ${getBorderColor(
-                      missing_data?.lost_without_reason?.risk,
-                    )}`}
-                    onClick={() => {
-                      setSecondRowSelectedItem('without_lost_reason');
-                      handleSecondDataPointChange('amount');
-                    }}
-                  >
-                    <div className="report-details__data-item">
-                      <p className="report-details__data-div-heading">
-                        <p>Lost Deals without Lost Reason</p>
+                </div>
+
+                <div
+                  className={`report-details__data-div ${
+                    secondRowSelectedItem === 'without_lost_reason'
+                      ? 'selected-item'
+                      : ''
+                  }  ${getBorderColor(
+                    missing_data?.lost_without_reason?.risk,
+                  )}`}
+                  onClick={() => {
+                    setSecondRowSelectedItem('without_lost_reason');
+                    handleSecondDataPointChange('amount');
+                  }}
+                >
+                  <div className="report-details__data-item">
+                    <p className="report-details__data-div-heading">
+                      <p>Lost Deals without Lost Reason</p>
+                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
                         <img
-                          src={findRiskImage(
-                            missing_data?.lost_without_reason?.risk,
-                          )}
-                        ></img>
-                      </p>
-                      <p className="report-details__data-div-score">
-                        <strong>
-                          {missing_data?.lost_without_reason?.percent}%
-                        </strong>
-                      </p>
-                      <p className="report-details__data-div-total">
-                        {missing_data?.lost_without_reason?.count?.toLocaleString()}{' '}
-                        <span>/ {total_deals?.toLocaleString()}</span>
-                      </p>
-                    </div>
+                          className="info-image"
+                          src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
+                        />
+                      </Tooltip>
+                      <img
+                        src={findRiskImage(
+                          missing_data?.lost_without_reason?.risk,
+                        )}
+                      ></img>
+                    </p>
+                    <p className="report-details__data-div-score">
+                      <strong>
+                        {missing_data?.lost_without_reason?.percent}%
+                      </strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.lost_without_reason?.count?.toLocaleString()}{' '}
+                      <span>/ {total_deals?.toLocaleString()}</span>
+                    </p>
                   </div>
-                </Tooltip>
-                <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
-                  <div
-                    className={`report-details__data-div ${
-                      secondRowSelectedItem === 'without_type'
-                        ? 'selected-item'
-                        : ''
-                    }  ${getBorderColor(
-                      missing_data?.without_deal_type?.risk,
-                    )}`}
-                    onClick={() => {
-                      setSecondRowSelectedItem('without_type');
-                      handleSecondDataPointChange('dealtype');
-                    }}
-                  >
-                    <div className="report-details__data-item">
-                      <p className="report-details__data-div-heading">
-                        <p>Deals without Deal Type</p>
+                </div>
+
+                <div
+                  className={`report-details__data-div ${
+                    secondRowSelectedItem === 'without_type'
+                      ? 'selected-item'
+                      : ''
+                  }  ${getBorderColor(missing_data?.without_deal_type?.risk)}`}
+                  onClick={() => {
+                    setSecondRowSelectedItem('without_type');
+                    handleSecondDataPointChange('dealtype');
+                  }}
+                >
+                  <div className="report-details__data-item">
+                    <p className="report-details__data-div-heading">
+                      <p>Deals without Deal Type</p>
+                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
                         <img
-                          src={findRiskImage(
-                            missing_data?.without_deal_type?.risk,
-                          )}
-                        ></img>
-                      </p>
-                      <p className="report-details__data-div-score">
-                        <strong>
-                          {missing_data?.without_deal_type?.percent}%
-                        </strong>
-                      </p>
-                      <p className="report-details__data-div-total">
-                        {missing_data?.without_deal_type?.count?.toLocaleString()}{' '}
-                        <span>/ {total_deals?.toLocaleString()}</span>
-                      </p>
-                    </div>
+                          className="info-image"
+                          src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
+                        />
+                      </Tooltip>
+                      <img
+                        src={findRiskImage(
+                          missing_data?.without_deal_type?.risk,
+                        )}
+                      ></img>
+                    </p>
+                    <p className="report-details__data-div-score">
+                      <strong>
+                        {missing_data?.without_deal_type?.percent}%
+                      </strong>
+                    </p>
+                    <p className="report-details__data-div-total">
+                      {missing_data?.without_deal_type?.count?.toLocaleString()}{' '}
+                      <span>/ {total_deals?.toLocaleString()}</span>
+                    </p>
                   </div>
-                </Tooltip>
+                </div>
               </div>
               <div>
                 <div className="audit-report__chart-container">
                   <div className="audit-report__chart">
                     <BarChart
                       token={token}
-                      reportId={'59'}
+                      reportId={reportId}
                       objectType={'deals'}
                       dataPoint={secondDataPoint}
                     />
@@ -502,79 +534,92 @@ const Deal = ({ token, score_data }) => {
         {isDeletingDataExpanded && (
           <>
             <div className="report-details__card">
-              <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
-                <div
-                  className={`report-details__duplicate-data-div  ${getBorderColor(
-                    junk_data?.no_activity_in_last_180_days?.risk,
-                  )}`}
-                >
-                  <div className="report-details__data-item">
-                    <p className="report-details__data-div-heading">
-                      <p>Deals have no activity in the last 180 days</p>
+              <div
+                className={`report-details__duplicate-data-div  ${getBorderColor(
+                  junk_data?.no_activity_in_last_180_days?.risk,
+                )}`}
+              >
+                <div className="report-details__data-item">
+                  <p className="report-details__data-div-heading">
+                    <p style={{ width: 'inherit' }}>
+                      Deals have no activity in the last 180 days
+                    </p>
+                    <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
                       <img
-                        src={findRiskImage(
-                          junk_data?.no_activity_in_last_180_days?.risk,
-                        )}
-                      ></img>
-                    </p>
-                    <p className="report-details__data-div-score">
-                      <strong>
-                        {junk_data?.no_activity_in_last_180_days?.count?.toLocaleString()}{' '}
-                        /
-                      </strong>
-                      <span
-                        style={{
-                          fontSize: 'large',
-                          fontWeight: '100',
-                          color: '#333',
-                        }}
-                      >
-                        {total_deals?.toLocaleString()}
-                      </span>
-                    </p>
-                  </div>
+                        className="info-image"
+                        src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
+                      />
+                    </Tooltip>
+                    <img
+                      src={findRiskImage(
+                        junk_data?.no_activity_in_last_180_days?.risk,
+                      )}
+                    ></img>
+                  </p>
+                  <p className="report-details__data-div-score">
+                    <strong>
+                      {junk_data?.no_activity_in_last_180_days?.count?.toLocaleString()}{' '}
+                      /
+                    </strong>
+                    <span
+                      style={{
+                        fontSize: 'large',
+                        fontWeight: '100',
+                        color: '#333',
+                      }}
+                    >
+                      {total_deals?.toLocaleString()}
+                    </span>
+                  </p>
                 </div>
-              </Tooltip>
-              <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
-                <div
-                  className={`report-details__duplicate-data-div  ${getBorderColor(
-                    junk_data?.without_name_and_owner?.risk,
-                  )}`}
-                >
-                  <div className="report-details__data-item">
-                    <p className="report-details__data-div-heading">
-                      <p>Deals without name and owner</p>
+              </div>
+
+              <div
+                className={`report-details__duplicate-data-div  ${getBorderColor(
+                  junk_data?.without_name_and_owner?.risk,
+                )}`}
+              >
+                <div className="report-details__data-item">
+                  <p className="report-details__data-div-heading">
+                    <p style={{ width: 'inherit' }}>
+                      Deals without name and owner
+                    </p>
+                    <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
                       <img
-                        src={findRiskImage(
-                          junk_data?.without_name_and_owner?.risk,
-                        )}
-                      ></img>
-                    </p>
-                    <p className="report-details__data-div-score">
-                      <strong>
-                        {junk_data?.without_name_and_owner?.count?.toLocaleString()}{' '}
-                        /
-                      </strong>
-                      <span
-                        style={{
-                          fontSize: 'large',
-                          fontWeight: '100',
-                          color: '#333',
-                        }}
-                      >
-                        {total_deals?.toLocaleString()}
-                      </span>
-                    </p>
-                  </div>
+                        className="info-image"
+                        src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
+                      />
+                    </Tooltip>
+                    <img
+                      src={findRiskImage(
+                        junk_data?.without_name_and_owner?.risk,
+                      )}
+                    ></img>
+                  </p>
+                  <p className="report-details__data-div-score">
+                    <strong>
+                      {junk_data?.without_name_and_owner?.count?.toLocaleString()}{' '}
+                      /
+                    </strong>
+                    <span
+                      style={{
+                        fontSize: 'large',
+                        fontWeight: '100',
+                        color: '#333',
+                      }}
+                    >
+                      {total_deals?.toLocaleString()}
+                    </span>
+                  </p>
                 </div>
-              </Tooltip>
+              </div>
             </div>
             <div>
               <div className="audit-report__chart-container">
                 <div className="audit-report__chart">
                   <BarChart
                     token={token}
-                    reportId={'59'}
+                    reportId={reportId}
                     objectType={'deals'}
                     dataPoint={firstDatapoint}
                   />

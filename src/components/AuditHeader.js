@@ -95,7 +95,7 @@ const AuditHeader = ({
       document.cookie = `state=${result.token}; path=/; secure; SameSite=Strict`;
 
       setTimeout(checkReport, 10000, selectedHub.hub_id, result.token);
-      setProgress(0);
+      setProgress(2);
       setIsGenerating(true);
 
       const response = await triggerReportGeneration(

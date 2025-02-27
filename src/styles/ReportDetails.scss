@@ -37,6 +37,7 @@
   /* Card Styles */
   &__card {
     margin-bottom: 1rem;
+    padding-bottom: 1rem;
     display: flex;
     justify-content: space-evenly;
   }
@@ -121,7 +122,7 @@
     height: 50px;
   }
   &__data-div-heading p {
-    width: inherit;
+    width: 14vw;
     text-wrap: auto;
   }
 
@@ -281,6 +282,9 @@
   }
 }
 
+.info-image {
+  top: 10% !important;
+}
 /* Medium screens (e.g., tablets, 768px and up) */
 @media (max-width: 1024px) {
   .report-details {
@@ -371,7 +375,7 @@
   display: flex;
   justify-content: flex-start;
   margin: 1rem;
-  margin-bottom: 6rem;
+  margin-bottom: 8rem;
 }
 
 .audit-report__chart canvas {

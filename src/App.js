@@ -63,7 +63,7 @@ function App() {
                   activeTab === 'current' ? 'active' : ''
                 }`}
               >
-                Current Report
+                Your Report
               </button>
               <button
                 onClick={() => handleTabChange('past')}
@@ -77,7 +77,7 @@ function App() {
           }
         >
           {/* Main Content */}
-          <GenerateReport title="Current Report" />
+          <GenerateReport title="Your Report" />
           <AuditReport title="Past Reports" />
         </TabLayout>
       </div>

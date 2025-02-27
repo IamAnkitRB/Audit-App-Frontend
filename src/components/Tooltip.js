@@ -2,10 +2,12 @@ import React from 'react';
 import { addNewAccount } from '../utils/api';
 export const Tooltip = ({ tooltipText, children }) => {
   return (
-    <div className="tooltip-wrapper">
-      {children}
-      <div className="tooltip-text">{tooltipText}</div>
-    </div>
+    <>
+      <div className="tooltip-wrapper">
+        {children}
+        <div className="tooltip-text">{tooltipText}</div>
+      </div>
+    </>
   );
 };
 
@@ -40,16 +42,6 @@ export const DropdownTooltip = ({
           </div>
         ))}
         <button
-          //     onClick={() => {
-          //       window.location.href = `https://app.hubspot.com/oauth/authorize
-          // ?client_id=e2c4a7c0-aba4-48b6-a94b-b1d3e233f22b
-          // &redirect_uri=https://enabling-condor-instantly.ngrok-free.app/getcode
-          // &scope=tickets%20crm.objects.owners.read%20crm.objects.companies.read
-          // %20crm.objects.deals.read%20crm.objects.contacts.read&state=${token}`.replace(
-          //         /\s+/g,
-          //         '',
-          //       );
-          //     }}
           onClick={() => {
             handleAddNewAccount(token);
           }}

@@ -55,23 +55,6 @@ const ScoreSection = ({
     borderColorClass = 'border-green';
   }
 
-  // useEffect(() => {
-  //   const auditSection = document.querySelector('.audit-report__subSection');
-  //   console.log(auditSection);
-  //   const header = document.querySelector('header'); // Adjust if needed
-  //   console.log(header);
-  //   const headerHeight = header.offsetHeight; // Get header height dynamically
-  //   console.log(headerHeight);
-  //   document.addEventListener('click', function () {
-  //     const sectionTop = auditSection.getBoundingClientRect().top; // Distance from top
-  //     console.log(sectionTop);
-  //     if (sectionTop <= headerHeight) {
-  //       auditSection.classList.add('sticky');
-  //     } else {
-  //       auditSection.classList.remove('sticky');
-  //     }
-  //   });
-  // }, []);
   return (
     <>
       {/* Overall Audit Score */}
