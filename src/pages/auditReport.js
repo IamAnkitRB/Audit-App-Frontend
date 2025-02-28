@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { fetchAuditDataByID, fetchReportList } from '../utils/api';
+import {
+  fetchAuditDataByID,
+  fetchReportList,
+  fetchGraphData,
+} from '../utils/api';
 import { UserCircleIcon } from '@heroicons/react/24/solid';
 import '../styles/AuditReport.scss';
 import AuditHeader from '../components/AuditHeader';
@@ -8,7 +12,7 @@ import ScoreSection from '../components/ScoreSection';
 import Error from '../components/Error';
 import { useAuth } from '../App';
 
-export default function AuditReport() {
+export default function AuditReport({ userData }) {
   const [selectedReportId, setSelectedReportId] = useState(null);
   const [selectedHub, setSelectedHub] = useState(null);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
@@ -16,6 +20,7 @@ export default function AuditReport() {
   const [reportList, setReportList] = useState([]);
   const [error, setError] = useState(null);
   const [graphData, setGraphData] = useState(null);
+  const [lastUpdated, setLastUpdated] = useState(null);
   const { token } = useAuth();
 
   // Fetch Report List
@@ -45,10 +50,11 @@ export default function AuditReport() {
         if (!token || !selectedReportId) return;
 
         const response = await fetchAuditDataByID(token, selectedReportId);
-        console.log(response);
         if (response) {
-          setAuditData(response);
+          setAuditData(response?.result);
+          setLastUpdated(response?.updated_at);
         }
+        fetchGraphStatus(selectedReportId);
       } catch (error) {
         console.error('Error fetching audit data:', error);
         setError(error);
@@ -65,7 +71,35 @@ export default function AuditReport() {
   };
 
   const toggleDropdown = () => {
-    if (!generateButton) setDropdownOpen(!isDropdownOpen);
+    setDropdownOpen(!isDropdownOpen);
+  };
+
+  const fetchGraphStatus = async (reportId) => {
+    try {
+      if (!token || !reportId) {
+        throw new Error('Token or Report ID is missing');
+      }
+
+      let result = await fetchGraphData(token, reportId);
+
+      if (result?.success) {
+        setGraphData(result?.data);
+      }
+
+      while (result?.status !== 'Completed') {
+        console.log('Graph is not completed. Retrying...');
+
+        await new Promise((resolve) => setTimeout(resolve, 60000));
+
+        result = await fetchGraphData(token, reportId);
+        console.log('Graph result:', result);
+        if (result?.success) {
+          setGraphData(result?.data);
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching graph status:', err);
+    }
   };
 
   // **Show error page if an error occurs**
@@ -77,7 +111,11 @@ export default function AuditReport() {
   // **Show report list if no report is selected**
   if (!selectedReportId) {
     return (
-      <ReportList reports={reportList} onSelectReport={setSelectedReportId} />
+      <ReportList
+        reports={reportList}
+        onSelectReport={setSelectedReportId}
+        setSelectedHub={setSelectedHub}
+      />
     );
   }
 
@@ -91,63 +129,68 @@ export default function AuditReport() {
 
   return (
     <div className="audit-report">
+      <header className="audit-report__header">
+        <div className="report-header">
+          <div>
+            <p>Hi {userData?.hub_details?.hs_user}</p>
+            <div className="dropdown" style={{ marginTop: '6px' }}>
+              <div className="dropdown-domain">{selectedHub}</div>
+            </div>
+          </div>
+          <div style={{ display: 'flex' }}>
+            <button
+              onClick={() =>
+                document
+                  .getElementById('take_action')
+                  .scrollIntoView({ behavior: 'smooth' })
+              }
+            >
+              Take Bulk Action ↓
+            </button>
+            <div className="header__user">
+              <div
+                className="header__user-icon"
+                onClick={toggleDropdown}
+                style={{ cursor: 'pointer' }}
+              >
+                <UserCircleIcon className="header__user-heroicon" />
+              </div>
+              {isDropdownOpen && (
+                <div className="header__dropdown">
+                  <button
+                    className="header__dropdown-button"
+                    onClick={handleLogout}
+                    style={{
+                      opacity: 1,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </header>
+
       <div
         style={{
           display: 'flex',
           justifyContent: 'space-between',
-          position: 'relative',
-          top: '9px',
+          fontSize: 'small',
         }}
       >
-        <div>
-          {/* <p>Hi {userData?.hub_details?.hs_user}</p> */}
-          <div className="dropdown" style={{ marginTop: '6px' }}>
-            <div className="tooltip-container">
-              Hub ID: {selectedHub?.hub_id} ({selectedHub?.hub_domain})▼
-            </div>
-          </div>
-        </div>
-        <div style={{ display: 'flex' }}>
-          <button
-            onClick={() =>
-              document
-                .getElementById('take_action')
-                .scrollIntoView({ behavior: 'smooth' })
-            }
-          >
-            Take Bulk Action ↓
-          </button>
-          <div className="header__user">
-            <div
-              className="header__user-icon"
-              onClick={toggleDropdown}
-              style={{ cursor: 'pointer' }}
-            >
-              <UserCircleIcon className="header__user-heroicon" />
-            </div>
-            {isDropdownOpen && (
-              <div className="header__dropdown">
-                <button
-                  className="header__dropdown-button"
-                  onClick={handleLogout}
-                  style={{
-                    opacity: 1,
-                    cursor: 'pointer',
-                  }}
-                >
-                  Logout
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
+        <p
+          style={{ cursor: 'pointer' }}
+          onClick={() => setSelectedReportId(null)}
+        >
+          ← Go Back
+        </p>
+
+        <p style={{ marginTop: 0 }}>Last Updated: {lastUpdated}</p>
       </div>
 
-      <p onClick={() => setSelectedReportId(null)}>Go Back</p>
-
-      <p style={{ textAlign: 'right', fontSize: 'small' }}>
-        Last Updated: {new Date().toLocaleString()}
-      </p>
       <ScoreSection
         token={token}
         overall_audit_score={overall_audit_score}

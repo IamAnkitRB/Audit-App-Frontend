@@ -18,6 +18,7 @@ const Contact = ({ token, score_data, graphData }) => {
     'num_associated_deals',
   );
   const [thirdDataPoint, setThirdDataPoint] = useState('jobtitle');
+  const [lastDataPoint, setLastDataPoint] = useState('no_activity_last_180');
 
   const [contactActiveListSelections, setContactActiveListSelections] =
     useState({
@@ -42,6 +43,9 @@ const Contact = ({ token, score_data, graphData }) => {
       group4: {
         no_name_and_domain: false,
         no_activity_180: false,
+      },
+      group5: {
+        contacts_with_no_activity_in_last_180_days: false,
       },
     });
 
@@ -85,6 +89,48 @@ const Contact = ({ token, score_data, graphData }) => {
       const data = await response.json();
       if (response.ok) {
         console.log('Active list(s) created successfully!');
+      } else {
+        console.log('Error creating active list: ' + data.error);
+      }
+    } catch (error) {
+      console.error('API error:', error);
+      alert('Network error. Please try again later.');
+    }
+  };
+
+  const handleDeleteActiveList = async (group) => {
+    const selectedProperties = Object.entries(
+      contactActiveListSelections[group],
+    )
+      .filter(([key, value]) => value)
+      .map(([key]) => key);
+
+    if (!selectedProperties.length) {
+      alert('Please select at least one property.');
+      return;
+    }
+
+    // Build the payload; using "company" as the object name in this example.
+    const payload = {
+      objectname: 'contacts',
+      propertynames: selectedProperties,
+    };
+
+    try {
+      const response = await fetch(
+        'https://enabling-condor-instantly.ngrok-free.app/deleterecords',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            state: token,
+          },
+          body: JSON.stringify(payload),
+        },
+      );
+      const data = await response.json();
+      if (response.ok) {
+        console.log('Items Deleted successfully!');
       } else {
         console.log('Error creating active list: ' + data.error);
       }
@@ -730,7 +776,14 @@ const Contact = ({ token, score_data, graphData }) => {
               <div
                 className={`report-details__duplicate-data-div  ${getBorderColor(
                   junk_data?.no_activity_in_last_180_days?.risk,
-                )}`}
+                )}  ${
+                  lastDataPoint === 'no_activity_last_180'
+                    ? 'selected-item'
+                    : ''
+                }`}
+                onClick={() => {
+                  setLastDataPoint('no_activity_last_180');
+                }}
               >
                 <div className="report-details__data-item">
                   <p className="report-details__data-div-heading">
@@ -770,7 +823,14 @@ const Contact = ({ token, score_data, graphData }) => {
               <div
                 className={`report-details__duplicate-data-div  ${getBorderColor(
                   junk_data?.internal_team_members?.risk,
-                )}`}
+                )} ${
+                  lastDataPoint === 'internal_team_members'
+                    ? 'selected-item'
+                    : ''
+                } `}
+                onClick={() => {
+                  setLastDataPoint('internal_team_members');
+                }}
               >
                 <div className="report-details__data-item">
                   <p className="report-details__data-div-heading">
@@ -807,13 +867,18 @@ const Contact = ({ token, score_data, graphData }) => {
                 </div>
               </div>
             </div>
-            <div>
-              <div className="audit-report__chart-container">
-                <div className="audit-report__chart">
-                  <BarChart graphData={graphData} dataPoint={firstDatapoint} />
+            {lastDataPoint === 'no_activity_last_180' && (
+              <div>
+                <div className="audit-report__chart-container">
+                  <div className="audit-report__chart">
+                    <BarChart
+                      graphData={graphData}
+                      dataPoint={firstDatapoint}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </>
         )}
       </section>
@@ -857,7 +922,7 @@ const Contact = ({ token, score_data, graphData }) => {
                   />
                   Contacts without Email ID
                 </label>
-                <label>
+                {/* <label>
                   <input
                     type="checkbox"
                     checked={
@@ -872,7 +937,7 @@ const Contact = ({ token, score_data, graphData }) => {
                     }
                   />
                   Contacts without Associated Company
-                </label>
+                </label> */}
                 <label>
                   <input
                     type="checkbox"
@@ -1030,7 +1095,7 @@ const Contact = ({ token, score_data, graphData }) => {
           {/* You can keep or adjust the Consider Deleting / Delete Junk groups as needed */}
           <div className="report-details__action-group">
             <div className="report-details__list">
-              <div className="report-details__checkbox-group">
+              {/* <div className="report-details__checkbox-group">
                 <h5>Consider Deleting</h5>
                 <label>
                   <input
@@ -1065,18 +1130,45 @@ const Contact = ({ token, score_data, graphData }) => {
                 <button onClick={() => handleCreateContactActiveList('group4')}>
                   Create Active List
                 </button>
-              </div>
+              </div> */}
               <div className="report-details__checkbox-group">
                 <h5>Delete Junk</h5>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      contactActiveListSelections.group5
+                        .contacts_with_no_activity_in_last_180_days
+                    }
+                    onChange={(e) =>
+                      handleContactCheckboxChange(
+                        'group5',
+                        'contacts_with_no_activity_in_last_180_days',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Contacts have no activity in the last 180 days
                 </label>
-                <label>
-                  <input type="checkbox" />
+                {/* <label>
+                  <input
+                    type="checkbox"
+                    checked={
+                      contactActiveListSelections.group5.internal_team_members
+                    }
+                    onChange={(e) =>
+                      handleContactCheckboxChange(
+                        'group5',
+                        'internal_team_members',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Contacts are internal team members
-                </label>
-                <button>Delete Junk</button>
+                </label> */}
+                <button onClick={() => handleDeleteActiveList('group5')}>
+                  Delete Junk
+                </button>
               </div>
             </div>
           </div>

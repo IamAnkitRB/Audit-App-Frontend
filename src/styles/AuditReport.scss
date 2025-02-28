@@ -2,6 +2,9 @@
   margin: 0 20px;
   color: #6c6c6c;
 
+  &__title {
+    margin-top: 20px;
+  }
   /* Header Styles */
   &__header {
     border-radius: 5px;
@@ -255,6 +258,11 @@
 .tooltip-container {
   position: relative;
   display: inline-block;
+}
+
+.dropdown-domain {
+  font-size: medium;
+  margin: auto;
 }
 
 .tooltip {

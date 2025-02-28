@@ -17,7 +17,7 @@ export const fetchAuditDataByID = async (token, reportId) => {
     }
 
     const result = await response.json();
-    return result.data[0];
+    return result.data;
   } catch (error) {
     console.error('Error fetching report:', error);
     throw error;
@@ -92,10 +92,10 @@ export const triggerReportGeneration = async (token, hubID) => {
   }
 };
 
-export const fetchGraphData = async (token, reportId, objectType) => {
+export const fetchGraphData = async (token, reportId) => {
   try {
     const response = await fetch(
-      'https://enabling-condor-instantly.ngrok-free.app/fetchgraphdata',
+      'https://enabling-condor-instantly.ngrok-free.app/checkandfetchgraph',
       {
         method: 'POST',
         headers: {
@@ -103,8 +103,7 @@ export const fetchGraphData = async (token, reportId, objectType) => {
           state: token,
         },
         body: JSON.stringify({
-          reportId,
-          objectType,
+          report_id: reportId,
         }),
       },
     );
@@ -186,29 +185,6 @@ export const triggerGraphGeneration = async (token, reportId, hubId) => {
   try {
     const response = await fetch(
       'https://enabling-condor-instantly.ngrok-free.app/savegraphs',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          state: token,
-        },
-        body: JSON.stringify({ report_id: reportId, hub_id: hubId }),
-      },
-    );
-
-    const data = await response.json();
-
-    return data;
-  } catch (error) {
-    console.log(`Error while adding new hubspot porta:`, error);
-    throw error;
-  }
-};
-
-export const checkGraphProgress = async (token, reportId, hubId) => {
-  try {
-    const response = await fetch(
-      'https://enabling-condor-instantly.ngrok-free.app/checkgraphs',
       {
         method: 'POST',
         headers: {

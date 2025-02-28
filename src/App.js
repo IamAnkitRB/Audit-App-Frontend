@@ -3,6 +3,7 @@ import './App.scss';
 import TabLayout from './components/TabLayout';
 import AuditReport from './pages/auditReport';
 import GenerateReport from './pages/generateReport';
+import { fetchUserData } from './utils/api';
 
 // Create Auth Context
 const AuthContext = createContext(null);
@@ -12,6 +13,7 @@ export const useAuth = () => useContext(AuthContext);
 function App() {
   const [activeTab, setActiveTab] = useState('current');
   const [token, setToken] = useState(null);
+  const [userData, setUserData] = useState(null);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -40,6 +42,9 @@ function App() {
 
     if (savedToken) {
       setToken(savedToken);
+      fetchUserData(savedToken).then((data) => {
+        setUserData(data);
+      });
     } else {
       window.location.href =
         'https://test-portal-contentninja-6343592.hs-sites.com/audit-app-login';
@@ -77,8 +82,8 @@ function App() {
           }
         >
           {/* Main Content */}
-          <GenerateReport title="Your Report" />
-          <AuditReport title="Past Reports" />
+          <GenerateReport title="Your Report" userData={userData} />
+          <AuditReport title="Past Reports" userData={userData} />
         </TabLayout>
       </div>
     </AuthContext.Provider>

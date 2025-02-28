@@ -11,6 +11,7 @@ const ScoreSection = ({
   data_audit = {},
   graphData,
 }) => {
+  console.log('graph data', graphData);
   const [selectedCategory, setSelectedCategory] = useState('contacts');
   const [overall_score, setOverallScore] = useState(0);
   const [isExpanded, setIsExpanded] = useState(true);
@@ -39,7 +40,7 @@ const ScoreSection = ({
 
   useEffect(() => {
     setOverallScore(overall_audit_score?.score);
-  }, [overall_score]);
+  }, [overall_audit_score]);
 
   let borderColorClass = '';
   if (score_breakdown?.data_quality?.score === null) {

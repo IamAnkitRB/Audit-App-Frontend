@@ -31,6 +31,10 @@ const Ticket = ({ token, score_data, graphData }) => {
       tickets_without_name_and_owner: false,
       tickets_without_activity_180: false,
     },
+    group4: {
+      tickets_without_name_and_owner: false,
+      tickets_with_no_activity_in_last_180_days: false,
+    },
   });
 
   const handleTicketCheckboxChange = (group, key, checked) => {
@@ -98,6 +102,46 @@ const Ticket = ({ token, score_data, graphData }) => {
       case 'deletingData':
         setIsDeletingDataExpanded(!isDeletingDataExpanded);
         break;
+    }
+  };
+
+  const handleDeleteActiveList = async (group) => {
+    const selectedProperties = Object.entries(ticketActiveListSelections[group])
+      .filter(([key, value]) => value)
+      .map(([key]) => key);
+
+    if (!selectedProperties.length) {
+      alert('Please select at least one property.');
+      return;
+    }
+
+    // Build the payload; using "company" as the object name in this example.
+    const payload = {
+      objectname: 'tickets',
+      propertynames: selectedProperties,
+    };
+
+    try {
+      const response = await fetch(
+        'https://enabling-condor-instantly.ngrok-free.app/deleterecords',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            state: token,
+          },
+          body: JSON.stringify(payload),
+        },
+      );
+      const data = await response.json();
+      if (response.ok) {
+        console.log('Items Deleted successfully!');
+      } else {
+        console.log('Error creating active list: ' + data.error);
+      }
+    } catch (error) {
+      console.error('API error:', error);
+      alert('Network error. Please try again later.');
     }
   };
 
@@ -580,9 +624,13 @@ const Ticket = ({ token, score_data, graphData }) => {
               <div
                 className={`report-details__duplicate-data-div  ${getBorderColor(
                   junk_data?.without_name_and_owner?.risk,
-                )} ${lastDataPoint === 'subject' ? 'selected-item' : ''}  `}
+                )} ${
+                  lastDataPoint === 'without_name_and_owner'
+                    ? 'selected-item'
+                    : ''
+                }  `}
                 onClick={() => {
-                  setLastDataPoint('subject');
+                  setLastDataPoint('without_name_and_owner');
                 }}
               >
                 <div className="report-details__data-item">
@@ -639,7 +687,7 @@ const Ticket = ({ token, score_data, graphData }) => {
         >
           <h4 className="report-details__action-title">Take Bulk Action</h4>
           <div className="report-details__action-group">
-            <div className="report-details__list">
+            <div className="report-details__list_main">
               {/* Group 1: Are You Kidding Me! */}
               <div className="report-details__checkbox-group">
                 <h5>Are You Kidding Me!</h5>
@@ -675,8 +723,7 @@ const Ticket = ({ token, score_data, graphData }) => {
                   />
                   Tickets without Owner
                 </label>
-                <label>
-                  {/* Extra label remains unchanged */}
+                {/* <label>
                   <input
                     type="checkbox"
                     checked={
@@ -692,7 +739,7 @@ const Ticket = ({ token, score_data, graphData }) => {
                     }
                   />
                   Tickets without Associated Contact
-                </label>
+                </label> */}
                 <label>
                   <input
                     type="checkbox"
@@ -791,11 +838,11 @@ const Ticket = ({ token, score_data, graphData }) => {
             </div>
           </div>
           <div className="report-details__action-group">
-            <div className="report-details__list">
+            <div className="report-details__list_main">
               {/* Group 3: Consider Deleting */}
               <div className="report-details__checkbox-group">
                 <h5>Consider Deleting</h5>
-                <label>
+                {/* <label>
                   <input
                     type="checkbox"
                     checked={
@@ -811,7 +858,7 @@ const Ticket = ({ token, score_data, graphData }) => {
                     }
                   />
                   Tickets have no activity in the last 180 days
-                </label>
+                </label> */}
                 <label>
                   <input
                     type="checkbox"
@@ -836,14 +883,42 @@ const Ticket = ({ token, score_data, graphData }) => {
               <div className="report-details__checkbox-group">
                 <h5>Delete Junk</h5>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      ticketActiveListSelections.group4
+                        .tickets_with_no_activity_in_last_180_days
+                    }
+                    onChange={(e) =>
+                      handleTicketCheckboxChange(
+                        'group4',
+                        'tickets_with_no_activity_in_last_180_days',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Tickets have no activity in the last 180 days
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      ticketActiveListSelections.group4
+                        .tickets_without_name_and_owner
+                    }
+                    onChange={(e) =>
+                      handleTicketCheckboxChange(
+                        'group4',
+                        'tickets_without_name_and_owner',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Tickets without name and owner
                 </label>
-                <button>Delete Junk</button>
+                <button onClick={() => handleDeleteActiveList('group4')}>
+                  Delete Junk
+                </button>
               </div>
             </div>
           </div>

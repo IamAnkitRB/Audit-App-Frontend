@@ -29,16 +29,16 @@ export const DropdownTooltip = ({
     <div className="tooltip-wrapper">
       {children}
       <div className="tooltip-content">
-        {hubs.map((hub) => (
+        {hubs?.map((hub) => (
           <div
-            key={hub.hub_id}
+            key={hub?.hub_id}
             style={{
               cursor: generateButton ? 'not-allowed' : 'pointer',
               opacity: generateButton ? 0.6 : 1,
             }}
             onClick={() => handleHubSelection(hub)}
           >
-            Hub ID: {hub.hub_id} ({hub.hub_domain})
+            Hub ID: {hub?.hub_id} ({hub?.hub_domain})
           </div>
         ))}
         <button

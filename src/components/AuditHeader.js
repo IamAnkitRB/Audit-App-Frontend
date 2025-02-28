@@ -4,8 +4,8 @@ import {
   generateNewReport,
   triggerReportGeneration,
   triggerGraphGeneration,
-  checkGraphProgress,
   fetchAuditDataByID,
+  fetchGraphData,
 } from '../utils/api';
 import { useAuth } from '../App';
 import { DropdownTooltip } from './Tooltip';
@@ -21,6 +21,7 @@ const AuditHeader = ({
   setAuditData,
   showGenerate = true,
   setReportId,
+  setGraphData,
 }) => {
   const { token } = useAuth();
   const [showDropdown, setShowDropdown] = useState(false);
@@ -57,7 +58,7 @@ const AuditHeader = ({
       setReportId(latestReportId);
 
       const result = await fetchAuditDataByID(token, latestReportId);
-      setAuditData(result);
+      setAuditData(result?.result);
     };
     fetchData();
   }, [hubId]);
@@ -107,38 +108,56 @@ const AuditHeader = ({
         selectedHub.hub_id,
       );
 
-      console.log('respone:::', response);
-
       if (response) {
         console.log('Report generation started successfully.');
       } else {
         console.error('Failed to start report generation.');
       }
-      triggerGraphGeneration(
+      const data = triggerGraphGeneration(
         result.token,
         response.report_id,
         selectedHub.hub_id,
       );
-      setTimeout(() => {
-        const checkProgressInterval = setInterval(async () => {
-          const status = await checkGraphProgress(
-            result.token,
-            response.report_id,
-            selectedHub.hub_id,
-          );
+      if (data.success) {
+        setIsGenerating(false);
+        await triggerGraphGeneration(token, data.report_id, hubId);
 
-          if (status === 'completed') {
-            console.log('Report generation completed.');
-            clearInterval(checkProgressInterval);
-          } else {
-            console.log('Report generation still in progress...');
-          }
-        }, 60000);
-      }, 10000);
+        fetchGraphStatus(data.report_id);
+      } else {
+        throw new Error(data.message || 'Failed to generate the report.');
+      }
     } catch (error) {
       console.error('Error while triggering new report generation:', error);
     } finally {
       setGenerateButton(false);
+    }
+  };
+
+  const fetchGraphStatus = async (reportId) => {
+    try {
+      if (!token || !reportId) {
+        throw new Error('Token or Report ID is missing');
+      }
+
+      let result = await fetchGraphData(token, reportId);
+
+      if (result?.success) {
+        setGraphData(result?.data);
+      }
+
+      while (result?.status !== 'Completed') {
+        console.log('Graph is not completed. Retrying...');
+
+        await new Promise((resolve) => setTimeout(resolve, 60000));
+
+        result = await fetchGraphData(token, reportId);
+        console.log('Graph result:', result);
+        if (result?.success) {
+          setGraphData(result?.data);
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching graph status:', err);
     }
   };
 

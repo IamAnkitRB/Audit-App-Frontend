@@ -13,6 +13,7 @@ const Deal = ({ token, score_data, graphData }) => {
     useState('without_name');
   const [secondRowSelectedItem, setSecondRowSelectedItem] =
     useState('without_close_date');
+  const [lastDataPoint, setLastDataPoint] = useState('no_activity_last_180');
 
   const [dealActiveListSelections, setDealActiveListSelections] = useState({
     group1: {
@@ -30,6 +31,10 @@ const Deal = ({ token, score_data, graphData }) => {
     group3: {
       deals_without_name_and_owner: false,
       deals_without_activity_180: false,
+    },
+    group4: {
+      deals_without_name_and_owner: false,
+      deals_with_no_activity_in_last_180_days: false,
     },
   });
 
@@ -75,6 +80,46 @@ const Deal = ({ token, score_data, graphData }) => {
         alert('Active list(s) created successfully!');
       } else {
         alert('Error creating active list: ' + data.error);
+      }
+    } catch (error) {
+      console.error('API error:', error);
+      alert('Network error. Please try again later.');
+    }
+  };
+
+  const handleDeleteActiveList = async (group) => {
+    const selectedProperties = Object.entries(dealActiveListSelections[group])
+      .filter(([key, value]) => value)
+      .map(([key]) => key);
+
+    if (!selectedProperties.length) {
+      alert('Please select at least one property.');
+      return;
+    }
+
+    // Build the payload; using "company" as the object name in this example.
+    const payload = {
+      objectname: 'deals',
+      propertynames: selectedProperties,
+    };
+
+    try {
+      const response = await fetch(
+        'https://enabling-condor-instantly.ngrok-free.app/deleterecords',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            state: token,
+          },
+          body: JSON.stringify(payload),
+        },
+      );
+      const data = await response.json();
+      if (response.ok) {
+        console.log('Items Deleted successfully!');
+      } else {
+        console.log('Error creating active list: ' + data.error);
       }
     } catch (error) {
       console.error('API error:', error);
@@ -533,7 +578,14 @@ const Deal = ({ token, score_data, graphData }) => {
               <div
                 className={`report-details__duplicate-data-div  ${getBorderColor(
                   junk_data?.no_activity_in_last_180_days?.risk,
-                )}`}
+                )} ${
+                  lastDataPoint === 'no_activity_last_180'
+                    ? 'selected-item'
+                    : ''
+                }  `}
+                onClick={() => {
+                  setLastDataPoint('no_activity_last_180');
+                }}
               >
                 <div className="report-details__data-item">
                   <p className="report-details__data-div-heading">
@@ -573,7 +625,14 @@ const Deal = ({ token, score_data, graphData }) => {
               <div
                 className={`report-details__duplicate-data-div  ${getBorderColor(
                   junk_data?.without_name_and_owner?.risk,
-                )}`}
+                )} ${
+                  lastDataPoint === 'without_name_and_owner'
+                    ? 'selected-item'
+                    : ''
+                } `}
+                onClick={() => {
+                  setLastDataPoint('without_name_and_owner');
+                }}
               >
                 <div className="report-details__data-item">
                   <p className="report-details__data-div-heading">
@@ -610,13 +669,18 @@ const Deal = ({ token, score_data, graphData }) => {
                 </div>
               </div>
             </div>
-            <div>
-              <div className="audit-report__chart-container">
-                <div className="audit-report__chart">
-                  <BarChart graphData={graphData} dataPoint={firstDatapoint} />
+            {lastDataPoint == 'no_activity_last_180' && (
+              <div>
+                <div className="audit-report__chart-container">
+                  <div className="audit-report__chart">
+                    <BarChart
+                      graphData={graphData}
+                      dataPoint={firstDatapoint}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </>
         )}
       </section>
@@ -627,7 +691,7 @@ const Deal = ({ token, score_data, graphData }) => {
         >
           <h4 className="report-details__action-title">Take Bulk Action</h4>
           <div className="report-details__action-group">
-            <div className="report-details__list">
+            <div className="report-details__list_main">
               {/* Group 1: Are You Kidding Me! */}
               <div className="report-details__checkbox-group">
                 <h5>Are You Kidding Me!</h5>
@@ -678,7 +742,7 @@ const Deal = ({ token, score_data, graphData }) => {
                   />
                   Deals without Associated Contact
                 </label>
-                <label>
+                {/* <label>
                   <input
                     type="checkbox"
                     checked={
@@ -694,7 +758,7 @@ const Deal = ({ token, score_data, graphData }) => {
                     }
                   />
                   Deals without Associated Company
-                </label>
+                </label> */}
                 <button onClick={() => handleCreateDealActiveList('group1')}>
                   Create Active List
                 </button>
@@ -775,11 +839,11 @@ const Deal = ({ token, score_data, graphData }) => {
             </div>
           </div>
           <div className="report-details__action-group">
-            <div className="report-details__list">
+            <div className="report-details__list_main">
               {/* Group 3: Consider Deleting */}
               <div className="report-details__checkbox-group">
                 <h5>Consider Deleting</h5>
-                <label>
+                {/* <label>
                   <input
                     type="checkbox"
                     checked={
@@ -794,18 +858,17 @@ const Deal = ({ token, score_data, graphData }) => {
                     }
                   />
                   Deals without activity in the last 180 days
-                </label>
+                </label> */}
                 <label>
                   <input
                     type="checkbox"
                     checked={
-                      dealActiveListSelections.group3
-                        .deals_without_name_and_owner
+                      dealActiveListSelections.group3.deals_without_activity_180
                     }
                     onChange={(e) =>
                       handleDealCheckboxChange(
                         'group3',
-                        'deals_without_name_and_owner',
+                        'deals_without_activity_180',
                         e.target.checked,
                       )
                     }
@@ -819,14 +882,42 @@ const Deal = ({ token, score_data, graphData }) => {
               <div className="report-details__checkbox-group">
                 <h5>Delete Junk</h5>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      dealActiveListSelections.group4
+                        .deals_with_no_activity_in_last_180_days
+                    }
+                    onChange={(e) =>
+                      handleDealCheckboxChange(
+                        'group4',
+                        'deals_with_no_activity_in_last_180_days',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Deals without activity in the last 180 days
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={
+                      dealActiveListSelections.group4
+                        .deals_without_name_and_owner
+                    }
+                    onChange={(e) =>
+                      handleDealCheckboxChange(
+                        'group4',
+                        'deals_without_name_and_owner',
+                        e.target.checked,
+                      )
+                    }
+                  />
                   Deals without Name and Owner
                 </label>
-                <button>Delete Junk</button>
+                <button onClick={() => handleDeleteActiveList('group4')}>
+                  Delete Junk
+                </button>
               </div>
             </div>
           </div>

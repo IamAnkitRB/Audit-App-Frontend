@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const ReportList = ({ reports, onSelectReport }) => {
+const ReportList = ({ reports, onSelectReport, setSelectedHub }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const reportsPerPage = 10;
 
@@ -50,7 +50,12 @@ const ReportList = ({ reports, onSelectReport }) => {
               <td>{new Date(report.created_at).toLocaleDateString()}</td>
               <td>{report.score ? report.score : 'N/A'}</td>
               <td>
-                <button onClick={() => onSelectReport(report.report_id)}>
+                <button
+                  onClick={() => {
+                    onSelectReport(report.report_id);
+                    setSelectedHub(report.hub_domain);
+                  }}
+                >
                   View Report
                 </button>
               </td>

@@ -69,14 +69,17 @@ const BarChart = ({ dataPoint, graphData }) => {
   const [view, setView] = useState('source');
 
   useEffect(() => {
-    if (!graphData || !dataPoint) return;
+    if (!graphData || !dataPoint) return; // Ensure graphData and dataPoint exist
 
+    // Prepare data for 'By Source'
     const labelsBySource = Object.keys(
       graphData.graph_data_by_source[dataPoint] || {},
     );
     const valuesBySource = Object.values(
       graphData.graph_data_by_source[dataPoint] || {},
     );
+
+    if (labelsBySource.length === 0 || valuesBySource.length === 0) return;
 
     setChartDataBySource({
       labels: labelsBySource,
@@ -89,10 +92,10 @@ const BarChart = ({ dataPoint, graphData }) => {
       ],
     });
 
+    // Prepare data for 'By Owners'
     const ownersData = Object.entries(
       graphData.graph_data_by_owner[dataPoint] || {},
     );
-
     ownersData.sort((a, b) => b[1] - a[1]);
 
     const topOwners = ownersData.slice(0, 9);
@@ -104,7 +107,6 @@ const BarChart = ({ dataPoint, graphData }) => {
 
     const labelsByOwners = topOwners.map((owner) => owner[0]);
     const valuesByOwners = topOwners.map((owner) => owner[1]);
-
     if (othersValue > 0) {
       labelsByOwners.push('Others');
       valuesByOwners.push(othersValue);
@@ -189,7 +191,7 @@ const BarChart = ({ dataPoint, graphData }) => {
       </div>
 
       {/* Graph */}
-      {!graphData ? (
+      {!graphData || !dataPoint ? (
         <div>
           <div style={{ width: '100%', opacity: 0.6, marginLeft: '1.5rem' }}>
             <Bar
@@ -204,7 +206,11 @@ const BarChart = ({ dataPoint, graphData }) => {
         </div>
       ) : (
         <Bar
-          data={view === 'source' ? chartDataBySource : chartDataByOwners}
+          data={
+            view === 'source'
+              ? chartDataBySource || dummyDataBySource
+              : chartDataByOwners || dummyDataByOwners
+          }
           options={options}
         />
       )}
