@@ -21,6 +21,8 @@ const AuditHeader = ({
   setAuditData,
   showGenerate = true,
   setReportId,
+  isGeneratingGraph,
+  setIsGeneratingGraph,
   setGraphData,
 }) => {
   const { token } = useAuth();
@@ -39,7 +41,7 @@ const AuditHeader = ({
 
   // Toggle user dropdown
   const toggleDropdown = () => {
-    if (!generateButton) setDropdownOpen(!isDropdownOpen);
+    setDropdownOpen(!isDropdownOpen);
   };
 
   useEffect(() => {
@@ -87,8 +89,10 @@ const AuditHeader = ({
     }
 
     try {
-      console.log('Triggering new report with token:', token);
       setGenerateButton(true);
+      setIsGeneratingGraph(true);
+      setGraphData(null);
+
       setShowModal(false);
 
       const result = await generateNewReport(token, selectedHub.hub_id);
@@ -102,6 +106,7 @@ const AuditHeader = ({
       setTimeout(checkReport, 10000, selectedHub.hub_id, result.token);
       setProgress(2);
       setIsGenerating(true);
+      setIsGeneratingGraph(true);
 
       const response = await triggerReportGeneration(
         result.token,
@@ -143,17 +148,22 @@ const AuditHeader = ({
 
       if (result?.success) {
         setGraphData(result?.data);
+
+        if (result?.status === 'Completed') {
+          setIsGeneratingGraph(false);
+        }
       }
 
-      while (result?.status !== 'Completed') {
-        console.log('Graph is not completed. Retrying...');
-
+      while (result?.status !== 'Completed' && !isGenerating) {
         await new Promise((resolve) => setTimeout(resolve, 60000));
 
         result = await fetchGraphData(token, reportId);
-        console.log('Graph result:', result);
         if (result?.success) {
           setGraphData(result?.data);
+
+          if (result?.status === 'Completed') {
+            setIsGeneratingGraph(false);
+          }
         }
       }
     } catch (err) {
@@ -174,7 +184,7 @@ const AuditHeader = ({
                     (hub) => hub.hub_domain !== selectedHub?.hub_domain,
                   )}
                   handleHubSelection={handleHubSelection}
-                  generateButton={generateButton}
+                  generateButton={(generateButton || isGeneratingGraph) && true}
                   token={token}
                 >
                   <button
@@ -182,12 +192,12 @@ const AuditHeader = ({
                     onClick={() =>
                       !generateButton && setShowDropdown(!showDropdown)
                     }
-                    disabled={generateButton}
+                    disabled={generateButton || isGeneratingGraph}
                   >
                     Hub ID: {selectedHub?.hub_id} ({selectedHub?.hub_domain})▼
                   </button>
                 </DropdownTooltip>
-                {generateButton && (
+                {(generateButton || isGeneratingGraph) && (
                   <span className="tooltip">{tooltipText}</span>
                 )}
               </div>
@@ -210,13 +220,15 @@ const AuditHeader = ({
               <button
                 className="generate-report-button"
                 onClick={() => setShowModal(true)}
-                disabled={generateButton}
+                disabled={generateButton || isGeneratingGraph}
               >
-                {generateButton
+                {generateButton || isGeneratingGraph
                   ? 'Generating New Report...'
                   : 'Generate New Report'}
               </button>
-              {generateButton && <span className="tooltip">{tooltipText}</span>}
+              {(generateButton || isGeneratingGraph) && (
+                <span className="tooltip">{tooltipText}</span>
+              )}
             </div>
           )}
 
@@ -224,22 +236,23 @@ const AuditHeader = ({
             <div
               className="header__user-icon"
               onClick={toggleDropdown}
-              style={{ cursor: generateButton ? 'not-allowed' : 'pointer' }}
+              style={{ cursor: 'pointer' }}
             >
               <UserCircleIcon className="header__user-heroicon" />
             </div>
             {isDropdownOpen && (
               <div className="header__dropdown">
-                <button
+                <p
                   className="header__dropdown-button"
                   onClick={handleLogout}
                   style={{
-                    opacity: generateButton ? 0.6 : 1,
-                    cursor: generateButton ? 'not-allowed' : 'pointer',
+                    opacity: 1,
+                    cursor: 'pointer',
+                    fontSize: 'medium',
                   }}
                 >
                   Logout
-                </button>
+                </p>
               </div>
             )}
           </div>

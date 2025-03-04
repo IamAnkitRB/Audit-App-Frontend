@@ -208,7 +208,8 @@
       gap: 20px; /* Adds spacing between items */
       justify-items: center;
       align-items: start;
-      margin-bottom: 1.5rem;
+      width: 95%;
+      margin: auto;
     }
     .report-details__list_main {
       display: grid;
@@ -229,7 +230,8 @@
       padding: 1rem;
       border-radius: 9px;
       width: 100%;
-      height: 100%;
+      height: 16rem;
+      position: relative;
 
       label {
         display: flex;
@@ -281,9 +283,10 @@
     }
 
     .report-details__checkbox-group button {
-      width: 100%;
+      width: 90%;
       margin: auto;
-      margin-top: 1rem;
+      position: absolute;
+      top: 13rem;
     }
 
     .report-details__action-button-div {

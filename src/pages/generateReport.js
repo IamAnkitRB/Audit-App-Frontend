@@ -19,6 +19,7 @@ const GenerateReport = ({ userData }) => {
   const { token } = useAuth();
 
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isGeneratingGraph, setIsGeneratingGraph] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [auditData, setAuditData] = useState(null);
@@ -117,17 +118,22 @@ const GenerateReport = ({ userData }) => {
 
       if (result?.success) {
         setGraphData(result?.data);
+        if (result?.status === 'Completed') {
+          setIsGeneratingGraph(false);
+        }
       }
 
-      while (result?.status !== 'Completed') {
+      while (result?.status !== 'Completed' && !isGenerating) {
         console.log('Graph is not completed. Retrying...');
 
         await new Promise((resolve) => setTimeout(resolve, 60000));
 
         result = await fetchGraphData(token, reportId);
-        console.log('Graph result:', result);
         if (result?.success) {
           setGraphData(result?.data);
+          if (result?.status === 'Completed') {
+            setIsGeneratingGraph(false);
+          }
         }
       }
     } catch (err) {
@@ -189,6 +195,8 @@ const GenerateReport = ({ userData }) => {
         setAuditData={setAuditData}
         setReportId={setReportId}
         setGraphData={setGraphData}
+        setIsGeneratingGraph={setIsGeneratingGraph}
+        isGeneratingGraph={isGeneratingGraph}
       />
       {isGenerating ? (
         <ReportGenerate progress={progress} />

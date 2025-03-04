@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import BarChart from './BarChart';
+import RequestModal from './RequestModal';
 import { findRiskImage, getBorderColor } from '../utils/riskManager';
 import { Tooltip } from './Tooltip';
 
@@ -8,17 +9,19 @@ const Contact = ({ token, score_data, graphData }) => {
   const [isMissingDataExpanded, setIsMissingDataExpanded] = useState(true);
   const [isDeletingDataExpanded, setIsDeletingDataExpanded] = useState(true);
   const [firstRowSelectedItem, setfirstRowSelectedItem] =
-    useState('withoutFirstName');
+    useState('without_first_name');
   const [secondRowSelectedItem, setSecondRowSelectedItem] =
-    useState('withoutDeals');
+    useState('without_deals');
   const [thirdRowSelectedItem, setThirdRowSelectedItem] =
-    useState('withoutJobTitle');
+    useState('without_job_title');
   const [firstDatapoint, setFirstDatapoint] = useState('firstname');
   const [secondDataPoint, setSecondDataPoint] = useState(
     'num_associated_deals',
   );
   const [thirdDataPoint, setThirdDataPoint] = useState('jobtitle');
-  const [lastDataPoint, setLastDataPoint] = useState('no_activity_last_180');
+  const [lastDataPoint, setLastDataPoint] = useState(
+    'no_activity_in_last_180_days',
+  );
 
   const [contactActiveListSelections, setContactActiveListSelections] =
     useState({
@@ -46,8 +49,100 @@ const Contact = ({ token, score_data, graphData }) => {
       },
       group5: {
         contacts_with_no_activity_in_last_180_days: false,
+        internal_team_members: false,
       },
     });
+
+  const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
+  const [requestModalData, setRequestModalData] = useState({
+    selectedItems: [],
+    actionType: '',
+  });
+
+  const handleCreateContactActiveList = (group) => {
+    const selectedKeys = Object.entries(contactActiveListSelections[group])
+      .filter(([key, value]) => value)
+      .map(([key]) => key);
+
+    if (!selectedKeys.length) {
+      alert('Please select at least one property.');
+      return;
+    }
+
+    setRequestModalData({ selectedItems: selectedKeys, actionType: 'create' });
+    setIsRequestModalOpen(true);
+  };
+
+  const handleDeleteActiveList = (group) => {
+    const selectedKeys = Object.entries(contactActiveListSelections[group])
+      .filter(([key, value]) => value)
+      .map(([key]) => key);
+
+    if (!selectedKeys.length) {
+      alert('Please select at least one property.');
+      return;
+    }
+
+    setRequestModalData({ selectedItems: selectedKeys, actionType: 'delete' });
+    setIsRequestModalOpen(true);
+  };
+
+  const handleApiCall = async (item) => {
+    const payload = {
+      objectname: 'contact',
+      propertynames: [item],
+    };
+
+    console.log('payload:', payload);
+
+    const url =
+      requestModalData.actionType === 'create'
+        ? 'https://enabling-condor-instantly.ngrok-free.app/createlist'
+        : 'https://enabling-condor-instantly.ngrok-free.app/deleterecords';
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          state: token,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+      if (requestModalData.actionType === 'create') {
+        if (response?.ok && data[item]?.success) {
+          return {
+            success: true,
+            message: data[item].message || 'List created successfully',
+          };
+        } else {
+          return {
+            success: false,
+            message: data[item]?.error?.message || 'Something went wrong',
+          };
+        }
+      } else {
+        if (response?.ok && data.success) {
+          return {
+            success: true,
+            message: data.message || 'Items Deleted successfully',
+          };
+        } else {
+          return {
+            success: false,
+            message: data.error?.message || 'Something went wrong',
+          };
+        }
+      }
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Network error. Please try again later.',
+      };
+    }
+  };
 
   const handleContactCheckboxChange = (group, key, checked) => {
     setContactActiveListSelections((prev) => ({
@@ -59,86 +154,86 @@ const Contact = ({ token, score_data, graphData }) => {
     }));
   };
 
-  const handleCreateContactActiveList = async (group) => {
-    const selectedKeys = Object.entries(contactActiveListSelections[group])
-      .filter(([key, value]) => value)
-      .map(([key]) => key);
+  // const handleCreateContactActiveList = async (group) => {
+  //   const selectedKeys = Object.entries(contactActiveListSelections[group])
+  //     .filter(([key, value]) => value)
+  //     .map(([key]) => key);
 
-    if (!selectedKeys.length) {
-      alert('Please select at least one property.');
-      return;
-    }
+  //   if (!selectedKeys.length) {
+  //     alert('Please select at least one property.');
+  //     return;
+  //   }
 
-    const payload = {
-      objectname: 'contact',
-      propertynames: selectedKeys,
-    };
+  //   const payload = {
+  //     objectname: 'contact',
+  //     propertynames: selectedKeys,
+  //   };
 
-    try {
-      const response = await fetch(
-        'https://enabling-condor-instantly.ngrok-free.app/createlist',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            state: token,
-          },
-          body: JSON.stringify(payload),
-        },
-      );
-      const data = await response.json();
-      if (response.ok) {
-        console.log('Active list(s) created successfully!');
-      } else {
-        console.log('Error creating active list: ' + data.error);
-      }
-    } catch (error) {
-      console.error('API error:', error);
-      alert('Network error. Please try again later.');
-    }
-  };
+  //   try {
+  //     const response = await fetch(
+  //       'https://enabling-condor-instantly.ngrok-free.app/createlist',
+  //       {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           state: token,
+  //         },
+  //         body: JSON.stringify(payload),
+  //       },
+  //     );
+  //     const data = await response.json();
+  //     if (response.ok) {
+  //       console.log('Active list(s) created successfully!');
+  //     } else {
+  //       console.log('Error creating active list: ' + data.error);
+  //     }
+  //   } catch (error) {
+  //     console.error('API error:', error);
+  //     alert('Network error. Please try again later.');
+  //   }
+  // };
 
-  const handleDeleteActiveList = async (group) => {
-    const selectedProperties = Object.entries(
-      contactActiveListSelections[group],
-    )
-      .filter(([key, value]) => value)
-      .map(([key]) => key);
+  // const handleDeleteActiveList = async (group) => {
+  //   const selectedProperties = Object.entries(
+  //     contactActiveListSelections[group],
+  //   )
+  //     .filter(([key, value]) => value)
+  //     .map(([key]) => key);
 
-    if (!selectedProperties.length) {
-      alert('Please select at least one property.');
-      return;
-    }
+  //   if (!selectedProperties.length) {
+  //     alert('Please select at least one property.');
+  //     return;
+  //   }
 
-    // Build the payload; using "company" as the object name in this example.
-    const payload = {
-      objectname: 'contacts',
-      propertynames: selectedProperties,
-    };
+  //   // Build the payload; using "company" as the object name in this example.
+  //   const payload = {
+  //     objectname: 'contacts',
+  //     propertynames: selectedProperties,
+  //   };
 
-    try {
-      const response = await fetch(
-        'https://enabling-condor-instantly.ngrok-free.app/deleterecords',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            state: token,
-          },
-          body: JSON.stringify(payload),
-        },
-      );
-      const data = await response.json();
-      if (response.ok) {
-        console.log('Items Deleted successfully!');
-      } else {
-        console.log('Error creating active list: ' + data.error);
-      }
-    } catch (error) {
-      console.error('API error:', error);
-      alert('Network error. Please try again later.');
-    }
-  };
+  //   try {
+  //     const response = await fetch(
+  //       'https://enabling-condor-instantly.ngrok-free.app/deleterecords',
+  //       {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           state: token,
+  //         },
+  //         body: JSON.stringify(payload),
+  //       },
+  //     );
+  //     const data = await response.json();
+  //     if (response.ok) {
+  //       console.log('Items Deleted successfully!');
+  //     } else {
+  //       console.log('Error creating active list: ' + data.error);
+  //     }
+  //   } catch (error) {
+  //     console.error('API error:', error);
+  //     alert('Network error. Please try again later.');
+  //   }
+  // };
 
   const handleFirstDataPointChange = (dataPoint) => {
     setFirstDatapoint(dataPoint);
@@ -223,12 +318,12 @@ const Contact = ({ token, score_data, graphData }) => {
               <div className="report-details__card ">
                 <div
                   className={`report-details__data-div ${
-                    firstRowSelectedItem === 'withoutFirstName'
+                    firstRowSelectedItem === 'without_first_name'
                       ? 'selected-item'
                       : ''
                   }  ${getBorderColor(missing_data?.without_first_name?.risk)}`}
                   onClick={() => {
-                    setfirstRowSelectedItem('withoutFirstName');
+                    setfirstRowSelectedItem('without_first_name');
                     handleFirstDataPointChange('firstname');
                   }}
                 >
@@ -261,12 +356,12 @@ const Contact = ({ token, score_data, graphData }) => {
 
                 <div
                   className={`report-details__data-div ${
-                    firstRowSelectedItem === 'withoutEmailId'
+                    firstRowSelectedItem === 'without_email'
                       ? 'selected-item'
                       : ''
                   }  ${getBorderColor(missing_data?.without_email?.risk)}`}
                   onClick={() => {
-                    setfirstRowSelectedItem('withoutEmailId');
+                    setfirstRowSelectedItem('without_email');
                     handleFirstDataPointChange('email');
                   }}
                 >
@@ -295,14 +390,14 @@ const Contact = ({ token, score_data, graphData }) => {
                 </div>
                 <div
                   className={`report-details__data-div ${
-                    firstRowSelectedItem === 'withoutAssociatedCompany'
+                    firstRowSelectedItem === 'without_associated_company'
                       ? 'selected-item'
                       : ''
                   }  ${getBorderColor(
                     missing_data?.without_associated_company?.risk,
                   )}`}
                   onClick={() => {
-                    setfirstRowSelectedItem('withoutAssociatedCompany');
+                    setfirstRowSelectedItem('without_associated_company');
                     handleFirstDataPointChange('associatedcompanyid');
                   }}
                 >
@@ -336,12 +431,12 @@ const Contact = ({ token, score_data, graphData }) => {
 
                 <div
                   className={`report-details__data-div ${
-                    firstRowSelectedItem === 'withoutOwner'
+                    firstRowSelectedItem === 'without_owner'
                       ? 'selected-item'
                       : ''
                   }  ${getBorderColor(missing_data?.without_owner?.risk)}`}
                   onClick={() => {
-                    setfirstRowSelectedItem('withoutOwner');
+                    setfirstRowSelectedItem('without_owner');
                     handleFirstDataPointChange('hubspot_owner_id');
                   }}
                 >
@@ -375,6 +470,8 @@ const Contact = ({ token, score_data, graphData }) => {
                     <BarChart
                       dataPoint={firstDatapoint}
                       graphData={graphData}
+                      missingData={missing_data}
+                      inferenceKey={firstRowSelectedItem}
                     />
                   </div>
                 </div>
@@ -387,12 +484,12 @@ const Contact = ({ token, score_data, graphData }) => {
               <div className="report-details__card">
                 <div
                   className={`report-details__data-div ${
-                    secondRowSelectedItem === 'withoutDeals'
+                    secondRowSelectedItem === 'without_deals'
                       ? 'selected-item'
                       : ''
                   }  ${getBorderColor(missing_data?.without_deals?.risk)}`}
                   onClick={() => {
-                    setSecondRowSelectedItem('withoutDeals');
+                    setSecondRowSelectedItem('without_deals');
                     handleSecondDataPointChange('num_associated_deals');
                   }}
                 >
@@ -422,20 +519,18 @@ const Contact = ({ token, score_data, graphData }) => {
 
                 <div
                   className={`report-details__data-div ${
-                    secondRowSelectedItem === 'withoutLeadSource'
+                    secondRowSelectedItem === 'without_lastname'
                       ? 'selected-item'
                       : ''
-                  }  ${getBorderColor(
-                    missing_data?.without_lead_source?.risk,
-                  )}`}
+                  }  ${getBorderColor(missing_data?.without_lastname?.risk)}`}
                   onClick={() => {
-                    setSecondRowSelectedItem('withoutLeadSource');
-                    handleSecondDataPointChange('deals');
+                    setSecondRowSelectedItem('without_lastname');
+                    handleSecondDataPointChange('lastname');
                   }}
                 >
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
-                      <p> Contacts without Lead Source</p>
+                      <p> Contacts without Last Name</p>
                       <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
                         <img
                           className="info-image"
@@ -445,17 +540,17 @@ const Contact = ({ token, score_data, graphData }) => {
 
                       <img
                         src={findRiskImage(
-                          missing_data?.without_lead_source?.risk,
+                          missing_data?.without_lastname?.risk,
                         )}
                       ></img>
                     </p>
                     <p className="report-details__data-div-score">
                       <strong>
-                        {missing_data?.without_lead_source?.percent}%
+                        {missing_data?.without_lastname?.percent}%
                       </strong>
                     </p>
                     <p className="report-details__data-div-total">
-                      {missing_data?.without_lead_source?.count?.toLocaleString()}{' '}
+                      {missing_data?.without_lastname?.count?.toLocaleString()}{' '}
                       <span>/ {total_contacts?.toLocaleString()}</span>
                     </p>
                   </div>
@@ -463,14 +558,14 @@ const Contact = ({ token, score_data, graphData }) => {
 
                 <div
                   className={`report-details__data-div ${
-                    secondRowSelectedItem === 'withoutLifecycleStage'
+                    secondRowSelectedItem === 'without_lifecycle_stage'
                       ? 'selected-item'
                       : ''
                   }  ${getBorderColor(
                     missing_data?.without_lifecycle_stage?.risk,
                   )}`}
                   onClick={() => {
-                    setSecondRowSelectedItem('withoutLifecycleStage');
+                    setSecondRowSelectedItem('without_lifecycle_stage');
                     handleSecondDataPointChange('lifecyclestage');
                   }}
                 >
@@ -504,14 +599,14 @@ const Contact = ({ token, score_data, graphData }) => {
 
                 <div
                   className={`report-details__data-div ${
-                    secondRowSelectedItem === 'withoutLeadStatus'
+                    secondRowSelectedItem === 'without_lead_status'
                       ? 'selected-item'
                       : ''
                   }  ${getBorderColor(
                     missing_data?.without_lead_status?.risk,
                   )}`}
                   onClick={() => {
-                    setSecondRowSelectedItem('withoutLeadStatus');
+                    setSecondRowSelectedItem('without_lead_status');
                     handleSecondDataPointChange('hs_lead_status');
                   }}
                 >
@@ -549,6 +644,8 @@ const Contact = ({ token, score_data, graphData }) => {
                     <BarChart
                       graphData={graphData}
                       dataPoint={secondDataPoint}
+                      missingData={missing_data}
+                      inferenceKey={secondRowSelectedItem}
                     />
                   </div>
                 </div>
@@ -561,12 +658,12 @@ const Contact = ({ token, score_data, graphData }) => {
               <div className="report-details__card">
                 <div
                   className={`report-details__data-div ${
-                    thirdRowSelectedItem === 'withoutJobTitle'
+                    thirdRowSelectedItem === 'without_job_title'
                       ? 'selected-item'
                       : ''
                   }  ${getBorderColor(missing_data?.without_job_title?.risk)}`}
                   onClick={() => {
-                    setThirdRowSelectedItem('withoutJobTitle');
+                    setThirdRowSelectedItem('without_job_title');
                     handleThirdDataPointChange('jobtitle');
                   }}
                 >
@@ -600,14 +697,14 @@ const Contact = ({ token, score_data, graphData }) => {
 
                 <div
                   className={`report-details__data-div ${
-                    thirdRowSelectedItem === 'withoutMarketingStatus'
+                    thirdRowSelectedItem === 'without_marketing_contact_status'
                       ? 'selected-item'
                       : ''
                   }  ${getBorderColor(
                     missing_data?.without_marketing_contact_status?.risk,
                   )}`}
                   onClick={() => {
-                    setThirdRowSelectedItem('withoutMarketingStatus');
+                    setThirdRowSelectedItem('without_marketing_contact_status');
                     handleThirdDataPointChange('hs_marketable_status');
                   }}
                 >
@@ -645,12 +742,12 @@ const Contact = ({ token, score_data, graphData }) => {
 
                 <div
                   className={`report-details__data-div ${
-                    thirdRowSelectedItem === 'withLeadScore'
+                    thirdRowSelectedItem === 'without_lead_score'
                       ? 'selected-item'
                       : ''
                   }  ${getBorderColor(missing_data?.without_lead_score?.risk)}`}
                   onClick={() => {
-                    setThirdRowSelectedItem('withLeadScore');
+                    setThirdRowSelectedItem('without_lead_score');
                     handleThirdDataPointChange('hubspotscore');
                   }}
                 >
@@ -684,12 +781,12 @@ const Contact = ({ token, score_data, graphData }) => {
 
                 <div
                   className={`report-details__data-div ${
-                    thirdRowSelectedItem === 'withoutPhoneNumber'
+                    thirdRowSelectedItem === 'without_phone'
                       ? 'selected-item'
                       : ''
                   }  ${getBorderColor(missing_data?.without_phone?.risk)}`}
                   onClick={() => {
-                    setThirdRowSelectedItem('withoutPhoneNumber');
+                    setThirdRowSelectedItem('without_phone');
                     handleThirdDataPointChange('phone');
                   }}
                 >
@@ -723,6 +820,8 @@ const Contact = ({ token, score_data, graphData }) => {
                     <BarChart
                       graphData={graphData}
                       dataPoint={thirdDataPoint}
+                      missingData={missing_data}
+                      inferenceKey={thirdRowSelectedItem}
                     />
                   </div>
                 </div>
@@ -777,12 +876,12 @@ const Contact = ({ token, score_data, graphData }) => {
                 className={`report-details__duplicate-data-div  ${getBorderColor(
                   junk_data?.no_activity_in_last_180_days?.risk,
                 )}  ${
-                  lastDataPoint === 'no_activity_last_180'
+                  lastDataPoint === 'no_activity_in_last_180_days'
                     ? 'selected-item'
                     : ''
                 }`}
                 onClick={() => {
-                  setLastDataPoint('no_activity_last_180');
+                  setLastDataPoint('no_activity_in_last_180_days');
                 }}
               >
                 <div className="report-details__data-item">
@@ -867,13 +966,15 @@ const Contact = ({ token, score_data, graphData }) => {
                 </div>
               </div>
             </div>
-            {lastDataPoint === 'no_activity_last_180' && (
+            {lastDataPoint === 'no_activity_in_last_180_days' && (
               <div>
                 <div className="audit-report__chart-container">
                   <div className="audit-report__chart">
                     <BarChart
                       graphData={graphData}
-                      dataPoint={firstDatapoint}
+                      dataPoint={lastDataPoint}
+                      missingData={junk_data}
+                      inferenceKey={lastDataPoint}
                     />
                   </div>
                 </div>
@@ -1150,7 +1251,7 @@ const Contact = ({ token, score_data, graphData }) => {
                   />
                   Contacts have no activity in the last 180 days
                 </label>
-                {/* <label>
+                <label>
                   <input
                     type="checkbox"
                     checked={
@@ -1165,7 +1266,7 @@ const Contact = ({ token, score_data, graphData }) => {
                     }
                   />
                   Contacts are internal team members
-                </label> */}
+                </label>
                 <button onClick={() => handleDeleteActiveList('group5')}>
                   Delete Junk
                 </button>
@@ -1174,6 +1275,13 @@ const Contact = ({ token, score_data, graphData }) => {
           </div>
         </div>
       </section>
+      <RequestModal
+        isOpen={isRequestModalOpen}
+        onClose={() => setIsRequestModalOpen(false)}
+        selectedItems={requestModalData.selectedItems}
+        actionType={requestModalData.actionType}
+        handleApiCall={handleApiCall}
+      />
     </div>
   );
 };

@@ -11,7 +11,6 @@ const ScoreSection = ({
   data_audit = {},
   graphData,
 }) => {
-  console.log('graph data', graphData);
   const [selectedCategory, setSelectedCategory] = useState('contacts');
   const [overall_score, setOverallScore] = useState(0);
   const [isExpanded, setIsExpanded] = useState(true);

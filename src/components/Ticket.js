@@ -13,7 +13,9 @@ const Ticket = ({ token, score_data, graphData }) => {
     useState('without_priority');
   const [firstDatapoint, setFirstDatapoint] = useState('subject');
   const [secondDataPoint, setSecondDataPoint] = useState('hs_ticket_priority');
-  const [lastDataPoint, setLastDataPoint] = useState('no_activity_last_180');
+  const [lastDataPoint, setLastDataPoint] = useState(
+    'no_activity_in_last_180_days',
+  );
 
   const [ticketActiveListSelections, setTicketActiveListSelections] = useState({
     group1: {
@@ -286,7 +288,7 @@ const Ticket = ({ token, score_data, graphData }) => {
                 >
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
-                      <p>Tickets with Associated Contact</p>
+                      <p>Tickets without Associated Contact</p>
                       <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
                         <img
                           className="info-image"
@@ -357,6 +359,8 @@ const Ticket = ({ token, score_data, graphData }) => {
                     <BarChart
                       graphData={graphData}
                       dataPoint={firstDatapoint}
+                      missingData={missing_data}
+                      inferenceKey={firstRowSelectedItem}
                     />
                   </div>
                 </div>
@@ -447,14 +451,14 @@ const Ticket = ({ token, score_data, graphData }) => {
 
                 <div
                   className={`report-details__data-div ${
-                    secondRowSelectedItem === 'without_pipeline'
+                    secondRowSelectedItem === 'without_pipeline_name'
                       ? 'selected-item'
                       : ''
                   }  ${getBorderColor(
                     missing_data?.without_pipeline_name?.risk,
                   )}`}
                   onClick={() => {
-                    setSecondRowSelectedItem('without_pipeline');
+                    setSecondRowSelectedItem('without_pipeline_name');
                     handleSecondDataPointChange('hs_pipeline');
                   }}
                 >
@@ -525,6 +529,8 @@ const Ticket = ({ token, score_data, graphData }) => {
                     <BarChart
                       graphData={graphData}
                       dataPoint={secondDataPoint}
+                      missingData={missing_data}
+                      inferenceKey={secondRowSelectedItem}
                     />
                   </div>
                 </div>
@@ -578,12 +584,12 @@ const Ticket = ({ token, score_data, graphData }) => {
                 className={`report-details__duplicate-data-div  ${getBorderColor(
                   junk_data?.no_activity_in_last_180_days?.risk,
                 )} ${
-                  lastDataPoint === 'no_activity_last_180'
+                  lastDataPoint === 'no_activity_in_last_180_days'
                     ? 'selected-item'
                     : ''
                 }  `}
                 onClick={() => {
-                  setLastDataPoint('no_activity_last_180');
+                  setLastDataPoint('no_activity_in_last_180_days');
                 }}
               >
                 <div className="report-details__data-item">
@@ -668,11 +674,16 @@ const Ticket = ({ token, score_data, graphData }) => {
                 </div>
               </div>
             </div>
-            {lastDataPoint == 'no_activity_last_180' && (
+            {lastDataPoint == 'no_activity_in_last_180_days' && (
               <div>
                 <div className="audit-report__chart-container">
                   <div className="audit-report__chart">
-                    <BarChart graphData={graphData} dataPoint={lastDataPoint} />
+                    <BarChart
+                      graphData={graphData}
+                      dataPoint={lastDataPoint}
+                      missingData={junk_data}
+                      inferenceKey={lastDataPoint}
+                    />
                   </div>
                 </div>
               </div>

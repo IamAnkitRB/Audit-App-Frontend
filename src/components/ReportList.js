@@ -35,7 +35,7 @@ const ReportList = ({ reports, onSelectReport, setSelectedHub }) => {
       <table className="audit-report__table">
         <thead>
           <tr>
-            <th>Report ID</th>
+            <th>S. No.</th>
             <th>Hub Domain</th>
             <th>Create Date</th>
             <th>Score</th>
@@ -43,9 +43,9 @@ const ReportList = ({ reports, onSelectReport, setSelectedHub }) => {
           </tr>
         </thead>
         <tbody>
-          {currentReports.map((report) => (
+          {currentReports.map((report, index) => (
             <tr key={report.report_id}>
-              <td>{report.report_id}</td>
+              <td>{indexOfFirstReport + index + 1}</td>
               <td>{report.hub_domain}</td>
               <td>{new Date(report.created_at).toLocaleDateString()}</td>
               <td>{report.score ? report.score : 'N/A'}</td>

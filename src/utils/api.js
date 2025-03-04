@@ -42,6 +42,7 @@ export const fetchReportList = async (token) => {
     }
 
     const data = await response.json();
+    data.data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     return data;
   } catch (error) {
     console.error('Error fetching report list:', error);

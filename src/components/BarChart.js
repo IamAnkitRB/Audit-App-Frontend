@@ -63,9 +63,11 @@ const dummyDataByOwners = {
   ],
 };
 
-const BarChart = ({ dataPoint, graphData }) => {
+const BarChart = ({ dataPoint, graphData, missingData, inferenceKey }) => {
   const [chartDataBySource, setChartDataBySource] = useState(null);
   const [chartDataByOwners, setChartDataByOwners] = useState(null);
+  const [inference, setInference] = useState(null);
+
   const [view, setView] = useState('source');
 
   useEffect(() => {
@@ -124,6 +126,16 @@ const BarChart = ({ dataPoint, graphData }) => {
     });
   }, [graphData, dataPoint]);
 
+  useEffect(() => {
+    if (!missingData || !inferenceKey) return;
+
+    const inferenceData = missingData[inferenceKey];
+
+    if (!inferenceData) return;
+
+    setInference(inferenceData?.inference);
+  }, [graphData, dataPoint]);
+
   const options = {
     responsive: true,
     indexAxis: 'y',
@@ -148,10 +160,12 @@ const BarChart = ({ dataPoint, graphData }) => {
           align: 'start',
           padding: 5,
           callback: function (value) {
-            return this.getLabelForValue(value)
+            let label = this.getLabelForValue(value);
+            label = label
               .replace(/_/g, ' ')
               .toLowerCase()
-              .replace(/\b\w/g, (char) => char.toUpperCase());
+              .replace(/\b\w/g, (char) => char.toLowerCase());
+            return label.length > 20 ? label.slice(0, 18) + '...' : label;
           },
         },
       },
@@ -160,12 +174,7 @@ const BarChart = ({ dataPoint, graphData }) => {
 
   return (
     <div>
-      <p className="graph-text">
-        A critical gap in data integrity. Without email IDs, outreach,
-        automation, and lead nurturing are severely impacted. This significantly
-        reduces marketing and sales efficiency, making attribution and
-        engagement tracking impossible.
-      </p>
+      <p className="graph-text">{inference}</p>
       {/* Toggle Switch */}
       <div className="toggle-container">
         <span
@@ -270,6 +279,7 @@ const BarChart = ({ dataPoint, graphData }) => {
           text-align: start;
           width: 100%;
           margin-left: 1.6rem;
+          min-height: 4rem;
         }
 
         .loading-container {

@@ -64,12 +64,10 @@ export default function TabLayout({ children, sidebarContent }) {
           ))}
         </nav>
         <div className="available_credits">
-          <p>
-            Available Credits{' '}
-            <span style={{ fontWeight: '600', fontSize: 'large' }}>
-              {credits}/100
-            </span>{' '}
-          </p>
+          <p style={{ marginBottom: '0' }}>Available Credits </p>
+          <p style={{ fontWeight: '600', fontSize: 'large', marginTop: '0' }}>
+            {credits}/100
+          </p>{' '}
           <button>+ Add Credits</button>
         </div>
       </aside>

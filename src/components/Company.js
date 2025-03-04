@@ -9,17 +9,20 @@ const Company = ({ token, score_data, graphData }) => {
   const [isDeletingDataExpanded, setIsDeletingDataExpanded] = useState(true);
   const [firstRowSelectedItem, setfirstRowSelectedItem] =
     useState('without_name');
-  const [secondRowSelectedItem, setSecondRowSelectedItem] =
-    useState('without_deals');
+  const [secondRowSelectedItem, setSecondRowSelectedItem] = useState(
+    'without_associated_deals',
+  );
   const [thirdRowSelectedItem, setThirdRowSelectedItem] = useState(
-    'without_employee_count',
+    'without_num_of_employees',
   );
   const [firstDatapoint, setFirstDatapoint] = useState('name');
   const [secondDataPoint, setSecondDataPoint] = useState(
     'num_associated_deals',
   );
   const [thirdDataPoint, setThirdDataPoint] = useState('numberofemployees');
-  const [lastDataPoint, setLastDataPoint] = useState('no_activity_last_180');
+  const [lastDataPoint, setLastDataPoint] = useState(
+    'no_activity_in_last_180_days',
+  );
 
   const [activeListSelections, setActiveListSelections] = useState({
     group1: {
@@ -305,7 +308,7 @@ const Company = ({ token, score_data, graphData }) => {
                 >
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
-                      <p>Companies with Associated Contact</p>
+                      <p>Companies without Associated Contact</p>
                       <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
                         <img
                           className="info-image"
@@ -370,6 +373,8 @@ const Company = ({ token, score_data, graphData }) => {
                     <BarChart
                       graphData={graphData}
                       dataPoint={firstDatapoint}
+                      missingData={missing_data}
+                      inferenceKey={firstRowSelectedItem}
                     />
                   </div>
                 </div>
@@ -382,14 +387,14 @@ const Company = ({ token, score_data, graphData }) => {
               <div className="report-details__card">
                 <div
                   className={`report-details__data-div ${
-                    secondRowSelectedItem === 'without_deals'
+                    secondRowSelectedItem === 'without_associated_deals'
                       ? 'selected-item'
                       : ''
                   }  ${getBorderColor(
                     missing_data?.without_associated_deals?.risk,
                   )}`}
                   onClick={() => {
-                    setSecondRowSelectedItem('without_deals');
+                    setSecondRowSelectedItem('without_associated_deals');
                     handleSecondDataPointChange('num_associated_deals');
                   }}
                 >
@@ -500,14 +505,14 @@ const Company = ({ token, score_data, graphData }) => {
 
                 <div
                   className={`report-details__data-div ${
-                    secondRowSelectedItem === 'without_region'
+                    secondRowSelectedItem === 'without_country_region'
                       ? 'selected-item'
                       : ''
                   }  ${getBorderColor(
                     missing_data?.without_country_region?.risk,
                   )}`}
                   onClick={() => {
-                    setSecondRowSelectedItem('without_region');
+                    setSecondRowSelectedItem('without_country_region');
                     handleSecondDataPointChange('country');
                   }}
                 >
@@ -544,6 +549,8 @@ const Company = ({ token, score_data, graphData }) => {
                     <BarChart
                       graphData={graphData}
                       dataPoint={secondDataPoint}
+                      missingData={missing_data}
+                      inferenceKey={secondRowSelectedItem}
                     />
                   </div>
                 </div>
@@ -556,14 +563,14 @@ const Company = ({ token, score_data, graphData }) => {
               <div className="report-details__card">
                 <div
                   className={`report-details__data-div ${
-                    thirdRowSelectedItem === 'without_employee_count'
+                    thirdRowSelectedItem === 'without_num_of_employees'
                       ? 'selected-item'
                       : ''
                   }  ${getBorderColor(
                     missing_data?.without_num_of_employees?.risk,
                   )}`}
                   onClick={() => {
-                    setThirdRowSelectedItem('without_employee_count');
+                    setThirdRowSelectedItem('without_num_of_employees');
                     handleThirdDataPointChange('numberofemployees');
                   }}
                 >
@@ -630,20 +637,20 @@ const Company = ({ token, score_data, graphData }) => {
 
                 <div
                   className={`report-details__data-div ${
-                    thirdRowSelectedItem === 'without_linkedin'
+                    thirdRowSelectedItem === 'without_linkedin_url'
                       ? 'selected-item'
                       : ''
                   }  ${getBorderColor(
                     missing_data?.without_linkedin_url?.risk,
                   )}`}
                   onClick={() => {
-                    setThirdRowSelectedItem('without_linkedin');
+                    setThirdRowSelectedItem('without_linkedin_url');
                     handleThirdDataPointChange('linkedin_company_page');
                   }}
                 >
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
-                      <p>Companies with LinkedIn Page URL</p>
+                      <p>Companies without LinkedIn Page URL</p>
                       <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
                         <img
                           className="info-image"
@@ -670,14 +677,14 @@ const Company = ({ token, score_data, graphData }) => {
 
                 <div
                   className={`report-details__data-div ${
-                    thirdRowSelectedItem === 'without_phone'
+                    thirdRowSelectedItem === 'without_phone_number'
                       ? 'selected-item'
                       : ''
                   }  ${getBorderColor(
                     missing_data?.without_phone_number?.risk,
                   )}`}
                   onClick={() => {
-                    setThirdRowSelectedItem('without_phone');
+                    setThirdRowSelectedItem('without_phone_number');
                     handleThirdDataPointChange('phone');
                   }}
                 >
@@ -714,6 +721,8 @@ const Company = ({ token, score_data, graphData }) => {
                     <BarChart
                       graphData={graphData}
                       dataPoint={thirdDataPoint}
+                      missingData={missing_data}
+                      inferenceKey={thirdRowSelectedItem}
                     />
                   </div>
                 </div>
@@ -768,12 +777,12 @@ const Company = ({ token, score_data, graphData }) => {
                 className={`report-details__duplicate-data-div  ${getBorderColor(
                   junk_data?.no_activity_in_last_180_days?.risk,
                 )} ${
-                  lastDataPoint === 'no_activity_last_180'
+                  lastDataPoint === 'no_activity_in_last_180_days'
                     ? 'selected-item'
                     : ''
                 }  `}
                 onClick={() => {
-                  setLastDataPoint('no_activity_last_180');
+                  setLastDataPoint('no_activity_in_last_180_days');
                 }}
               >
                 <div className="report-details__data-item">
@@ -858,13 +867,15 @@ const Company = ({ token, score_data, graphData }) => {
                 </div>
               </div>
             </div>
-            {lastDataPoint == 'no_activity_last_180' && (
+            {lastDataPoint == 'no_activity_in_last_180_days' && (
               <div>
                 <div className="audit-report__chart-container">
                   <div className="audit-report__chart">
                     <BarChart
                       graphData={graphData}
-                      dataPoint={firstDatapoint}
+                      dataPoint={lastDataPoint}
+                      missingData={junk_data}
+                      inferenceKey={lastDataPoint}
                     />
                   </div>
                 </div>

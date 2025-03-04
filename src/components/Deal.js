@@ -11,9 +11,12 @@ const Deal = ({ token, score_data, graphData }) => {
   const [isDeletingDataExpanded, setIsDeletingDataExpanded] = useState(true);
   const [firstRowSelectedItem, setfirstRowSelectedItem] =
     useState('without_name');
-  const [secondRowSelectedItem, setSecondRowSelectedItem] =
-    useState('without_close_date');
-  const [lastDataPoint, setLastDataPoint] = useState('no_activity_last_180');
+  const [secondRowSelectedItem, setSecondRowSelectedItem] = useState(
+    'without_closing_date',
+  );
+  const [lastDataPoint, setLastDataPoint] = useState(
+    'no_activity_in_last_180_days',
+  );
 
   const [dealActiveListSelections, setDealActiveListSelections] = useState({
     group1: {
@@ -287,7 +290,7 @@ const Deal = ({ token, score_data, graphData }) => {
                 >
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
-                      <p>Deals with Associated Contact</p>
+                      <p>Deals without Associated Contact</p>
                       <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
                         <img
                           className="info-image"
@@ -358,6 +361,8 @@ const Deal = ({ token, score_data, graphData }) => {
                     <BarChart
                       graphData={graphData}
                       dataPoint={firstDatapoint}
+                      missingData={missing_data}
+                      inferenceKey={firstRowSelectedItem}
                     />
                   </div>
                 </div>
@@ -370,14 +375,14 @@ const Deal = ({ token, score_data, graphData }) => {
               <div className="report-details__card">
                 <div
                   className={`report-details__data-div ${
-                    secondRowSelectedItem === 'without_close_date'
+                    secondRowSelectedItem === 'without_closing_date'
                       ? 'selected-item'
                       : ''
                   }  ${getBorderColor(
                     missing_data?.without_closing_date?.risk,
                   )}`}
                   onClick={() => {
-                    setSecondRowSelectedItem('without_close_date');
+                    setSecondRowSelectedItem('without_closing_date');
                     handleSecondDataPointChange('closedate');
                   }}
                 >
@@ -444,15 +449,15 @@ const Deal = ({ token, score_data, graphData }) => {
 
                 <div
                   className={`report-details__data-div ${
-                    secondRowSelectedItem === 'without_lost_reason'
+                    secondRowSelectedItem === 'lost_without_reason'
                       ? 'selected-item'
                       : ''
                   }  ${getBorderColor(
                     missing_data?.lost_without_reason?.risk,
                   )}`}
                   onClick={() => {
-                    setSecondRowSelectedItem('without_lost_reason');
-                    handleSecondDataPointChange('amount');
+                    setSecondRowSelectedItem('lost_without_reason');
+                    handleSecondDataPointChange('without_lost_reason');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -484,12 +489,12 @@ const Deal = ({ token, score_data, graphData }) => {
 
                 <div
                   className={`report-details__data-div ${
-                    secondRowSelectedItem === 'without_type'
+                    secondRowSelectedItem === 'without_deal_type'
                       ? 'selected-item'
                       : ''
                   }  ${getBorderColor(missing_data?.without_deal_type?.risk)}`}
                   onClick={() => {
-                    setSecondRowSelectedItem('without_type');
+                    setSecondRowSelectedItem('without_deal_type');
                     handleSecondDataPointChange('dealtype');
                   }}
                 >
@@ -526,6 +531,8 @@ const Deal = ({ token, score_data, graphData }) => {
                     <BarChart
                       graphData={graphData}
                       dataPoint={secondDataPoint}
+                      missingData={missing_data}
+                      inferenceKey={secondRowSelectedItem}
                     />
                   </div>
                 </div>
@@ -579,12 +586,12 @@ const Deal = ({ token, score_data, graphData }) => {
                 className={`report-details__duplicate-data-div  ${getBorderColor(
                   junk_data?.no_activity_in_last_180_days?.risk,
                 )} ${
-                  lastDataPoint === 'no_activity_last_180'
+                  lastDataPoint === 'no_activity_in_last_180_days'
                     ? 'selected-item'
                     : ''
                 }  `}
                 onClick={() => {
-                  setLastDataPoint('no_activity_last_180');
+                  setLastDataPoint('no_activity_in_last_180_days');
                 }}
               >
                 <div className="report-details__data-item">
@@ -669,13 +676,15 @@ const Deal = ({ token, score_data, graphData }) => {
                 </div>
               </div>
             </div>
-            {lastDataPoint == 'no_activity_last_180' && (
+            {lastDataPoint == 'no_activity_in_last_180_days' && (
               <div>
                 <div className="audit-report__chart-container">
                   <div className="audit-report__chart">
                     <BarChart
                       graphData={graphData}
-                      dataPoint={firstDatapoint}
+                      dataPoint={lastDataPoint}
+                      missingData={junk_data}
+                      inferenceKey={lastDataPoint}
                     />
                   </div>
                 </div>

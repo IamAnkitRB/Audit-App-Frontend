@@ -6,7 +6,6 @@ import {
 } from '../utils/api';
 import { UserCircleIcon } from '@heroicons/react/24/solid';
 import '../styles/AuditReport.scss';
-import AuditHeader from '../components/AuditHeader';
 import ReportList from '../components/ReportList';
 import ScoreSection from '../components/ScoreSection';
 import Error from '../components/Error';
@@ -85,18 +84,6 @@ export default function AuditReport({ userData }) {
       if (result?.success) {
         setGraphData(result?.data);
       }
-
-      while (result?.status !== 'Completed') {
-        console.log('Graph is not completed. Retrying...');
-
-        await new Promise((resolve) => setTimeout(resolve, 60000));
-
-        result = await fetchGraphData(token, reportId);
-        console.log('Graph result:', result);
-        if (result?.success) {
-          setGraphData(result?.data);
-        }
-      }
     } catch (err) {
       console.error('Error fetching graph status:', err);
     }
@@ -157,16 +144,17 @@ export default function AuditReport({ userData }) {
               </div>
               {isDropdownOpen && (
                 <div className="header__dropdown">
-                  <button
+                  <p
                     className="header__dropdown-button"
                     onClick={handleLogout}
                     style={{
                       opacity: 1,
                       cursor: 'pointer',
+                      fontSize: 'medium',
                     }}
                   >
                     Logout
-                  </button>
+                  </p>
                 </div>
               )}
             </div>
