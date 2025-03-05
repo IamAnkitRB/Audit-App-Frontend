@@ -1,9 +1,17 @@
 import React, { useState } from 'react';
 import BarChart from './BarChart';
 import { Tooltip } from './Tooltip';
+import RequestModal from './RequestModal';
 import { findRiskImage, getBorderColor } from '../utils/riskManager';
 
-const Company = ({ token, score_data, graphData }) => {
+const Company = ({
+  token,
+  score_data,
+  graphData,
+  isGeneratingGraph,
+  hubId,
+  page,
+}) => {
   const { missing_data, junk_data, total_companies } = score_data;
   const [isMissingDataExpanded, setIsMissingDataExpanded] = useState(true);
   const [isDeletingDataExpanded, setIsDeletingDataExpanded] = useState(true);
@@ -23,6 +31,11 @@ const Company = ({ token, score_data, graphData }) => {
   const [lastDataPoint, setLastDataPoint] = useState(
     'no_activity_in_last_180_days',
   );
+  const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
+  const [requestModalData, setRequestModalData] = useState({
+    selectedItems: [],
+    actionType: '',
+  });
 
   const [activeListSelections, setActiveListSelections] = useState({
     group1: {
@@ -75,84 +88,87 @@ const Company = ({ token, score_data, graphData }) => {
     }));
   };
 
-  const handleCreateActiveList = async (group) => {
-    // Gather selected property names for the group
-    const selectedProperties = Object.entries(activeListSelections[group])
+  const handleCreateActiveList = (group) => {
+    const selectedKeys = Object.entries(activeListSelections[group])
       .filter(([key, value]) => value)
       .map(([key]) => key);
 
-    if (!selectedProperties.length) {
+    if (!selectedKeys.length) {
       alert('Please select at least one property.');
       return;
     }
 
-    // Build the payload; using "company" as the object name in this example.
-    const payload = {
-      objectname: 'company',
-      propertynames: selectedProperties,
-    };
-
-    try {
-      const response = await fetch(
-        'https://enabling-condor-instantly.ngrok-free.app/createlist',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            state: token, // pass your token here
-          },
-          body: JSON.stringify(payload),
-        },
-      );
-      const data = await response.json();
-      if (response.ok) {
-        console.log('Active list(s) created successfully!');
-      } else {
-        console.log('Error creating active list: ' + data.error);
-      }
-    } catch (error) {
-      console.error('API error:', error);
-      alert('Network error. Please try again later.');
-    }
+    setRequestModalData({ selectedItems: selectedKeys, actionType: 'create' });
+    setIsRequestModalOpen(true);
   };
 
-  const handleDeleteActiveList = async (group) => {
-    const selectedProperties = Object.entries(activeListSelections[group])
+  const handleDeleteActiveList = (group) => {
+    const selectedKeys = Object.entries(activeListSelections[group])
       .filter(([key, value]) => value)
       .map(([key]) => key);
 
-    if (!selectedProperties.length) {
+    if (!selectedKeys.length) {
       alert('Please select at least one property.');
       return;
     }
 
-    // Build the payload; using "company" as the object name in this example.
+    setRequestModalData({ selectedItems: selectedKeys, actionType: 'delete' });
+    setIsRequestModalOpen(true);
+  };
+
+  const handleApiCall = async (item) => {
     const payload = {
       objectname: 'companies',
-      propertynames: selectedProperties,
+      propertynames: [item],
+      hubId: hubId,
     };
 
+    const url =
+      requestModalData.actionType === 'create'
+        ? 'https://enabling-condor-instantly.ngrok-free.app/createlist'
+        : 'https://enabling-condor-instantly.ngrok-free.app/deleterecords';
+
     try {
-      const response = await fetch(
-        'https://enabling-condor-instantly.ngrok-free.app/deleterecords',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            state: token,
-          },
-          body: JSON.stringify(payload),
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          state: token,
         },
-      );
+        body: JSON.stringify(payload),
+      });
+
       const data = await response.json();
-      if (response.ok) {
-        console.log('Items Deleted successfully!');
+      if (requestModalData.actionType === 'create') {
+        if (response?.ok && data[item]?.success) {
+          return {
+            success: true,
+            message: data[item].message || 'List created successfully',
+          };
+        } else {
+          return {
+            success: false,
+            message: data[item]?.error?.message || 'Something went wrong',
+          };
+        }
       } else {
-        console.log('Error creating active list: ' + data.error);
+        if (response?.ok && data.success) {
+          return {
+            success: true,
+            message: data.message || 'Items Deleted successfully',
+          };
+        } else {
+          return {
+            success: false,
+            message: data.error?.message || 'Something went wrong',
+          };
+        }
       }
     } catch (error) {
-      console.error('API error:', error);
-      alert('Network error. Please try again later.');
+      return {
+        success: false,
+        message: 'Network error. Please try again later.',
+      };
     }
   };
 
@@ -239,7 +255,7 @@ const Company = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Companies without Name</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These company records do not have a name, making it difficult to identify them.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -273,7 +289,7 @@ const Company = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p> Companies without Domain</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These companies do not have a domain associated, which limits online identification and outreach.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -309,7 +325,7 @@ const Company = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Companies without Associated Contact</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These companies do not have any associated contacts, which means no individuals are linked to them.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -347,7 +363,7 @@ const Company = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Companies without an Owner</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These companies do not have an assigned owner, meaning no specific user is responsible for managing them.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -401,7 +417,7 @@ const Company = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Companies without Deals (Opportunity/Customer)</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These companies are not associated with any deals, indicating no recorded business opportunities linked to them.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -439,7 +455,7 @@ const Company = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p> Companies without Industry</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These companies do not have an industry classification, which is useful for segmentation and targeting.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -479,7 +495,7 @@ const Company = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Companies without Lifecycle Stage</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These companies do not have a lifecycle stage assigned, which is used to track their journey in the business pipeline.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -519,7 +535,7 @@ const Company = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Companies without Country/Region</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These companies do not have a country or region specified, which makes geographic-based analysis and segmentation difficult.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -577,7 +593,7 @@ const Company = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Companies without Number of Employees</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These companies do not have the number of employees recorded, which can be a key indicator of company size.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -615,7 +631,7 @@ const Company = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p> Companies without Revenue</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These companies do not have revenue information recorded, which helps in understanding their financial scale.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -651,7 +667,7 @@ const Company = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Companies without LinkedIn Page URL</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These companies do not have a LinkedIn page URL recorded, which can limit research and networking opportunities.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -691,7 +707,7 @@ const Company = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Companies without Phone No</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These companies do not have a phone number recorded, which can restrict direct communication.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -790,7 +806,7 @@ const Company = ({ token, score_data, graphData }) => {
                     <p style={{ width: 'inherit' }}>
                       Companies have no activity in the last 180 days
                     </p>
-                    <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                    <Tooltip tooltipText="These companies have not had any recorded interactions or updates in the past 180 days.">
                       <img
                         className="info-image"
                         src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -837,7 +853,7 @@ const Company = ({ token, score_data, graphData }) => {
                     <p style={{ width: 'inherit' }}>
                       Companies without name and domain
                     </p>
-                    <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                    <Tooltip tooltipText="These companies are missing both a name and a domain, making it nearly impossible to identify them.">
                       <img
                         className="info-image"
                         src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -884,7 +900,12 @@ const Company = ({ token, score_data, graphData }) => {
           </>
         )}
       </section>
-      <section>
+      <section className={` ${page === 'past' ? 'blur-action-section' : ''} `}>
+        {page === 'past' && (
+          <div className="past-overlay-message">
+            Can't take action in past report
+          </div>
+        )}
         <div
           className="report-details__take-action report-details__subSection"
           id="take_action"
@@ -959,7 +980,13 @@ const Company = ({ token, score_data, graphData }) => {
                   Companies without an Owner
                 </label>
 
-                <button onClick={() => handleCreateActiveList('group1')}>
+                <button
+                  onClick={() => handleCreateActiveList('group1')}
+                  disabled={isGeneratingGraph}
+                  style={{
+                    cursor: isGeneratingGraph ? 'not-allowed' : 'pointer',
+                  }}
+                >
                   Create Active List
                 </button>
               </div>
@@ -1033,7 +1060,13 @@ const Company = ({ token, score_data, graphData }) => {
                   Companies without Country/Region
                 </label>
 
-                <button onClick={() => handleCreateActiveList('group2')}>
+                <button
+                  onClick={() => handleCreateActiveList('group2')}
+                  disabled={isGeneratingGraph}
+                  style={{
+                    cursor: isGeneratingGraph ? 'not-allowed' : 'pointer',
+                  }}
+                >
                   Create Active List
                 </button>
               </div>
@@ -1105,7 +1138,13 @@ const Company = ({ token, score_data, graphData }) => {
                   Companies without Phone No
                 </label>
 
-                <button onClick={() => handleCreateActiveList('group3')}>
+                <button
+                  onClick={() => handleCreateActiveList('group3')}
+                  disabled={isGeneratingGraph}
+                  style={{
+                    cursor: isGeneratingGraph ? 'not-allowed' : 'pointer',
+                  }}
+                >
                   Create Active List
                 </button>
               </div>
@@ -1150,7 +1189,13 @@ const Company = ({ token, score_data, graphData }) => {
                   Companies without name and domain
                 </label>
 
-                <button onClick={() => handleCreateActiveList('group4')}>
+                <button
+                  onClick={() => handleCreateActiveList('group4')}
+                  disabled={isGeneratingGraph}
+                  style={{
+                    cursor: isGeneratingGraph ? 'not-allowed' : 'pointer',
+                  }}
+                >
                   Create Active List
                 </button>
               </div>
@@ -1190,7 +1235,13 @@ const Company = ({ token, score_data, graphData }) => {
                   />
                   Companies without name and domain
                 </label>
-                <button onClick={() => handleDeleteActiveList('group5')}>
+                <button
+                  onClick={() => handleDeleteActiveList('group5')}
+                  disabled={isGeneratingGraph}
+                  style={{
+                    cursor: isGeneratingGraph ? 'not-allowed' : 'pointer',
+                  }}
+                >
                   Delete Junk
                 </button>
               </div>
@@ -1198,6 +1249,13 @@ const Company = ({ token, score_data, graphData }) => {
           </div>
         </div>
       </section>
+      <RequestModal
+        isOpen={isRequestModalOpen}
+        onClose={() => setIsRequestModalOpen(false)}
+        selectedItems={requestModalData.selectedItems}
+        actionType={requestModalData.actionType}
+        handleApiCall={handleApiCall}
+      />
     </div>
   );
 };

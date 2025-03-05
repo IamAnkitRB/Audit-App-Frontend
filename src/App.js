@@ -14,9 +14,12 @@ function App() {
   const [activeTab, setActiveTab] = useState('current');
   const [token, setToken] = useState(null);
   const [userData, setUserData] = useState(null);
+  const [selectedReportId, setSelectedReportId] = useState(null);
 
   const handleTabChange = (tab) => {
+    console.log('clicked');
     setActiveTab(tab);
+    setSelectedReportId(null);
   };
 
   const url = new URL(window.location.href);
@@ -63,7 +66,9 @@ function App() {
             <div className="sidebar">
               {/* Tab Buttons */}
               <button
-                onClick={() => handleTabChange('current')}
+                onClick={() => {
+                  handleTabChange('current');
+                }}
                 className={`sidebar-button ${
                   activeTab === 'current' ? 'active' : ''
                 }`}
@@ -71,7 +76,9 @@ function App() {
                 Your Report
               </button>
               <button
-                onClick={() => handleTabChange('past')}
+                onClick={() => {
+                  handleTabChange('past');
+                }}
                 className={`sidebar-button ${
                   activeTab === 'past' ? 'active' : ''
                 }`}
@@ -80,10 +87,16 @@ function App() {
               </button>
             </div>
           }
+          setSelectedReportId={setSelectedReportId}
         >
           {/* Main Content */}
           <GenerateReport title="Your Report" userData={userData} />
-          <AuditReport title="Past Reports" userData={userData} />
+          <AuditReport
+            title="Past Reports"
+            userData={userData}
+            selectedReportId={selectedReportId}
+            setSelectedReportId={setSelectedReportId}
+          />
         </TabLayout>
       </div>
     </AuthContext.Provider>

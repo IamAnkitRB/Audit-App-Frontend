@@ -10,6 +10,9 @@ const ScoreSection = ({
   score_breakdown = {},
   data_audit = {},
   graphData,
+  isGeneratingGraph,
+  hubId,
+  page = 'current',
 }) => {
   const [selectedCategory, setSelectedCategory] = useState('contacts');
   const [overall_score, setOverallScore] = useState(0);
@@ -340,6 +343,9 @@ const ScoreSection = ({
           category={selectedCategory}
           score_data={data_audit[selectedCategory]}
           graphData={graphData}
+          isGeneratingGraph={isGeneratingGraph}
+          hubId={hubId}
+          page={page}
         />
       )}
     </>

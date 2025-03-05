@@ -1,9 +1,17 @@
 import React, { useState } from 'react';
 import BarChart from './BarChart';
+import RequestModal from './RequestModal';
 import { Tooltip } from './Tooltip';
 import { findRiskImage, getBorderColor } from '../utils/riskManager';
 
-const Deal = ({ token, score_data, graphData }) => {
+const Deal = ({
+  token,
+  score_data,
+  graphData,
+  isGeneratingGraph,
+  hubId,
+  page,
+}) => {
   const { missing_data, junk_data, total_deals } = score_data;
   const [firstDatapoint, setFirstDatapoint] = useState('dealname');
   const [secondDataPoint, setSecondDataPoint] = useState('closedate');
@@ -33,12 +41,17 @@ const Deal = ({ token, score_data, graphData }) => {
     },
     group3: {
       deals_without_name_and_owner: false,
-      deals_without_activity_180: false,
+      deals_with_no_activity_in_last_180_days: false,
     },
     group4: {
       deals_without_name_and_owner: false,
       deals_with_no_activity_in_last_180_days: false,
     },
+  });
+  const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
+  const [requestModalData, setRequestModalData] = useState({
+    selectedItems: [],
+    actionType: '',
   });
 
   const handleDealCheckboxChange = (group, key, checked) => {
@@ -51,7 +64,7 @@ const Deal = ({ token, score_data, graphData }) => {
     }));
   };
 
-  const handleCreateDealActiveList = async (group) => {
+  const handleCreateActiveList = (group) => {
     const selectedKeys = Object.entries(dealActiveListSelections[group])
       .filter(([key, value]) => value)
       .map(([key]) => key);
@@ -61,72 +74,77 @@ const Deal = ({ token, score_data, graphData }) => {
       return;
     }
 
-    const payload = {
-      objectname: 'deal',
-      propertynames: selectedKeys,
-    };
-
-    try {
-      const response = await fetch(
-        'https://enabling-condor-instantly.ngrok-free.app/createlist',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            state: token,
-          },
-          body: JSON.stringify(payload),
-        },
-      );
-      const data = await response.json();
-      if (response.ok) {
-        alert('Active list(s) created successfully!');
-      } else {
-        alert('Error creating active list: ' + data.error);
-      }
-    } catch (error) {
-      console.error('API error:', error);
-      alert('Network error. Please try again later.');
-    }
+    setRequestModalData({ selectedItems: selectedKeys, actionType: 'create' });
+    setIsRequestModalOpen(true);
   };
 
-  const handleDeleteActiveList = async (group) => {
-    const selectedProperties = Object.entries(dealActiveListSelections[group])
+  const handleDeleteActiveList = (group) => {
+    const selectedKeys = Object.entries(dealActiveListSelections[group])
       .filter(([key, value]) => value)
       .map(([key]) => key);
 
-    if (!selectedProperties.length) {
+    if (!selectedKeys.length) {
       alert('Please select at least one property.');
       return;
     }
 
-    // Build the payload; using "company" as the object name in this example.
+    setRequestModalData({ selectedItems: selectedKeys, actionType: 'delete' });
+    setIsRequestModalOpen(true);
+  };
+
+  const handleApiCall = async (item) => {
     const payload = {
       objectname: 'deals',
-      propertynames: selectedProperties,
+      propertynames: [item],
+      hubId: hubId,
     };
 
+    const url =
+      requestModalData.actionType === 'create'
+        ? 'https://enabling-condor-instantly.ngrok-free.app/createlist'
+        : 'https://enabling-condor-instantly.ngrok-free.app/deleterecords';
+
     try {
-      const response = await fetch(
-        'https://enabling-condor-instantly.ngrok-free.app/deleterecords',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            state: token,
-          },
-          body: JSON.stringify(payload),
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          state: token,
         },
-      );
+        body: JSON.stringify(payload),
+      });
+
       const data = await response.json();
-      if (response.ok) {
-        console.log('Items Deleted successfully!');
+      if (requestModalData.actionType === 'create') {
+        if (response?.ok && data[item]?.success) {
+          return {
+            success: true,
+            message: data[item].message || 'List created successfully',
+          };
+        } else {
+          return {
+            success: false,
+            message: data[item]?.error?.message || 'Something went wrong',
+          };
+        }
       } else {
-        console.log('Error creating active list: ' + data.error);
+        if (response?.ok && data.success) {
+          return {
+            success: true,
+            message: data.message || 'Items Deleted successfully',
+          };
+        } else {
+          return {
+            success: false,
+            message: data.error?.message || 'Something went wrong',
+          };
+        }
       }
     } catch (error) {
-      console.error('API error:', error);
-      alert('Network error. Please try again later.');
+      return {
+        success: false,
+        message: 'Network error. Please try again later.',
+      };
     }
   };
 
@@ -221,7 +239,7 @@ const Deal = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Deals without Name</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These deals are missing a deal name, which is typically used to identify and reference them within the CRM.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -255,7 +273,7 @@ const Deal = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p> Deals without Owner</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These deals do not have an assigned owner, meaning no specific user is responsible for managing or progressing them.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -291,7 +309,7 @@ const Deal = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Deals without Associated Contact</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These deals are not linked to any contacts, meaning there is no individual associated with the deal for communication or follow-ups.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -331,7 +349,7 @@ const Deal = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Deals without Associated Company</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These deals do not have an associated company, making it unclear which organization the deal is connected to.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -389,7 +407,7 @@ const Deal = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Deals without Close Date</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These deals lack a closing date, which is used to track when the deal is expected to be finalized.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -427,7 +445,7 @@ const Deal = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p> Deals without Amount</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These deals do not have a specified monetary value, which is typically used to estimate revenue potential.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -463,7 +481,7 @@ const Deal = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Lost Deals without Lost Reason</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These deals are marked as lost but do not include a reason for the loss, which is often recorded to analyze deal performance.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -501,7 +519,7 @@ const Deal = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Deals without Deal Type</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These deals do not have a deal type assigned, which is used to categorize them based on their nature or purpose.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -599,7 +617,7 @@ const Deal = ({ token, score_data, graphData }) => {
                     <p style={{ width: 'inherit' }}>
                       Deals have no activity in the last 180 days
                     </p>
-                    <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                    <Tooltip tooltipText="These deals have been inactive for the last 180 days, with no recorded updates, communications, or engagement.">
                       <img
                         className="info-image"
                         src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -646,7 +664,7 @@ const Deal = ({ token, score_data, graphData }) => {
                     <p style={{ width: 'inherit' }}>
                       Deals without name and owner
                     </p>
-                    <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                    <Tooltip tooltipText="These deals are missing both a name and an assigned owner, making them incomplete in terms of basic identification and responsibility assignment.">
                       <img
                         className="info-image"
                         src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -693,7 +711,12 @@ const Deal = ({ token, score_data, graphData }) => {
           </>
         )}
       </section>
-      <section>
+      <section className={` ${page === 'past' ? 'blur-action-section' : ''} `}>
+        {page === 'past' && (
+          <div className="past-overlay-message">
+            Can't take action in past report
+          </div>
+        )}
         <div
           className="report-details__take-action report-details__subSection"
           id="take_action"
@@ -768,7 +791,13 @@ const Deal = ({ token, score_data, graphData }) => {
                   />
                   Deals without Associated Company
                 </label> */}
-                <button onClick={() => handleCreateDealActiveList('group1')}>
+                <button
+                  onClick={() => handleCreateActiveList('group1')}
+                  disabled={isGeneratingGraph}
+                  style={{
+                    cursor: isGeneratingGraph ? 'not-allowed' : 'pointer',
+                  }}
+                >
                   Create Active List
                 </button>
               </div>
@@ -841,7 +870,13 @@ const Deal = ({ token, score_data, graphData }) => {
                   />
                   Deals without Deal Type
                 </label>
-                <button onClick={() => handleCreateDealActiveList('group2')}>
+                <button
+                  onClick={() => handleCreateActiveList('group2')}
+                  disabled={isGeneratingGraph}
+                  style={{
+                    cursor: isGeneratingGraph ? 'not-allowed' : 'pointer',
+                  }}
+                >
                   Create Active List
                 </button>
               </div>
@@ -856,12 +891,12 @@ const Deal = ({ token, score_data, graphData }) => {
                   <input
                     type="checkbox"
                     checked={
-                      dealActiveListSelections.group3.deals_without_activity_180
+                      dealActiveListSelections.group3.deals_with_no_activity_in_last_180_days
                     }
                     onChange={(e) =>
                       handleDealCheckboxChange(
                         'group3',
-                        'deals_without_activity_180',
+                        'deals_with_no_activity_in_last_180_days',
                         e.target.checked,
                       )
                     }
@@ -872,19 +907,26 @@ const Deal = ({ token, score_data, graphData }) => {
                   <input
                     type="checkbox"
                     checked={
-                      dealActiveListSelections.group3.deals_without_activity_180
+                      dealActiveListSelections.group3
+                        .deals_with_no_activity_in_last_180_days
                     }
                     onChange={(e) =>
                       handleDealCheckboxChange(
                         'group3',
-                        'deals_without_activity_180',
+                        'deals_with_no_activity_in_last_180_days',
                         e.target.checked,
                       )
                     }
                   />
                   Deals without Name and Owner
                 </label>
-                <button onClick={() => handleCreateDealActiveList('group3')}>
+                <button
+                  onClick={() => handleCreateActiveList('group3')}
+                  disabled={isGeneratingGraph}
+                  style={{
+                    cursor: isGeneratingGraph ? 'not-allowed' : 'pointer',
+                  }}
+                >
                   Create Active List
                 </button>
               </div>
@@ -924,7 +966,13 @@ const Deal = ({ token, score_data, graphData }) => {
                   />
                   Deals without Name and Owner
                 </label>
-                <button onClick={() => handleDeleteActiveList('group4')}>
+                <button
+                  onClick={() => handleDeleteActiveList('group4')}
+                  disabled={isGeneratingGraph}
+                  style={{
+                    cursor: isGeneratingGraph ? 'not-allowed' : 'pointer',
+                  }}
+                >
                   Delete Junk
                 </button>
               </div>
@@ -932,6 +980,13 @@ const Deal = ({ token, score_data, graphData }) => {
           </div>
         </div>
       </section>
+      <RequestModal
+        isOpen={isRequestModalOpen}
+        onClose={() => setIsRequestModalOpen(false)}
+        selectedItems={requestModalData.selectedItems}
+        actionType={requestModalData.actionType}
+        handleApiCall={handleApiCall}
+      />
     </div>
   );
 };

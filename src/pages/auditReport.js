@@ -11,8 +11,11 @@ import ScoreSection from '../components/ScoreSection';
 import Error from '../components/Error';
 import { useAuth } from '../App';
 
-export default function AuditReport({ userData }) {
-  const [selectedReportId, setSelectedReportId] = useState(null);
+export default function AuditReport({
+  userData,
+  selectedReportId,
+  setSelectedReportId,
+}) {
   const [selectedHub, setSelectedHub] = useState(null);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [auditData, setAuditData] = useState(null);
@@ -119,13 +122,13 @@ export default function AuditReport({ userData }) {
       <header className="audit-report__header">
         <div className="report-header">
           <div>
-            <p>Hi {userData?.hub_details?.hs_user}</p>
+            <p>Hi {userData?.hub_details?.data?.hs_user}</p>
             <div className="dropdown" style={{ marginTop: '6px' }}>
               <div className="dropdown-domain">{selectedHub}</div>
             </div>
           </div>
           <div style={{ display: 'flex' }}>
-            <button
+            {/* <button
               onClick={() =>
                 document
                   .getElementById('take_action')
@@ -133,7 +136,7 @@ export default function AuditReport({ userData }) {
               }
             >
               Take Bulk Action ↓
-            </button>
+            </button> */}
             <div className="header__user">
               <div
                 className="header__user-icon"
@@ -186,6 +189,7 @@ export default function AuditReport({ userData }) {
         score_breakdown={score_breakdown}
         data_audit={data_audit}
         graphData={graphData}
+        page="past"
       />
     </div>
   );

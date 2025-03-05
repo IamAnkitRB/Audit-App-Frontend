@@ -39,8 +39,8 @@ const RequestModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
+    <div className="request-modal-overlay">
+      <div className="request-modal-content">
         <h2>
           {actionType === 'create'
             ? 'Creating Active List'

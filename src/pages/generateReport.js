@@ -152,8 +152,8 @@ const GenerateReport = ({ userData }) => {
           throw new Error('Failed to fetch user data');
         }
 
-        setHubId(result.hub_details.hub_id);
-        checkReport(result.hub_details.hub_id, token);
+        setHubId(result.hub_details?.data?.hub_id);
+        checkReport(result.hub_details?.data?.hub_id, token);
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -222,6 +222,8 @@ const GenerateReport = ({ userData }) => {
                 score_breakdown={score_breakdown}
                 data_audit={data_audit}
                 graphData={graphData}
+                isGeneratingGraph={isGeneratingGraph}
+                hubId={hubId}
               />
             </>
           )}

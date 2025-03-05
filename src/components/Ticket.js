@@ -2,8 +2,16 @@ import React, { useState } from 'react';
 import BarChart from './BarChart';
 import { Tooltip } from './Tooltip';
 import { findRiskImage, getBorderColor } from '../utils/riskManager';
+import RequestModal from './RequestModal';
 
-const Ticket = ({ token, score_data, graphData }) => {
+const Ticket = ({
+  token,
+  score_data,
+  graphData,
+  isGeneratingGraph,
+  hubId,
+  page,
+}) => {
   const { missing_data, junk_data, total_tickets } = score_data;
   const [isMissingDataExpanded, setIsMissingDataExpanded] = useState(true);
   const [isDeletingDataExpanded, setIsDeletingDataExpanded] = useState(true);
@@ -16,6 +24,11 @@ const Ticket = ({ token, score_data, graphData }) => {
   const [lastDataPoint, setLastDataPoint] = useState(
     'no_activity_in_last_180_days',
   );
+  const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
+  const [requestModalData, setRequestModalData] = useState({
+    selectedItems: [],
+    actionType: '',
+  });
 
   const [ticketActiveListSelections, setTicketActiveListSelections] = useState({
     group1: {
@@ -31,7 +44,7 @@ const Ticket = ({ token, score_data, graphData }) => {
     },
     group3: {
       tickets_without_name_and_owner: false,
-      tickets_without_activity_180: false,
+      tickets_with_no_activity_in_last_180_days: false,
     },
     group4: {
       tickets_without_name_and_owner: false,
@@ -49,7 +62,7 @@ const Ticket = ({ token, score_data, graphData }) => {
     }));
   };
 
-  const handleCreateTicketActiveList = async (group) => {
+  const handleCreateActiveList = (group) => {
     const selectedKeys = Object.entries(ticketActiveListSelections[group])
       .filter(([key, value]) => value)
       .map(([key]) => key);
@@ -59,32 +72,77 @@ const Ticket = ({ token, score_data, graphData }) => {
       return;
     }
 
+    setRequestModalData({ selectedItems: selectedKeys, actionType: 'create' });
+    setIsRequestModalOpen(true);
+  };
+
+  const handleDeleteActiveList = (group) => {
+    const selectedKeys = Object.entries(ticketActiveListSelections[group])
+      .filter(([key, value]) => value)
+      .map(([key]) => key);
+
+    if (!selectedKeys.length) {
+      alert('Please select at least one property.');
+      return;
+    }
+
+    setRequestModalData({ selectedItems: selectedKeys, actionType: 'delete' });
+    setIsRequestModalOpen(true);
+  };
+
+  const handleApiCall = async (item) => {
     const payload = {
-      objectname: 'ticket',
-      propertynames: selectedKeys,
+      objectname: 'tickets',
+      propertynames: [item],
+      hubId: hubId,
     };
 
+    const url =
+      requestModalData.actionType === 'create'
+        ? 'https://enabling-condor-instantly.ngrok-free.app/createlist'
+        : 'https://enabling-condor-instantly.ngrok-free.app/deleterecords';
+
     try {
-      const response = await fetch(
-        'https://enabling-condor-instantly.ngrok-free.app/createlist',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            state: token,
-          },
-          body: JSON.stringify(payload),
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          state: token,
         },
-      );
+        body: JSON.stringify(payload),
+      });
+
       const data = await response.json();
-      if (response.ok) {
-        alert('Active list(s) created successfully!');
+      if (requestModalData.actionType === 'create') {
+        if (response?.ok && data[item]?.success) {
+          return {
+            success: true,
+            message: data[item].message || 'List created successfully',
+          };
+        } else {
+          return {
+            success: false,
+            message: data[item]?.error?.message || 'Something went wrong',
+          };
+        }
       } else {
-        alert('Error creating active list: ' + data.error);
+        if (response?.ok && data.success) {
+          return {
+            success: true,
+            message: data.message || 'Items Deleted successfully',
+          };
+        } else {
+          return {
+            success: false,
+            message: data.error?.message || 'Something went wrong',
+          };
+        }
       }
     } catch (error) {
-      console.error('API error:', error);
-      alert('Network error. Please try again later.');
+      return {
+        success: false,
+        message: 'Network error. Please try again later.',
+      };
     }
   };
 
@@ -104,46 +162,6 @@ const Ticket = ({ token, score_data, graphData }) => {
       case 'deletingData':
         setIsDeletingDataExpanded(!isDeletingDataExpanded);
         break;
-    }
-  };
-
-  const handleDeleteActiveList = async (group) => {
-    const selectedProperties = Object.entries(ticketActiveListSelections[group])
-      .filter(([key, value]) => value)
-      .map(([key]) => key);
-
-    if (!selectedProperties.length) {
-      alert('Please select at least one property.');
-      return;
-    }
-
-    // Build the payload; using "company" as the object name in this example.
-    const payload = {
-      objectname: 'tickets',
-      propertynames: selectedProperties,
-    };
-
-    try {
-      const response = await fetch(
-        'https://enabling-condor-instantly.ngrok-free.app/deleterecords',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            state: token,
-          },
-          body: JSON.stringify(payload),
-        },
-      );
-      const data = await response.json();
-      if (response.ok) {
-        console.log('Items Deleted successfully!');
-      } else {
-        console.log('Error creating active list: ' + data.error);
-      }
-    } catch (error) {
-      console.error('API error:', error);
-      alert('Network error. Please try again later.');
     }
   };
 
@@ -219,7 +237,7 @@ const Ticket = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Tickets without Name</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These tickets do not have a subject or title, which is typically used to identify the issue being reported.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -253,7 +271,7 @@ const Ticket = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p> Tickets without Owner</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These tickets do not have an assigned owner, meaning no specific user is responsible for handling them.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -275,21 +293,24 @@ const Ticket = ({ token, score_data, graphData }) => {
 
                 <div
                   className={`report-details__data-div ${
-                    firstRowSelectedItem === 'without_associated_contacts'
+                    firstRowSelectedItem ===
+                    'without_associated_contacts_email_phone'
                       ? 'selected-item'
                       : ''
                   }  ${getBorderColor(
-                    missing_data?.without_associated_contacts?.risk,
+                    missing_data?.without_associated_contacts_email_phone?.risk,
                   )}`}
                   onClick={() => {
-                    setfirstRowSelectedItem('without_associated_contacts');
-                    handleFirstDataPointChange('hs_num_associated_companies');
+                    setfirstRowSelectedItem(
+                      'without_associated_contacts_email_phone',
+                    );
+                    handleFirstDataPointChange('hs_num_associated_contacts');
                   }}
                 >
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Tickets without Associated Contact</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These tickets are not linked to any contact, this also contains those contains which neither have name nor email.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -297,17 +318,22 @@ const Ticket = ({ token, score_data, graphData }) => {
                       </Tooltip>
                       <img
                         src={findRiskImage(
-                          missing_data?.without_associated_contacts?.risk,
+                          missing_data?.without_associated_contacts_email_phone
+                            ?.risk,
                         )}
                       ></img>
                     </p>
                     <p className="report-details__data-div-score">
                       <strong>
-                        {missing_data?.without_associated_contacts?.percent}%
+                        {
+                          missing_data?.without_associated_contacts_email_phone
+                            ?.percent
+                        }
+                        %
                       </strong>
                     </p>
                     <p className="report-details__data-div-total">
-                      {missing_data?.without_associated_contacts?.count?.toLocaleString()}{' '}
+                      {missing_data?.without_associated_contacts_email_phone?.count?.toLocaleString()}{' '}
                       <span>/ {total_tickets?.toLocaleString()}</span>
                     </p>
                   </div>
@@ -315,21 +341,21 @@ const Ticket = ({ token, score_data, graphData }) => {
 
                 <div
                   className={`report-details__data-div ${
-                    firstRowSelectedItem === 'without_associated_company'
+                    firstRowSelectedItem === 'without_num_associated_company'
                       ? 'selected-item'
                       : ''
                   }  ${getBorderColor(
-                    missing_data?.without_associated_company?.risk,
+                    missing_data?.without_num_associated_company?.risk,
                   )}`}
                   onClick={() => {
-                    setfirstRowSelectedItem('without_associated_company');
+                    setfirstRowSelectedItem('without_num_associated_company');
                     handleFirstDataPointChange('hs_num_associated_companies');
                   }}
                 >
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Tickets without Associated Company</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These tickets are not linked to any company, meaning they do not have an associated business entity recorded.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -337,17 +363,17 @@ const Ticket = ({ token, score_data, graphData }) => {
                       </Tooltip>
                       <img
                         src={findRiskImage(
-                          missing_data?.without_associated_company?.risk,
+                          missing_data?.without_num_associated_company?.risk,
                         )}
                       ></img>
                     </p>
                     <p className="report-details__data-div-score">
                       <strong>
-                        {missing_data?.without_associated_company?.percent}%
+                        {missing_data?.without_num_associated_company?.percent}%
                       </strong>
                     </p>
                     <p className="report-details__data-div-total">
-                      {missing_data?.without_associated_company?.count?.toLocaleString()}{' '}
+                      {missing_data?.without_num_associated_company?.count?.toLocaleString()}{' '}
                       <span>/ {total_tickets?.toLocaleString()}</span>
                     </p>
                   </div>
@@ -385,7 +411,7 @@ const Ticket = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Tickets without Priority</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These tickets do not have a priority level assigned, which is used to indicate their level of urgency.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -425,7 +451,7 @@ const Ticket = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p> Tickets without Ticket Description</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These tickets do not contain a description, which is typically used to provide details about the issue or request.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -465,7 +491,7 @@ const Ticket = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Lost Tickets without Pipeline Name</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These tickets are not assigned to a specific pipeline, which is used to track the stage or progress of a ticket.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -503,7 +529,7 @@ const Ticket = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Tickets without Status</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These tickets do not have a status assigned, which is typically used to indicate whether they are open, in progress, or resolved.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -597,7 +623,7 @@ const Ticket = ({ token, score_data, graphData }) => {
                     <p style={{ width: 'inherit' }}>
                       Tickets have no activity in the last 180 days
                     </p>
-                    <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                    <Tooltip tooltipText="These tickets have been inactive for the last 180 days, with no recorded updates, communications, or engagement.">
                       <img
                         className="info-image"
                         src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -644,7 +670,7 @@ const Ticket = ({ token, score_data, graphData }) => {
                     <p style={{ width: 'inherit' }}>
                       Tickets without name and owner
                     </p>
-                    <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                    <Tooltip tooltipText="These tickets are missing both a subject/title and an assigned owner, making them incomplete in terms of identification and responsibility.">
                       <img
                         className="info-image"
                         src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -691,7 +717,13 @@ const Ticket = ({ token, score_data, graphData }) => {
           </>
         )}
       </section>
-      <section>
+
+      <section className={` ${page === 'past' ? 'blur-action-section' : ''} `}>
+        {page === 'past' && (
+          <div className="past-overlay-message">
+            Can't take action in past report
+          </div>
+        )}
         <div
           className="report-details__take-action report-details__subSection"
           id="take_action"
@@ -768,7 +800,13 @@ const Ticket = ({ token, score_data, graphData }) => {
                   />
                   Tickets without Associated Company
                 </label>
-                <button onClick={() => handleCreateTicketActiveList('group1')}>
+                <button
+                  onClick={() => handleCreateActiveList('group1')}
+                  disabled={isGeneratingGraph}
+                  style={{
+                    cursor: isGeneratingGraph ? 'not-allowed' : 'pointer',
+                  }}
+                >
                   Create Active List
                 </button>
               </div>
@@ -842,7 +880,13 @@ const Ticket = ({ token, score_data, graphData }) => {
                   />
                   Tickets without Status
                 </label>
-                <button onClick={() => handleCreateTicketActiveList('group2')}>
+                <button
+                  onClick={() => handleCreateActiveList('group2')}
+                  disabled={isGeneratingGraph}
+                  style={{
+                    cursor: isGeneratingGraph ? 'not-allowed' : 'pointer',
+                  }}
+                >
                   Create Active List
                 </button>
               </div>
@@ -858,12 +902,12 @@ const Ticket = ({ token, score_data, graphData }) => {
                     type="checkbox"
                     checked={
                       ticketActiveListSelections.group3
-                        .tickets_without_activity_180
+                        .tickets_with_no_activity_in_last_180_days
                     }
                     onChange={(e) =>
                       handleTicketCheckboxChange(
                         'group3',
-                        'tickets_without_activity_180',
+                        'tickets_with_no_activity_in_last_180_days',
                         e.target.checked,
                       )
                     }
@@ -887,7 +931,13 @@ const Ticket = ({ token, score_data, graphData }) => {
                   />
                   Tickets without name and owner
                 </label>
-                <button onClick={() => handleCreateTicketActiveList('group3')}>
+                <button
+                  onClick={() => handleCreateActiveList('group3')}
+                  disabled={isGeneratingGraph}
+                  style={{
+                    cursor: isGeneratingGraph ? 'not-allowed' : 'pointer',
+                  }}
+                >
                   Create Active List
                 </button>
               </div>
@@ -927,7 +977,13 @@ const Ticket = ({ token, score_data, graphData }) => {
                   />
                   Tickets without name and owner
                 </label>
-                <button onClick={() => handleDeleteActiveList('group4')}>
+                <button
+                  onClick={() => handleDeleteActiveList('group4')}
+                  disabled={isGeneratingGraph}
+                  style={{
+                    cursor: isGeneratingGraph ? 'not-allowed' : 'pointer',
+                  }}
+                >
                   Delete Junk
                 </button>
               </div>
@@ -935,6 +991,13 @@ const Ticket = ({ token, score_data, graphData }) => {
           </div>
         </div>
       </section>
+      <RequestModal
+        isOpen={isRequestModalOpen}
+        onClose={() => setIsRequestModalOpen(false)}
+        selectedItems={requestModalData.selectedItems}
+        actionType={requestModalData.actionType}
+        handleApiCall={handleApiCall}
+      />
     </div>
   );
 };

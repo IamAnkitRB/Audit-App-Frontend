@@ -46,7 +46,7 @@ const AuditHeader = ({
 
   useEffect(() => {
     if (userData?.hub_details) {
-      setSelectedHub(userData.hub_details);
+      setSelectedHub(userData.hub_details?.data);
     }
   }, [userData]);
 
@@ -60,7 +60,11 @@ const AuditHeader = ({
       setReportId(latestReportId);
 
       const result = await fetchAuditDataByID(token, latestReportId);
+      const graphData = await fetchGraphData(token, latestReportId);
       setAuditData(result?.result);
+      if (!graphData?.data) {
+        setGraphData(graphData?.data);
+      }
     };
     fetchData();
   }, [hubId]);
@@ -175,7 +179,7 @@ const AuditHeader = ({
     <header className="audit-report__header">
       <div className="report-header">
         <div>
-          <p>Hi {userData?.hub_details?.hs_user}</p>
+          <p>Hi {userData?.hub_details?.data?.hs_user}</p>
           {showGenerate && (
             <div className="dropdown" style={{ marginTop: '6px' }}>
               <div className="tooltip-container">
@@ -261,12 +265,12 @@ const AuditHeader = ({
       {showModal && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <p>
+            <p style={{ fontSize: 'medium' }}>
               You are about to Generate a New Report for Hub:{' '}
               {selectedHub?.hub_id}
             </p>
             <div>
-              <p>({selectedHub?.hub_domain})</p>
+              <p style={{ fontSize: 'medium' }}>({selectedHub?.hub_domain})</p>
             </div>
 
             <button

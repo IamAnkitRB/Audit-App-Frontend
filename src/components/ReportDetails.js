@@ -5,7 +5,15 @@ import Company from './Company';
 import Deal from './Deal';
 import Ticket from './Ticket';
 
-const ReportDetails = ({ token, category, score_data, graphData }) => {
+const ReportDetails = ({
+  token,
+  category,
+  score_data,
+  graphData,
+  isGeneratingGraph,
+  hubId,
+  page,
+}) => {
   const formattedCategory =
     category.charAt(0).toUpperCase() + category.slice(1);
 
@@ -24,6 +32,9 @@ const ReportDetails = ({ token, category, score_data, graphData }) => {
           token={token}
           score_data={score_data}
           graphData={graphData?.contacts}
+          isGeneratingGraph={isGeneratingGraph}
+          hubId={hubId}
+          page={page}
         />
       )}
       {category.toLowerCase() === 'companies' && (
@@ -31,6 +42,9 @@ const ReportDetails = ({ token, category, score_data, graphData }) => {
           token={token}
           score_data={score_data}
           graphData={graphData?.companies}
+          isGeneratingGraph={isGeneratingGraph}
+          hubId={hubId}
+          page={page}
         />
       )}
       {category.toLowerCase() === 'deals' && (
@@ -38,6 +52,9 @@ const ReportDetails = ({ token, category, score_data, graphData }) => {
           token={token}
           score_data={score_data}
           graphData={graphData?.deals}
+          isGeneratingGraph={isGeneratingGraph}
+          hubId={hubId}
+          page={page}
         />
       )}
       {category.toLowerCase() === 'tickets' && (
@@ -45,6 +62,9 @@ const ReportDetails = ({ token, category, score_data, graphData }) => {
           token={token}
           score_data={score_data}
           graphData={graphData?.tickets}
+          isGeneratingGraph={isGeneratingGraph}
+          hubId={hubId}
+          page={page}
         />
       )}
     </div>

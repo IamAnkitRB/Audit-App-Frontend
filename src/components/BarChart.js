@@ -287,10 +287,10 @@ const BarChart = ({ dataPoint, graphData, missingData, inferenceKey }) => {
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          height: 360px;
+          height: 380px;
           width: 45rem;
           position: relative;
-          bottom: 22rem;
+          bottom: 24rem;
           backdrop-filter: blur(1px);
         }
 

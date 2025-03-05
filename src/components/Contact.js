@@ -4,7 +4,14 @@ import RequestModal from './RequestModal';
 import { findRiskImage, getBorderColor } from '../utils/riskManager';
 import { Tooltip } from './Tooltip';
 
-const Contact = ({ token, score_data, graphData }) => {
+const Contact = ({
+  token,
+  score_data,
+  graphData,
+  isGeneratingGraph,
+  hubId,
+  page,
+}) => {
   const { missing_data, junk_data, total_contacts } = score_data;
   const [isMissingDataExpanded, setIsMissingDataExpanded] = useState(true);
   const [isDeletingDataExpanded, setIsDeletingDataExpanded] = useState(true);
@@ -59,7 +66,7 @@ const Contact = ({ token, score_data, graphData }) => {
     actionType: '',
   });
 
-  const handleCreateContactActiveList = (group) => {
+  const handleCreateActiveList = (group) => {
     const selectedKeys = Object.entries(contactActiveListSelections[group])
       .filter(([key, value]) => value)
       .map(([key]) => key);
@@ -91,9 +98,8 @@ const Contact = ({ token, score_data, graphData }) => {
     const payload = {
       objectname: 'contact',
       propertynames: [item],
+      hubId: hubId,
     };
-
-    console.log('payload:', payload);
 
     const url =
       requestModalData.actionType === 'create'
@@ -153,87 +159,6 @@ const Contact = ({ token, score_data, graphData }) => {
       },
     }));
   };
-
-  // const handleCreateContactActiveList = async (group) => {
-  //   const selectedKeys = Object.entries(contactActiveListSelections[group])
-  //     .filter(([key, value]) => value)
-  //     .map(([key]) => key);
-
-  //   if (!selectedKeys.length) {
-  //     alert('Please select at least one property.');
-  //     return;
-  //   }
-
-  //   const payload = {
-  //     objectname: 'contact',
-  //     propertynames: selectedKeys,
-  //   };
-
-  //   try {
-  //     const response = await fetch(
-  //       'https://enabling-condor-instantly.ngrok-free.app/createlist',
-  //       {
-  //         method: 'POST',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           state: token,
-  //         },
-  //         body: JSON.stringify(payload),
-  //       },
-  //     );
-  //     const data = await response.json();
-  //     if (response.ok) {
-  //       console.log('Active list(s) created successfully!');
-  //     } else {
-  //       console.log('Error creating active list: ' + data.error);
-  //     }
-  //   } catch (error) {
-  //     console.error('API error:', error);
-  //     alert('Network error. Please try again later.');
-  //   }
-  // };
-
-  // const handleDeleteActiveList = async (group) => {
-  //   const selectedProperties = Object.entries(
-  //     contactActiveListSelections[group],
-  //   )
-  //     .filter(([key, value]) => value)
-  //     .map(([key]) => key);
-
-  //   if (!selectedProperties.length) {
-  //     alert('Please select at least one property.');
-  //     return;
-  //   }
-
-  //   // Build the payload; using "company" as the object name in this example.
-  //   const payload = {
-  //     objectname: 'contacts',
-  //     propertynames: selectedProperties,
-  //   };
-
-  //   try {
-  //     const response = await fetch(
-  //       'https://enabling-condor-instantly.ngrok-free.app/deleterecords',
-  //       {
-  //         method: 'POST',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           state: token,
-  //         },
-  //         body: JSON.stringify(payload),
-  //       },
-  //     );
-  //     const data = await response.json();
-  //     if (response.ok) {
-  //       console.log('Items Deleted successfully!');
-  //     } else {
-  //       console.log('Error creating active list: ' + data.error);
-  //     }
-  //   } catch (error) {
-  //     console.error('API error:', error);
-  //     alert('Network error. Please try again later.');
-  //   }
-  // };
 
   const handleFirstDataPointChange = (dataPoint) => {
     setFirstDatapoint(dataPoint);
@@ -330,7 +255,7 @@ const Contact = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item ">
                     <p className="report-details__data-div-heading">
                       <p>Contacts without First Name</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These contacts do not have a first name recorded, which is typically used to personalize communication.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -368,7 +293,7 @@ const Contact = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Contacts without Email ID</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These contacts do not have an email address recorded, which is commonly used for outreach and engagement.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -404,7 +329,7 @@ const Contact = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Contacts without Associated Company</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These contacts are not linked to any company, meaning there is no business entity associated with them.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -443,7 +368,7 @@ const Contact = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Contacts without Owners</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These contacts do not have an assigned owner, meaning no specific user is responsible for managing them.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -496,7 +421,7 @@ const Contact = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Contacts without Deals (Opportunity/Customer)</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These contacts are not associated with any deals, indicating no recorded business opportunities linked to them.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -531,7 +456,7 @@ const Contact = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p> Contacts without Last Name</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These contacts do not have a last name recorded, which is often used for proper identification.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -572,7 +497,7 @@ const Contact = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Contacts without Lifecycle Stage</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These contacts do not have a lifecycle stage assigned, which is used to track their journey in the sales funnel.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -613,7 +538,7 @@ const Contact = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Contacts without Lead status</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These contacts do not have a lead status assigned, which is typically used to indicate their engagement level.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -670,7 +595,7 @@ const Contact = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Contacts without Job Title</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These contacts do not have a job title recorded, which is often used to understand their role within a company.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -711,7 +636,7 @@ const Contact = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p> Contacts without Marketing Status</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These contacts do not have a marketing contact status assigned, which is used to determine if they are eligible for marketing campaigns.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -742,19 +667,21 @@ const Contact = ({ token, score_data, graphData }) => {
 
                 <div
                   className={`report-details__data-div ${
-                    thirdRowSelectedItem === 'without_lead_score'
+                    thirdRowSelectedItem === 'without_hubspotscore'
                       ? 'selected-item'
                       : ''
-                  }  ${getBorderColor(missing_data?.without_lead_score?.risk)}`}
+                  }  ${getBorderColor(
+                    missing_data?.without_hubspotscore?.risk,
+                  )}`}
                   onClick={() => {
-                    setThirdRowSelectedItem('without_lead_score');
+                    setThirdRowSelectedItem('without_hubspotscore');
                     handleThirdDataPointChange('hubspotscore');
                   }}
                 >
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Contacts without Lead Score</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These contacts do not have a lead score recorded, which is commonly used to prioritize leads based on engagement and fit.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -763,17 +690,17 @@ const Contact = ({ token, score_data, graphData }) => {
 
                       <img
                         src={findRiskImage(
-                          missing_data?.without_lead_score?.risk,
+                          missing_data?.without_hubspotscore?.risk,
                         )}
                       ></img>
                     </p>
                     <p className="report-details__data-div-score">
                       <strong>
-                        {missing_data?.without_lead_score?.percent}%
+                        {missing_data?.without_hubspotscore?.percent}%
                       </strong>
                     </p>
                     <p className="report-details__data-div-total">
-                      {missing_data?.without_lead_score?.count?.toLocaleString()}{' '}
+                      {missing_data?.without_hubspotscore?.count?.toLocaleString()}{' '}
                       <span>/ {total_contacts?.toLocaleString()}</span>
                     </p>
                   </div>
@@ -793,7 +720,7 @@ const Contact = ({ token, score_data, graphData }) => {
                   <div className="report-details__data-item">
                     <p className="report-details__data-div-heading">
                       <p>Contacts without Phone No</p>
-                      <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                      <Tooltip tooltipText="These contacts do not have a phone number recorded, which is typically used for direct communication.">
                         <img
                           className="info-image"
                           src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -889,7 +816,7 @@ const Contact = ({ token, score_data, graphData }) => {
                     <p style={{ width: 'inherit' }}>
                       Contacts have no activity in the last 180 days
                     </p>
-                    <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                    <Tooltip tooltipText="These contacts have not had any recorded interactions or updates in the past 180 days.">
                       <img
                         className="info-image"
                         src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -936,7 +863,7 @@ const Contact = ({ token, score_data, graphData }) => {
                     <p style={{ width: 'inherit' }}>
                       Contacts are internal team members
                     </p>
-                    <Tooltip tooltipText="These contacts are missing their first name which is essential for personalized communication.">
+                    <Tooltip tooltipText="These contacts are recognized as internal team members, meaning they are not external leads or customers.">
                       <img
                         className="info-image"
                         src="https://6343592.fs1.hubspotusercontent-na1.net/hubfs/6343592/info.png"
@@ -984,7 +911,12 @@ const Contact = ({ token, score_data, graphData }) => {
         )}
       </section>
 
-      <section>
+      <section className={` ${page === 'past' ? 'blur-action-section' : ''} `}>
+        {page === 'past' && (
+          <div className="past-overlay-message">
+            Can't take action in past report
+          </div>
+        )}
         <div
           className="report-details__take-action report-details__subSection"
           id="take_action"
@@ -1053,7 +985,13 @@ const Contact = ({ token, score_data, graphData }) => {
                   />
                   Contacts without Owner
                 </label>
-                <button onClick={() => handleCreateContactActiveList('group1')}>
+                <button
+                  onClick={() => handleCreateActiveList('group1')}
+                  disabled={isGeneratingGraph}
+                  style={{
+                    cursor: isGeneratingGraph ? 'not-allowed' : 'pointer',
+                  }}
+                >
                   Create Active List
                 </button>
               </div>
@@ -1121,7 +1059,13 @@ const Contact = ({ token, score_data, graphData }) => {
                   />
                   Contacts without Lead Status
                 </label>
-                <button onClick={() => handleCreateContactActiveList('group2')}>
+                <button
+                  onClick={() => handleCreateActiveList('group2')}
+                  disabled={isGeneratingGraph}
+                  style={{
+                    cursor: isGeneratingGraph ? 'not-allowed' : 'pointer',
+                  }}
+                >
                   Create Active List
                 </button>
               </div>
@@ -1187,7 +1131,13 @@ const Contact = ({ token, score_data, graphData }) => {
                   />
                   Contacts without Phone No
                 </label>
-                <button onClick={() => handleCreateContactActiveList('group3')}>
+                <button
+                  onClick={() => handleCreateActiveList('group3')}
+                  disabled={isGeneratingGraph}
+                  style={{
+                    cursor: isGeneratingGraph ? 'not-allowed' : 'pointer',
+                  }}
+                >
                   Create Active List
                 </button>
               </div>
@@ -1267,7 +1217,13 @@ const Contact = ({ token, score_data, graphData }) => {
                   />
                   Contacts are internal team members
                 </label>
-                <button onClick={() => handleDeleteActiveList('group5')}>
+                <button
+                  onClick={() => handleDeleteActiveList('group5')}
+                  disabled={isGeneratingGraph}
+                  style={{
+                    cursor: isGeneratingGraph ? 'not-allowed' : 'pointer',
+                  }}
+                >
                   Delete Junk
                 </button>
               </div>

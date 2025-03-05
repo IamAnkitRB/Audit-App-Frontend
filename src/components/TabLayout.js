@@ -3,7 +3,11 @@ import '../styles/TabLayout.scss';
 import { fetchReportList } from '../utils/api';
 import { useAuth } from '../App';
 
-export default function TabLayout({ children, sidebarContent }) {
+export default function TabLayout({
+  children,
+  sidebarContent,
+  setSelectedReportId,
+}) {
   const [activeTab, setActiveTab] = useState(0);
   const { token } = useAuth();
   const [credits, setCredits] = useState(0);
@@ -50,6 +54,7 @@ export default function TabLayout({ children, sidebarContent }) {
                 className={`tab-button ${activeTab === index ? 'active' : ''}`}
                 onClick={() => {
                   setActiveTab(index);
+                  setSelectedReportId(null);
                   toggleSection(index);
                 }}
               >
