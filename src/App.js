@@ -17,7 +17,6 @@ function App() {
   const [selectedReportId, setSelectedReportId] = useState(null);
 
   const handleTabChange = (tab) => {
-    console.log('clicked');
     setActiveTab(tab);
     setSelectedReportId(null);
   };
