@@ -99,8 +99,8 @@ const Ticket = ({
 
     const url =
       requestModalData.actionType === 'create'
-        ? 'https://enabling-condor-instantly.ngrok-free.app/createlist'
-        : 'https://enabling-condor-instantly.ngrok-free.app/deleterecords';
+        ? 'https://hsaudit.boundaryhq.com/createlist'
+        : 'https://hsaudit.boundaryhq.com/deleterecords';
 
     try {
       const response = await fetch(url, {
@@ -304,7 +304,7 @@ const Ticket = ({
                     setfirstRowSelectedItem(
                       'without_associated_contacts_email_phone',
                     );
-                    handleFirstDataPointChange('hs_num_associated_contacts');
+                    handleFirstDataPointChange('tickets_associated_contacts');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -445,7 +445,7 @@ const Ticket = ({
                   )}`}
                   onClick={() => {
                     setSecondRowSelectedItem('without_description');
-                    handleSecondDataPointChange('subject');
+                    handleSecondDataPointChange('content');
                   }}
                 >
                   <div className="report-details__data-item">
@@ -523,7 +523,7 @@ const Ticket = ({
                   }  ${getBorderColor(missing_data?.without_status?.risk)}`}
                   onClick={() => {
                     setSecondRowSelectedItem('without_status');
-                    handleSecondDataPointChange('subject');
+                    handleSecondDataPointChange('hs_pipeline_stage');
                   }}
                 >
                   <div className="report-details__data-item">

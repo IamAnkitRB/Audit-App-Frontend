@@ -1,16 +1,13 @@
 export const fetchAuditDataByID = async (token, reportId) => {
   try {
-    const response = await fetch(
-      'https://enabling-condor-instantly.ngrok-free.app/fetchreport',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          state: token,
-        },
-        body: JSON.stringify({ reportId: reportId }),
+    const response = await fetch('https://hsaudit.boundaryhq.com/fetchreport', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        state: token,
       },
-    );
+      body: JSON.stringify({ reportId: reportId }),
+    });
 
     if (!response.ok) {
       throw new Error(`Error: ${response.status} - ${response.statusText}`);
@@ -26,16 +23,13 @@ export const fetchAuditDataByID = async (token, reportId) => {
 
 export const fetchReportList = async (token) => {
   try {
-    const response = await fetch(
-      'https://enabling-condor-instantly.ngrok-free.app/pastreports',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          state: `${token}`,
-        },
+    const response = await fetch('https://hsaudit.boundaryhq.com/pastreports', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        state: `${token}`,
       },
-    );
+    });
 
     if (!response.ok) {
       throw new Error(`Error: ${response.status} - ${response.statusText}`);
@@ -52,17 +46,14 @@ export const fetchReportList = async (token) => {
 
 export const triggerCheckReport = async (token, hubID) => {
   try {
-    const response = await fetch(
-      'https://enabling-condor-instantly.ngrok-free.app/checkreport',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          state: token,
-        },
-        body: JSON.stringify({ hub_id: hubID }),
+    const response = await fetch('https://hsaudit.boundaryhq.com/checkreport', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        state: token,
       },
-    );
+      body: JSON.stringify({ hub_id: hubID }),
+    });
     const data = await response.json();
     return data;
   } catch (error) {
@@ -73,17 +64,14 @@ export const triggerCheckReport = async (token, hubID) => {
 
 export const triggerReportGeneration = async (token, hubID) => {
   try {
-    const response = await fetch(
-      'https://enabling-condor-instantly.ngrok-free.app/getreport',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          state: token,
-        },
-        body: JSON.stringify({ hub_id: hubID }),
+    const response = await fetch('https://hsaudit.boundaryhq.com/getreport', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        state: token,
       },
-    );
+      body: JSON.stringify({ hub_id: hubID }),
+    });
 
     const data = await response.json();
     return data;
@@ -96,7 +84,7 @@ export const triggerReportGeneration = async (token, hubID) => {
 export const fetchGraphData = async (token, reportId) => {
   try {
     const response = await fetch(
-      'https://enabling-condor-instantly.ngrok-free.app/checkandfetchgraph',
+      'https://hsaudit.boundaryhq.com/checkandfetchgraph',
       {
         method: 'POST',
         headers: {
@@ -119,16 +107,13 @@ export const fetchGraphData = async (token, reportId) => {
 
 export const fetchUserData = async (token) => {
   try {
-    const response = await fetch(
-      'https://enabling-condor-instantly.ngrok-free.app/gethubinfo',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          state: token,
-        },
+    const response = await fetch('https://hsaudit.boundaryhq.com/gethubinfo', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        state: token,
       },
-    );
+    });
 
     const data = await response.json();
     return data;
@@ -141,7 +126,7 @@ export const fetchUserData = async (token) => {
 export const generateNewReport = async (token, hubId) => {
   try {
     const response = await fetch(
-      'https://enabling-condor-instantly.ngrok-free.app/generatenewreport',
+      'https://hsaudit.boundaryhq.com/generatenewreport',
       {
         method: 'POST',
         headers: {
@@ -163,7 +148,7 @@ export const generateNewReport = async (token, hubId) => {
 export const addNewAccount = async (token) => {
   try {
     const response = await fetch(
-      'https://enabling-condor-instantly.ngrok-free.app/addnewaccount',
+      'https://hsaudit.boundaryhq.com/addnewaccount',
       {
         method: 'POST',
         headers: {
@@ -184,17 +169,14 @@ export const addNewAccount = async (token) => {
 
 export const triggerGraphGeneration = async (token, reportId, hubId) => {
   try {
-    const response = await fetch(
-      'https://enabling-condor-instantly.ngrok-free.app/savegraphs',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          state: token,
-        },
-        body: JSON.stringify({ report_id: reportId, hub_id: hubId }),
+    const response = await fetch('https://hsaudit.boundaryhq.com/savegraphs', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        state: token,
       },
-    );
+      body: JSON.stringify({ report_id: reportId, hub_id: hubId }),
+    });
 
     const data = await response.json();
 

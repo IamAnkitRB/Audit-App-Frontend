@@ -103,8 +103,8 @@ const Contact = ({
 
     const url =
       requestModalData.actionType === 'create'
-        ? 'https://enabling-condor-instantly.ngrok-free.app/createlist'
-        : 'https://enabling-condor-instantly.ngrok-free.app/deleterecords';
+        ? 'https://hsaudit.boundaryhq.com/createlist'
+        : 'https://hsaudit.boundaryhq.com/deleterecords';
 
     try {
       const response = await fetch(url, {
